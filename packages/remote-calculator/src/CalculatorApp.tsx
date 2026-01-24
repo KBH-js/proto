@@ -82,18 +82,29 @@ export default function CalculatorApp() {
       return;
     }
 
-    const isShared = hostReact === React;
+    const remoteReact = React;
+    const instanceEqual = hostReact === remoteReact;
+    // Compare internal core function - more accurate even if bundler wraps objects in Proxy
+    const createElementEqual = hostReact.createElement === remoteReact.createElement;
 
+    console.group('🔍 Module Federation Debug');
+    console.log('Host React Version:', hostReact.version);
+    console.log('Remote React Version:', remoteReact.version);
     console.log(
-      `%c[Shared Dependency Check] React Instance Equal: ${isShared}`,
-      isShared ? 'color: green; font-weight: bold;' : 'color: red; font-weight: bold;'
+      `%cInstance Equal: ${instanceEqual}`,
+      instanceEqual ? 'color: green; font-weight: bold;' : 'color: orange;'
     );
-
-    if (isShared) {
-      console.log('✅ Remote app is using Host\'s React instance (Module Federation shared dependency working)');
+    console.log(
+      `%ccreateElement Equal: ${createElementEqual}`,
+      createElementEqual ? 'color: green; font-weight: bold;' : 'color: red; font-weight: bold;'
+    );
+    
+    if (createElementEqual) {
+      console.log('✅ Shared dependency working - same React core functions');
     } else {
-      console.warn('❌ Duplicate React instances detected! Check Module Federation shared config.');
+      console.warn('❌ Duplicate React instances - createElement differs!');
     }
+    console.groupEnd();
   }, []);
 
   /**
