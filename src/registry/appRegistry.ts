@@ -13,6 +13,10 @@ export interface AppRegistryEntry {
   defaultConfig: AppConfig;
   /** Whether this is a remote micro-frontend loaded via Module Federation */
   isRemote?: boolean;
+  /** Port the remote is served from (for technical indicator display) */
+  remotePort?: number;
+  /** Module name for logging (e.g., 'remoteCalculator/CalculatorApp') */
+  remoteModule?: string;
 }
 
 /**
@@ -20,6 +24,9 @@ export interface AppRegistryEntry {
  * 
  * This component is loaded dynamically via Module Federation from
  * the remote-calculator package running on port 5001.
+ * 
+ * Note: If the remote fails to load, a page refresh is required to retry.
+ * This is a known limitation of Module Federation (browser/runtime caching).
  * 
  * The import path 'remoteCalculator/CalculatorApp' is mapped in vite.config.ts
  * to http://localhost:5001/assets/remoteEntry.js
@@ -101,6 +108,8 @@ export const appRegistry: Record<string, AppRegistryEntry> = {
       defaultSize: { w: 320, h: 480 },
     },
     isRemote: true,
+    remotePort: 5001,
+    remoteModule: 'remoteCalculator/CalculatorApp',
   },
 };
 

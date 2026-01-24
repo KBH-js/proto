@@ -1,4 +1,5 @@
 import { Component, ReactNode } from 'react';
+import { federationLogger } from '../../store/toastStore';
 
 /**
  * Error Boundary for Remote Micro-Frontends
@@ -25,6 +26,8 @@ interface ErrorBoundaryProps {
   children: ReactNode;
   /** Optional custom fallback UI */
   fallback?: ReactNode;
+  /** Callback to close the window (used for remote app failures) */
+  onClose?: () => void;
 }
 
 interface ErrorBoundaryState {
@@ -32,8 +35,6 @@ interface ErrorBoundaryState {
   hasError: boolean;
   /** The error that was caught */
   error: Error | null;
-  /** Key to force re-render on retry */
-  retryKey: number;
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -42,7 +43,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.state = {
       hasError: false,
       error: null,
-      retryKey: 0,
     };
   }
 
@@ -60,27 +60,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
    * Log error information for debugging
    */
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error('ErrorBoundary caught an error:', error);
-    console.error('Component stack:', errorInfo.componentStack);
+    const { appName = 'Unknown' } = this.props;
     
-    // In production, you might send this to an error reporting service
-    // errorReportingService.log({ error, componentStack: errorInfo.componentStack });
+    // Use styled console logger for Module Federation errors
+    federationLogger.moduleFailed(appName, error.message);
+    
+    // Also log component stack for debugging
+    console.error('Component stack:', errorInfo.componentStack);
   }
 
-  /**
-   * Reset error state and increment retry key to force re-render
-   */
-  handleRetry = (): void => {
-    this.setState((prevState) => ({
-      hasError: false,
-      error: null,
-      retryKey: prevState.retryKey + 1,
-    }));
-  };
-
   render(): ReactNode {
-    const { hasError, error, retryKey } = this.state;
-    const { appName = 'Application', children, fallback } = this.props;
+    const { hasError, error } = this.state;
+    const { appName = 'Application', children, fallback, onClose } = this.props;
 
     if (hasError) {
       // Use custom fallback if provided
@@ -101,7 +92,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           
           {/* Secondary Message */}
           <p className="text-foreground-secondary text-sm mb-4 max-w-xs">
-            The remote application could not be loaded. Please ensure the service is running.
+            The remote application could not be loaded. Please ensure the service is running and try opening the app again.
           </p>
           
           {/* Error Details (collapsed by default in production) */}
@@ -116,20 +107,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </details>
           )}
           
-          {/* Retry Button */}
-          <button
-            onClick={this.handleRetry}
-            className="px-4 py-2 bg-accent-primary hover:bg-accent-hover text-foreground-primary rounded-lg font-medium transition-colors flex items-center gap-2"
-          >
-            <span>🔄</span>
-            <span>Retry</span>
-          </button>
+          {/* Close Button */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-accent-primary hover:bg-accent-hover text-foreground-primary rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <span>✕</span>
+              <span>Close Window</span>
+            </button>
+          )}
         </div>
       );
     }
 
-    // Use key to force re-mount children on retry
-    return <div key={retryKey}>{children}</div>;
+    return <>{children}</>;
   }
 }
 
