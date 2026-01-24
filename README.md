@@ -20,16 +20,36 @@
 Host(OS)와 Remote(App)가 어떻게 독립적으로 배포되고 런타임에 통합되는지 보여줍니다.
 
 ```mermaid
-graph LR
-    User[👤 User Browser] -->|Access| Host[🖥️ Host App]
-    Host <-.->|Module Federation| Remote[📦 Remote App]
-    
-    Host --- H1[Zustand Store]
-    Host --- H2[App Registry]
-    Host --- H3[Window Manager]
-    
-    Remote --- R1[Calculator]
-    Remote --- R2[Future Apps...]
+graph TD
+    classDef host fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef remote fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef shared fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+
+    User["👤 User"] -->|Access| Host
+
+    subgraph Host ["🖥️ Host App"]
+        Registry[App Registry]
+        Store[Zustand Store]
+        Desktop[Desktop UI]
+        Desktop -->|Action| Store
+        Desktop -->|Load| Registry
+    end
+
+    subgraph Remote ["📦 Remote App"]
+        Calc[Calculator]
+    end
+
+    subgraph Shared ["♻️ Shared Deps"]
+        ReactLib[React 19]
+    end
+
+    Registry -.->|Module Federation| Calc
+    Host -.-> ReactLib
+    Calc -.-> ReactLib
+
+    class Registry,Store,Desktop host
+    class Calc remote
+    class ReactLib shared
 ```
 
 ## 🚀 Technical Decision
