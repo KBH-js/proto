@@ -16,13 +16,9 @@ export function WindowManagerLayout() {
       <Desktop />
 
       {/* Windows layer - renders all open windows */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="relative w-full h-full pointer-events-auto">
-          {windows.map((win) => (
-            <WindowFrame key={win.id} window={win} />
-          ))}
-        </div>
-      </div>
+      {windows.map((win) => (
+        <WindowFrame key={win.id} window={win} />
+      ))}
 
       {/* Taskbar - always on top */}
       <Taskbar />

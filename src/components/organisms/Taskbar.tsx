@@ -15,14 +15,17 @@ export function Taskbar() {
     focusWindow,
   } = useWindowStore();
 
-  const handleTaskbarItemClick = (windowId: string, isMinimized: boolean) => {
+  const handleTaskbarItemClick = (windowId: string, isMinimized: boolean, isActive: boolean) => {
     if (isMinimized) {
       // Restore and focus the minimized window
       restoreWindow(windowId);
       focusWindow(windowId);
-    } else {
-      // Minimize the visible window
+    } else if (isActive) {
+      // Only minimize if clicking the already-active window
       minimizeWindow(windowId);
+    } else {
+      // Bring non-active visible window to focus
+      focusWindow(windowId);
     }
   };
 
@@ -42,14 +45,17 @@ export function Taskbar() {
         {windows.length === 0 ? (
           <span className="text-gray-500 text-sm">No open windows</span>
         ) : (
-          windows.map((win) => (
-            <TaskbarItem
-              key={win.id}
-              window={win}
-              isActive={activeWindowId === win.id}
-              onClick={() => handleTaskbarItemClick(win.id, win.isMinimized)}
-            />
-          ))
+          windows.map((win) => {
+            const isActive = activeWindowId === win.id;
+            return (
+              <TaskbarItem
+                key={win.id}
+                window={win}
+                isActive={isActive}
+                onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
+              />
+            );
+          })
         )}
       </div>
     </div>

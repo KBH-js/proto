@@ -12,6 +12,7 @@ export function Desktop() {
   const availableApps = getAvailableApps();
 
   const handleAppLaunch = (componentType: string, title: string) => {
+    console.log('Launching app:', componentType, title);
     openWindow(componentType, title);
   };
 
