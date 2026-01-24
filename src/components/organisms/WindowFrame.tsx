@@ -63,7 +63,6 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   const appEntry = getApp(win.componentType);
   const AppComponent = appEntry?.component;
   const isRemote = appEntry?.isRemote ?? false;
-  const remotePort = appEntry?.remotePort;
   const remoteModule = appEntry?.remoteModule;
 
   // Callback when remote component loads successfully
@@ -162,7 +161,6 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           onMinimize={() => minimizeWindow(win.id)}
           onMaximize={handleMaximizeToggle}
           isRemote={isRemote}
-          remotePort={remotePort}
         />
 
         {/* Content Area */}

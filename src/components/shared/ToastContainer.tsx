@@ -1,3 +1,4 @@
+import { Info, CheckCircle2, AlertTriangle, XCircle, Zap, X } from 'lucide-react';
 import { useToastStore, Toast } from '../../store/toastStore';
 
 /**
@@ -13,11 +14,11 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
   };
 
   const typeIcons = {
-    info: 'ℹ️',
-    success: '✅',
-    warning: '⚠️',
-    error: '❌',
-    system: '⚡',
+    info: <Info className="w-5 h-5 text-blue-400" />,
+    success: <CheckCircle2 className="w-5 h-5 text-green-400" />,
+    warning: <AlertTriangle className="w-5 h-5 text-yellow-400" />,
+    error: <XCircle className="w-5 h-5 text-red-400" />,
+    system: <Zap className="w-5 h-5 text-cyan-400" />,
   };
 
   return (
@@ -29,7 +30,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
         ${typeStyles[toast.type]}
       `}
     >
-      <span className="text-lg">{typeIcons[toast.type]}</span>
+      {typeIcons[toast.type]}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-mono text-gray-100 break-words">
           {toast.message}
@@ -42,7 +43,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
         onClick={onDismiss}
         className="text-gray-400 hover:text-white transition-colors"
       >
-        ✕
+        <X className="w-4 h-4" />
       </button>
     </div>
   );

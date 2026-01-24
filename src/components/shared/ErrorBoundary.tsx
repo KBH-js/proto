@@ -1,4 +1,5 @@
 import { Component, ReactNode } from 'react';
+import { AlertTriangle, X } from 'lucide-react';
 import { federationLogger } from '../../store/toastStore';
 
 /**
@@ -81,27 +82,29 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       // Default error UI
       return (
-        <div className="flex flex-col items-center justify-center h-full bg-background-surface p-6 text-center">
+        <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-6 text-center">
           {/* Warning Icon */}
-          <div className="text-6xl mb-4">⚠️</div>
+          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+            <AlertTriangle className="w-8 h-8 text-red-500" />
+          </div>
           
           {/* Primary Message */}
-          <h2 className="text-xl font-semibold text-foreground-primary mb-2">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
             {appName} is currently unavailable
           </h2>
           
           {/* Secondary Message */}
-          <p className="text-foreground-secondary text-sm mb-4 max-w-xs">
+          <p className="text-gray-500 text-sm mb-4 max-w-xs">
             The remote application could not be loaded. Please ensure the service is running and try opening the app again.
           </p>
           
           {/* Error Details (collapsed by default in production) */}
           {error && (
-            <details className="mb-4 text-xs text-foreground-tertiary max-w-xs">
-              <summary className="cursor-pointer hover:text-foreground-secondary">
+            <details className="mb-4 text-xs text-gray-400 max-w-xs">
+              <summary className="cursor-pointer hover:text-gray-600">
                 Technical details
               </summary>
-              <pre className="mt-2 p-2 bg-background-secondary rounded text-left overflow-auto max-h-24">
+              <pre className="mt-2 p-2 bg-gray-200 rounded text-left overflow-auto max-h-24 text-gray-700">
                 {error.message}
               </pre>
             </details>
@@ -111,9 +114,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           {onClose && (
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-accent-primary hover:bg-accent-hover text-foreground-primary rounded-lg font-medium transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
             >
-              <span>✕</span>
+              <X className="w-4 h-4" />
               <span>Close Window</span>
             </button>
           )}
