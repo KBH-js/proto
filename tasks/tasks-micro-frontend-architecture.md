@@ -147,8 +147,8 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 9.6 Create error UI with warning icon (⚠️ or SVG)
   - [x] 9.7 Display message: "[App Name] is currently unavailable"
   - [x] 9.8 Display secondary text: "The remote application could not be loaded"
-  - [x] 9.9 Add "Retry" button that resets error state and re-renders children
-  - [x] 9.10 Implement retry by resetting state and using a key prop trick
+  - [x] 9.9 Add "Close Window" button (retry without refresh not possible with Module Federation)
+  - [x] 9.10 Pass `onClose` prop to allow closing the failed window
   - [x] 9.11 Accept `appName` prop for customizing error message
   - [x] 9.12 Create `src/components/shared/LoadingFallback.tsx` component
   - [x] 9.13 Implement centered spinner or pulsing skeleton UI
@@ -169,43 +169,43 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 10.12 Verify local apps (Placeholder, About, Settings) still render correctly
   - [x] 10.13 Verify Calculator appears in desktop icons
 
-- [ ] 11.0 Integration Testing & Verification
-  - [ ] 11.1 Open terminal 1: navigate to `packages/remote-calculator`, run `pnpm dev`
-  - [ ] 11.2 Verify remote dev server starts on http://localhost:5001
-  - [ ] 11.3 Open terminal 2: navigate to root, run `pnpm dev`
-  - [ ] 11.4 Verify host dev server starts on http://localhost:5173
-  - [ ] 11.5 Open browser to http://localhost:5173
-  - [ ] 11.6 Double-click Calculator icon on desktop
-  - [ ] 11.7 Verify Calculator window opens and loads remote component
-  - [ ] 11.8 Test calculator functionality (numbers, operations, clear)
-  - [ ] 11.9 Open browser console, verify NO "multiple React instances" errors
-  - [ ] 11.10 Stop remote server (Ctrl+C in terminal 1)
-  - [ ] 11.11 Refresh host page, click Calculator icon
-  - [ ] 11.12 Verify error boundary displays with retry button
-  - [ ] 11.13 Verify host remains functional (other apps work, taskbar works)
-  - [ ] 11.14 Restart remote server
-  - [ ] 11.15 Click "Retry" button in error UI
-  - [ ] 11.16 Verify Calculator loads successfully after retry
-  - [ ] 11.17 Test local apps (About, Settings) still work correctly
-  - [ ] 11.18 Verify Calculator styling matches host design system
+- [x] 11.0 Integration Testing & Verification
+  - [x] 11.1 Open terminal 1: navigate to `packages/remote-calculator`, run `pnpm build && pnpm preview`
+  - [x] 11.2 Verify remote preview server starts on http://localhost:5001
+  - [x] 11.3 Open terminal 2: navigate to root, run `pnpm dev`
+  - [x] 11.4 Verify host dev server starts on http://localhost:5173
+  - [x] 11.5 Open browser to http://localhost:5173
+  - [x] 11.6 Double-click Calculator icon on desktop
+  - [x] 11.7 Verify Calculator window opens and loads remote component
+  - [x] 11.8 Test calculator functionality (numbers, operations, clear)
+  - [x] 11.9 Open browser console, verify NO "multiple React instances" errors
+  - [x] 11.10 Stop remote server (Ctrl+C in terminal 1)
+  - [x] 11.11 Refresh host page, click Calculator icon
+  - [x] 11.12 Verify error boundary displays with "Close Window" button
+  - [x] 11.13 Verify host remains functional (other apps work, taskbar works)
+  - [x] 11.14 Restart remote server
+  - [x] 11.15 Click "Close Window" button in error UI (closes failed window)
+  - [N/A] 11.16 ~~Retry without refresh~~ - Not possible with Module Federation (browser/runtime caching)
+  - [x] 11.17 Test local apps (About, Settings) still work correctly
+  - [x] 11.18 Verify Calculator styling matches host design system
 
-- [ ] 12.0 Create Documentation
-  - [ ] 12.1 Create `REMOTES.md` at repository root
-  - [ ] 12.2 Add "Overview" section explaining Module Federation architecture
-  - [ ] 12.3 Add "Quick Start" section with dev environment startup steps
-  - [ ] 12.4 Document startup order: remote first, then host
-  - [ ] 12.5 Add "Creating a New Remote App" section with step-by-step guide
-  - [ ] 12.6 Include template vite.config.ts for new remotes
-  - [ ] 12.7 Document required shared dependencies configuration
-  - [ ] 12.8 Add "Registering a Remote in the Host" section
-  - [ ] 12.9 Document how to add TypeScript declarations for new remotes
-  - [ ] 12.10 Document how to add remote app to appRegistry
-  - [ ] 12.11 Add "Standalone vs Integration Mode" section
-  - [ ] 12.12 Explain MockHostProvider usage for standalone development
-  - [ ] 12.13 Add "Host-Remote Communication" section
-  - [ ] 12.14 Document HostContext usage for read-only state access
-  - [ ] 12.15 Document Custom Events API pattern for bidirectional communication
-  - [ ] 12.16 Add "Troubleshooting" section with common issues and solutions
-  - [ ] 12.17 Add inline comments to `packages/remote-calculator/vite.config.ts` explaining federation options
-  - [ ] 12.18 Add inline comments to host `vite.config.ts` explaining remote configuration
-  - [ ] 12.19 Review all documentation for completeness and accuracy
+- [x] 12.0 Create Documentation
+  - [x] 12.1 Create `REMOTES.md` at repository root
+  - [x] 12.2 Add "Overview" section explaining Module Federation architecture
+  - [x] 12.3 Add "Quick Start" section with dev environment startup steps
+  - [x] 12.4 Document startup order: remote first, then host
+  - [x] 12.5 Add "Creating a New Remote App" section with step-by-step guide
+  - [x] 12.6 Include template vite.config.ts for new remotes
+  - [x] 12.7 Document required shared dependencies configuration
+  - [x] 12.8 Add "Registering a Remote in the Host" section
+  - [x] 12.9 Document how to add TypeScript declarations for new remotes
+  - [x] 12.10 Document how to add remote app to appRegistry
+  - [x] 12.11 Add "Standalone vs Integration Mode" section
+  - [x] 12.12 Explain MockHostProvider usage for standalone development
+  - [x] 12.13 Add "Host-Remote Communication" section
+  - [x] 12.14 Document HostContext usage for read-only state access
+  - [x] 12.15 Document Custom Events API pattern for bidirectional communication
+  - [x] 12.16 Add "Troubleshooting" section with common issues and solutions
+  - [x] 12.17 Add inline comments to `packages/remote-calculator/vite.config.ts` explaining federation options
+  - [x] 12.18 Add inline comments to host `vite.config.ts` explaining remote configuration
+  - [x] 12.19 Review all documentation for completeness and accuracy

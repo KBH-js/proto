@@ -1,4 +1,5 @@
-import { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow } from '@proto/shared/theme';
+// Use local theme copy for independent deployment (instead of @proto/shared/theme)
+import { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow } from './src/theme.js';
 
 /** @type {import('tailwindcss').Config} */
 export default {

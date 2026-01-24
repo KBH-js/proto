@@ -133,15 +133,32 @@ export const federationLogger = {
    * Print the Module Federation banner on app start
    */
   printBanner: () => {
+    // Get remote URL from build-time define (see vite.config.ts)
+    const remoteCalcUrl = typeof __REMOTE_CALCULATOR_URL__ !== 'undefined' 
+      ? __REMOTE_CALCULATOR_URL__ 
+      : 'http://localhost:5001/assets/remoteEntry.js';
+    
+    // Extract hostname for display
+    const remoteHost = (() => {
+      try {
+        const url = new URL(remoteCalcUrl);
+        return `${url.protocol}//${url.host}`;
+      } catch {
+        return remoteCalcUrl;
+      }
+    })();
+
+    const hostUrl = window.location.origin;
+    
     console.log(
       `%c
-╔══════════════════════════════════════════════════════════╗
-║          🚀 Proto OS - Micro-Frontend Architecture       ║
-╠══════════════════════════════════════════════════════════╣
-║  Host: http://localhost:5173                             ║
-║  Remotes:                                                ║
-║    • remoteCalculator → http://localhost:5001            ║
-╚══════════════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════════════╗
+║             🚀 Proto OS - Micro-Frontend Architecture             ║
+╠═══════════════════════════════════════════════════════════════════╣
+║  Host: ${hostUrl.padEnd(55)}║
+║  Remotes:                                                         ║
+║    • remoteCalculator → ${remoteHost.padEnd(39)}║
+╚═══════════════════════════════════════════════════════════════════╝
 `,
       'color: #00d8ff; font-family: monospace;'
     );
