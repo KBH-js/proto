@@ -28,13 +28,16 @@ export default defineConfig({
       },
       shared: {
         // React must be shared as singleton to prevent "multiple React instances" error
+        // generate: false - remote should use host's shared modules, not generate its own
         react: {
           singleton: true,
           requiredVersion: '^19.0.0',
+          generate: false,
         },
         'react-dom': {
           singleton: true,
           requiredVersion: '^19.0.0',
+          generate: false,
         },
       },
     }),
