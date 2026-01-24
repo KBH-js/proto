@@ -154,20 +154,20 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 9.13 Implement centered spinner or pulsing skeleton UI
   - [x] 9.14 Style both components with Tailwind matching host design
 
-- [ ] 10.0 Refactor App Registry for Dynamic Imports
-  - [ ] 10.1 Open `src/registry/appRegistry.ts`
-  - [ ] 10.2 Update `AppRegistryEntry` interface: change `component` type to `ComponentType<unknown> | React.LazyExoticComponent<ComponentType<unknown>>`
-  - [ ] 10.3 Add `isRemote?: boolean` flag to `AppRegistryEntry` interface
-  - [ ] 10.4 Create lazy import for Calculator: `const LazyCalculatorApp = React.lazy(() => import('remoteCalculator/CalculatorApp'))`
-  - [ ] 10.5 Add calculator entry to `appRegistry` with `componentType: 'calculator'`, `isRemote: true`
-  - [ ] 10.6 Set calculator default config: `title: 'Calculator'`, `icon: '🧮'`, `defaultSize: { w: 320, h: 480 }`
-  - [ ] 10.7 Open `src/components/organisms/WindowFrame.tsx`
-  - [ ] 10.8 Import `Suspense` from React
-  - [ ] 10.9 Import `ErrorBoundary` and `LoadingFallback` components
-  - [ ] 10.10 Wrap app content rendering with `<ErrorBoundary appName={title}>`
-  - [ ] 10.11 Inside ErrorBoundary, wrap with `<Suspense fallback={<LoadingFallback />}>`
-  - [ ] 10.12 Verify local apps (Placeholder, About, Settings) still render correctly
-  - [ ] 10.13 Verify Calculator appears in desktop icons
+- [x] 10.0 Refactor App Registry for Dynamic Imports
+  - [x] 10.1 Open `src/registry/appRegistry.ts`
+  - [x] 10.2 Update `AppRegistryEntry` interface: change `component` type to `ComponentType<unknown> | React.LazyExoticComponent<ComponentType<unknown>>`
+  - [x] 10.3 Add `isRemote?: boolean` flag to `AppRegistryEntry` interface
+  - [x] 10.4 Create lazy import for Calculator: `const LazyCalculatorApp = React.lazy(() => import('remoteCalculator/CalculatorApp'))`
+  - [x] 10.5 Add calculator entry to `appRegistry` with `componentType: 'calculator'`, `isRemote: true`
+  - [x] 10.6 Set calculator default config: `title: 'Calculator'`, `icon: '🧮'`, `defaultSize: { w: 320, h: 480 }`
+  - [x] 10.7 Open `src/components/organisms/WindowFrame.tsx`
+  - [x] 10.8 Import `Suspense` from React
+  - [x] 10.9 Import `ErrorBoundary` and `LoadingFallback` components
+  - [x] 10.10 Wrap app content rendering with `<ErrorBoundary appName={title}>`
+  - [x] 10.11 Inside ErrorBoundary, wrap with `<Suspense fallback={<LoadingFallback />}>`
+  - [x] 10.12 Verify local apps (Placeholder, About, Settings) still render correctly
+  - [x] 10.13 Verify Calculator appears in desktop icons
 
 - [ ] 11.0 Integration Testing & Verification
   - [ ] 11.1 Open terminal 1: navigate to `packages/remote-calculator`, run `pnpm dev`

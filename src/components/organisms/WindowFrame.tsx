@@ -1,8 +1,11 @@
+import { Suspense } from 'react';
 import { Rnd } from 'react-rnd';
 import { WindowState, DEFAULT_MIN_SIZE } from '../../types/window.types';
 import { useWindowStore } from '../../store/windowStore';
 import { getApp } from '../../registry/appRegistry';
 import { TitleBar, DRAG_HANDLE_CLASS } from './TitleBar';
+import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { LoadingFallback } from '../shared/LoadingFallback';
 
 interface WindowFrameProps {
   /** The window state object */
@@ -111,7 +114,11 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
         {/* Content Area */}
         <div className="flex-1 bg-white overflow-auto">
           {AppComponent ? (
-            <AppComponent />
+            <ErrorBoundary appName={win.title}>
+              <Suspense fallback={<LoadingFallback message={`Loading ${win.title}...`} />}>
+                <AppComponent />
+              </Suspense>
+            </ErrorBoundary>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
               App not found: {win.componentType}

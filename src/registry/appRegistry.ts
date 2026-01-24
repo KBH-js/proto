@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, LazyExoticComponent, lazy } from 'react';
 import { AppConfig, Size } from '../types/window.types';
 import { PlaceholderApp, AboutApp, SettingsApp } from '../apps/PlaceholderApp';
 
@@ -8,10 +8,23 @@ import { PlaceholderApp, AboutApp, SettingsApp } from '../apps/PlaceholderApp';
 export interface AppRegistryEntry {
   /** The React component to render (accepts any props) */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: ComponentType<any>;
+  component: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
   /** Default configuration for this app */
   defaultConfig: AppConfig;
+  /** Whether this is a remote micro-frontend loaded via Module Federation */
+  isRemote?: boolean;
 }
+
+/**
+ * Lazy-loaded Calculator App from Remote Micro-Frontend
+ * 
+ * This component is loaded dynamically via Module Federation from
+ * the remote-calculator package running on port 5001.
+ * 
+ * The import path 'remoteCalculator/CalculatorApp' is mapped in vite.config.ts
+ * to http://localhost:5001/assets/remoteEntry.js
+ */
+const LazyCalculatorApp = lazy(() => import('remoteCalculator/CalculatorApp'));
 
 /**
  * Application Registry
@@ -71,6 +84,23 @@ export const appRegistry: Record<string, AppRegistryEntry> = {
       icon: '⚙️',
       defaultSize: { w: 500, h: 400 },
     },
+  },
+  
+  /**
+   * Calculator App (Remote Micro-Frontend)
+   * 
+   * Loaded dynamically via Module Federation from packages/remote-calculator.
+   * Requires the remote dev server to be running on port 5001.
+   */
+  calculator: {
+    component: LazyCalculatorApp,
+    defaultConfig: {
+      componentType: 'calculator',
+      title: 'Calculator',
+      icon: '🧮',
+      defaultSize: { w: 320, h: 480 },
+    },
+    isRemote: true,
   },
 };
 
