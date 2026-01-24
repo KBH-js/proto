@@ -138,21 +138,21 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 8.8 Wrap root app component with `HostProvider` in `src/App.tsx`
   - [x] 8.9 Add JSDoc comments documenting Custom Events API for future bidirectional communication
 
-- [ ] 9.0 Create Error Boundary & Loading States
-  - [ ] 9.1 Create `src/components/shared` directory
-  - [ ] 9.2 Create `src/components/shared/ErrorBoundary.tsx` as class component
-  - [ ] 9.3 Implement `state: { hasError: boolean, error: Error | null }`
-  - [ ] 9.4 Implement `static getDerivedStateFromError(error)` returning `{ hasError: true, error }`
-  - [ ] 9.5 Implement `componentDidCatch(error, info)` for logging
-  - [ ] 9.6 Create error UI with warning icon (⚠️ or SVG)
-  - [ ] 9.7 Display message: "[App Name] is currently unavailable"
-  - [ ] 9.8 Display secondary text: "The remote application could not be loaded"
-  - [ ] 9.9 Add "Retry" button that resets error state and re-renders children
-  - [ ] 9.10 Implement retry by resetting state and using a key prop trick
-  - [ ] 9.11 Accept `appName` prop for customizing error message
-  - [ ] 9.12 Create `src/components/shared/LoadingFallback.tsx` component
-  - [ ] 9.13 Implement centered spinner or pulsing skeleton UI
-  - [ ] 9.14 Style both components with Tailwind matching host design
+- [x] 9.0 Create Error Boundary & Loading States
+  - [x] 9.1 Create `src/components/shared` directory
+  - [x] 9.2 Create `src/components/shared/ErrorBoundary.tsx` as class component
+  - [x] 9.3 Implement `state: { hasError: boolean, error: Error | null }`
+  - [x] 9.4 Implement `static getDerivedStateFromError(error)` returning `{ hasError: true, error }`
+  - [x] 9.5 Implement `componentDidCatch(error, info)` for logging
+  - [x] 9.6 Create error UI with warning icon (⚠️ or SVG)
+  - [x] 9.7 Display message: "[App Name] is currently unavailable"
+  - [x] 9.8 Display secondary text: "The remote application could not be loaded"
+  - [x] 9.9 Add "Retry" button that resets error state and re-renders children
+  - [x] 9.10 Implement retry by resetting state and using a key prop trick
+  - [x] 9.11 Accept `appName` prop for customizing error message
+  - [x] 9.12 Create `src/components/shared/LoadingFallback.tsx` component
+  - [x] 9.13 Implement centered spinner or pulsing skeleton UI
+  - [x] 9.14 Style both components with Tailwind matching host design
 
 - [ ] 10.0 Refactor App Registry for Dynamic Imports
   - [ ] 10.1 Open `src/registry/appRegistry.ts`
