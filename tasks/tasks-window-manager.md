@@ -113,15 +113,15 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 6.15 WindowFrame: dynamically resolve and render component from appRegistry based on `componentType`
   - [x] 6.16 WindowFrame: style with border/shadow, distinguish active vs inactive window
 
-- [ ] 7.0 Build Taskbar Component
-  - [ ] 7.1 Create `src/components/organisms/Taskbar.tsx`
-  - [ ] 7.2 Taskbar: fixed positioning at bottom, full width, ~48-56px height
-  - [ ] 7.3 Taskbar: set z-index higher than any window (e.g., 9999)
-  - [ ] 7.4 Taskbar: style with dark/semi-transparent background
-  - [ ] 7.5 Taskbar: subscribe to `windows` array from Zustand store
-  - [ ] 7.6 Taskbar: render TaskbarItem for each open window
-  - [ ] 7.7 Taskbar: pass `isActive` prop based on `activeWindowId`
-  - [ ] 7.8 Taskbar: implement click handler - if minimized: restore + focus; if visible: minimize
+- [x] 7.0 Build Taskbar Component
+  - [x] 7.1 Create `src/components/organisms/Taskbar.tsx`
+  - [x] 7.2 Taskbar: fixed positioning at bottom, full width, ~48-56px height
+  - [x] 7.3 Taskbar: set z-index higher than any window (e.g., 9999)
+  - [x] 7.4 Taskbar: style with dark/semi-transparent background
+  - [x] 7.5 Taskbar: subscribe to `windows` array from Zustand store
+  - [x] 7.6 Taskbar: render TaskbarItem for each open window
+  - [x] 7.7 Taskbar: pass `isActive` prop based on `activeWindowId`
+  - [x] 7.8 Taskbar: implement click handler - if minimized: restore + focus; if visible: minimize
 
 - [ ] 8.0 Build Desktop with App Launcher
   - [ ] 8.1 Create `src/components/organisms/Desktop.tsx`
