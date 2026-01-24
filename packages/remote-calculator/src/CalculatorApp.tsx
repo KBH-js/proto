@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 /**
  * Calculator App Component
@@ -72,6 +72,29 @@ function formatDisplay(value: number): string {
 export default function CalculatorApp() {
   const [state, setState] = useState<CalculatorState>(initialState);
   const { display, previousValue, operation } = state;
+
+  // Debug: Verify React singleton (shared dependency via Module Federation)
+  useEffect(() => {
+    const hostReact = (window as unknown as { HOST_REACT?: typeof React }).HOST_REACT;
+    
+    if (!hostReact) {
+      console.warn('[Shared Dependency Check] HOST_REACT not found. Running standalone?');
+      return;
+    }
+
+    const isShared = hostReact === React;
+
+    console.log(
+      `%c[Shared Dependency Check] React Instance Equal: ${isShared}`,
+      isShared ? 'color: green; font-weight: bold;' : 'color: red; font-weight: bold;'
+    );
+
+    if (isShared) {
+      console.log('✅ Remote app is using Host\'s React instance (Module Federation shared dependency working)');
+    } else {
+      console.warn('❌ Duplicate React instances detected! Check Module Federation shared config.');
+    }
+  }, []);
 
   /**
    * Handle digit input (0-9)
