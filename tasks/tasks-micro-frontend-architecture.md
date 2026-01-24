@@ -107,15 +107,15 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 5.13 Ensure component handles division by zero gracefully
   - [x] 5.14 Export component as default export
 
-- [ ] 6.0 Set Up Remote Standalone Mode
-  - [ ] 6.1 Create `src/MockHostProvider.tsx` with hardcoded default context values
-  - [ ] 6.2 Define mock values: `theme: 'dark'`, `locale: 'en'`
-  - [ ] 6.3 Create `src/App.tsx` that wraps CalculatorApp with MockHostProvider
-  - [ ] 6.4 Add basic page styling in App.tsx (centered, dark background)
-  - [ ] 6.5 Create `src/main.tsx` that renders App into root element
-  - [ ] 6.6 Import `index.css` in main.tsx
-  - [ ] 6.7 Verify `pnpm dev` launches standalone calculator on port 5001
-  - [ ] 6.8 Test calculator works in standalone mode
+- [x] 6.0 Set Up Remote Standalone Mode
+  - [x] 6.1 Create `src/MockHostProvider.tsx` with hardcoded default context values
+  - [x] 6.2 Define mock values: `theme: 'dark'`, `locale: 'en'`
+  - [x] 6.3 Create `src/App.tsx` that wraps CalculatorApp with MockHostProvider
+  - [x] 6.4 Add basic page styling in App.tsx (centered, dark background)
+  - [x] 6.5 Create `src/main.tsx` that renders App into root element
+  - [x] 6.6 Import `index.css` in main.tsx
+  - [x] 6.7 Verify `pnpm dev` launches standalone calculator on port 5001
+  - [x] 6.8 Test calculator works in standalone mode
 
 - [ ] 7.0 Configure Module Federation for Host
   - [ ] 7.1 Install `@originjs/vite-plugin-federation` in host (root package.json)
