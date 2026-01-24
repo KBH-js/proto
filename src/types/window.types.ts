@@ -86,6 +86,9 @@ export interface AppConfig {
   
   /** Optional minimum window size (defaults to 200x150) */
   minSize?: Size;
+
+  /** If set, clicking opens this URL instead of a window */
+  externalUrl?: string;
 }
 
 // ============================================================================

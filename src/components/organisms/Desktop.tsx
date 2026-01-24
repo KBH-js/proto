@@ -1,6 +1,6 @@
 import { useWindowStore } from '../../store/windowStore';
 import { getAvailableApps } from '../../registry/appRegistry';
-import { TASKBAR_HEIGHT } from '../../types/window.types';
+import { TASKBAR_HEIGHT, AppConfig } from '../../types/window.types';
 import { DesktopIcon } from '../molecules/DesktopIcon';
 
 /**
@@ -11,9 +11,16 @@ export function Desktop() {
   const openWindow = useWindowStore((state) => state.openWindow);
   const availableApps = getAvailableApps();
 
-  const handleAppLaunch = (componentType: string, title: string) => {
-    console.log('Launching app:', componentType, title);
-    openWindow(componentType, title);
+  const handleAppLaunch = (app: AppConfig) => {
+    // If app has an external URL, open it in a new tab
+    if (app.externalUrl) {
+      window.open(app.externalUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    
+    // Otherwise, open as a window
+    console.log('Launching app:', app.componentType, app.title);
+    openWindow(app.componentType, app.title);
   };
 
   return (
@@ -39,7 +46,7 @@ export function Desktop() {
             key={app.componentType}
             icon={app.icon}
             label={app.title}
-            onDoubleClick={() => handleAppLaunch(app.componentType, app.title)}
+            onDoubleClick={() => handleAppLaunch(app)}
           />
         ))}
       </div>

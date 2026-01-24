@@ -1,20 +1,19 @@
 import { ComponentType, LazyExoticComponent, lazy } from 'react';
 import { AppConfig, Size } from '../types/window.types';
-import { PlaceholderApp, AboutApp, SettingsApp } from '../apps/PlaceholderApp';
+import { AboutApp } from '../apps/AboutApp';
+import { portfolioConfig } from '../config/portfolio.config';
 
 /**
  * Registry entry for an application
  */
 export interface AppRegistryEntry {
-  /** The React component to render (accepts any props) */
+  /** The React component to render (optional - not needed for external links) */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
+  component?: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
   /** Default configuration for this app */
   defaultConfig: AppConfig;
   /** Whether this is a remote micro-frontend loaded via Module Federation */
   isRemote?: boolean;
-  /** Port the remote is served from (for technical indicator display) */
-  remotePort?: number;
   /** Module name for logging (e.g., 'remoteCalculator/CalculatorApp') */
   remoteModule?: string;
 }
@@ -64,51 +63,49 @@ const LazyCalculatorApp = lazy(() => import('remoteCalculator/CalculatorApp'));
  * between static and dynamic loading strategies.
  */
 export const appRegistry: Record<string, AppRegistryEntry> = {
-  placeholder: {
-    component: PlaceholderApp,
-    defaultConfig: {
-      componentType: 'placeholder',
-      title: 'Placeholder',
-      icon: '📦',
-    },
-  },
-  
+  /**
+   * About App - Portfolio introduction in Korean
+   */
   about: {
     component: AboutApp,
     defaultConfig: {
       componentType: 'about',
       title: 'About',
-      icon: '🖥️',
-      defaultSize: { w: 400, h: 450 },
+      icon: 'info', // lucide icon name
+      defaultSize: { w: 450, h: 580 },
     },
   },
-  
-  settings: {
-    component: SettingsApp,
+
+  /**
+   * Resume - External link to resume PDF
+   * Configure the URL in src/config/portfolio.config.ts
+   */
+  resume: {
+    // No component - this is an external link
     defaultConfig: {
-      componentType: 'settings',
-      title: 'Settings',
-      icon: '⚙️',
-      defaultSize: { w: 500, h: 400 },
+      componentType: 'resume',
+      title: 'Resume',
+      icon: 'file-text', // lucide icon name
+      externalUrl: portfolioConfig.resume.externalUrl || portfolioConfig.resume.pdfUrl,
     },
   },
-  
+
   /**
    * Calculator App (Remote Micro-Frontend)
    * 
    * Loaded dynamically via Module Federation from packages/remote-calculator.
-   * Requires the remote dev server to be running on port 5001.
+   * In development: localhost:5001
+   * In production: Deployed on Vercel (configured via VITE_REMOTE_CALCULATOR_URL)
    */
   calculator: {
     component: LazyCalculatorApp,
     defaultConfig: {
       componentType: 'calculator',
       title: 'Calculator',
-      icon: '🧮',
+      icon: 'calculator', // lucide icon name
       defaultSize: { w: 320, h: 480 },
     },
     isRemote: true,
-    remotePort: 5001,
     remoteModule: 'remoteCalculator/CalculatorApp',
   },
 };

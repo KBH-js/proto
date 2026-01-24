@@ -1,4 +1,5 @@
 import { WindowControls } from '../molecules/WindowControls';
+import { isDevelopment } from '../../config/portfolio.config';
 
 interface TitleBarProps {
   /** Window title to display */
@@ -15,8 +16,6 @@ interface TitleBarProps {
   onMaximize: () => void;
   /** Whether this window contains a remote micro-frontend */
   isRemote?: boolean;
-  /** Port the remote is served from (for display) */
-  remotePort?: number;
 }
 
 /** CSS class name used by react-rnd for drag handle */
@@ -34,11 +33,16 @@ export function TitleBar({
   onMinimize,
   onMaximize,
   isRemote = false,
-  remotePort,
 }: TitleBarProps) {
   const handleDoubleClick = () => {
     onMaximize();
   };
+
+  // Remote badge label and tooltip based on environment
+  const remoteBadgeLabel = isDevelopment ? 'MFE:DEV' : 'MFE';
+  const remoteTooltip = isDevelopment 
+    ? 'Module Federation - Development (localhost)' 
+    : 'Module Federation - Loaded from Vercel';
 
   return (
     <div
@@ -76,11 +80,10 @@ export function TitleBar({
                 : 'bg-cyan-600/50 text-cyan-100'
               }
             `}
-            title={remotePort ? `Loaded from localhost:${remotePort}` : 'Remote micro-frontend'}
+            title={remoteTooltip}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            REMOTE
-            {remotePort && <span className="text-cyan-200 font-normal">:{remotePort}</span>}
+            {remoteBadgeLabel}
           </span>
         </div>
       )}
@@ -98,7 +101,7 @@ export function TitleBar({
       </div>
 
       {/* Spacer for balance (same width as controls + badge space) */}
-      <div className={`flex-shrink-0 ${isRemote ? 'w-[120px]' : 'w-[52px]'}`} />
+      <div className={`flex-shrink-0 ${isRemote ? 'w-[100px]' : 'w-[52px]'}`} />
     </div>
   );
 }
