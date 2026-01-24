@@ -84,16 +84,16 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 4.6 Export helper function `getApp(componentType: string)` to retrieve component from registry
   - [x] 4.7 Add JSDoc comments explaining how to add MFE apps in the future
 
-- [ ] 5.0 Build Atomic Components (Atoms & Molecules)
-  - [ ] 5.1 Create `src/components/atoms/Button.tsx` - generic button with variants (icon-only, with-text)
-  - [ ] 5.2 Create `src/components/atoms/Icon.tsx` - wrapper for rendering icons (can use inline SVGs or icon library)
-  - [ ] 5.3 Create `src/components/molecules/WindowControls.tsx` - macOS traffic light buttons (red close, yellow minimize, green maximize)
-  - [ ] 5.4 Style WindowControls: circular buttons ~12px, spacing, hover effects showing symbols (×, −, +)
-  - [ ] 5.5 Add onClick props to WindowControls for `onClose`, `onMinimize`, `onMaximize`
-  - [ ] 5.6 Create `src/components/molecules/TaskbarItem.tsx` - button showing window icon/title, active state indicator
-  - [ ] 5.7 Add props to TaskbarItem: `window`, `isActive`, `onClick`
-  - [ ] 5.8 Create `src/components/molecules/DesktopIcon.tsx` - icon + label, double-click handler
-  - [ ] 5.9 Add props to DesktopIcon: `icon`, `label`, `onDoubleClick`
+- [x] 5.0 Build Atomic Components (Atoms & Molecules)
+  - [x] 5.1 Create `src/components/atoms/Button.tsx` - generic button with variants (icon-only, with-text)
+  - [x] 5.2 Create `src/components/atoms/Icon.tsx` - wrapper for rendering icons (can use inline SVGs or icon library)
+  - [x] 5.3 Create `src/components/molecules/WindowControls.tsx` - macOS traffic light buttons (red close, yellow minimize, green maximize)
+  - [x] 5.4 Style WindowControls: circular buttons ~12px, spacing, hover effects showing symbols (×, −, +)
+  - [x] 5.5 Add onClick props to WindowControls for `onClose`, `onMinimize`, `onMaximize`
+  - [x] 5.6 Create `src/components/molecules/TaskbarItem.tsx` - button showing window icon/title, active state indicator
+  - [x] 5.7 Add props to TaskbarItem: `window`, `isActive`, `onClick`
+  - [x] 5.8 Create `src/components/molecules/DesktopIcon.tsx` - icon + label, double-click handler
+  - [x] 5.9 Add props to DesktopIcon: `icon`, `label`, `onDoubleClick`
 
 - [ ] 6.0 Build Window Frame with Drag/Resize (react-rnd)
   - [ ] 6.1 Create `src/components/organisms/TitleBar.tsx`
