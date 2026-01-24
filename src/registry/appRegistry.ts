@@ -86,7 +86,7 @@ export const appRegistry: Record<string, AppRegistryEntry> = {
       componentType: 'resume',
       title: 'Resume',
       icon: 'file-text', // lucide icon name
-      externalUrl: portfolioConfig.resume.externalUrl || portfolioConfig.resume.pdfUrl,
+      externalUrl: portfolioConfig.resume.externalUrl,
     },
   },
 

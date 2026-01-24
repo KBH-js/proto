@@ -63,7 +63,7 @@ export const isProduction = import.meta.env.PROD;
  * In development: shows "REMOTE" with localhost indicator
  * In production: shows "REMOTE" (deployed on Vercel)
  */
-export function getRemoteLabel(remoteName: keyof typeof portfolioConfig.remotes): string {
+export function getRemoteLabel(_remoteName: keyof typeof portfolioConfig.remotes): string {
   return isDevelopment ? 'REMOTE (DEV)' : 'REMOTE';
 }
 

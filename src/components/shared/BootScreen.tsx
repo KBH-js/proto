@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Terminal, Cpu, HardDrive, Wifi, CheckCircle2, Loader2 } from 'lucide-react';
+import { Terminal, Wifi, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface BootScreenProps {
   onBootComplete: () => void;
