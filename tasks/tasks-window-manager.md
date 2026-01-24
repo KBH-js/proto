@@ -75,14 +75,14 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 3.11 Implement helper `getNextZIndex` to calculate highest zIndex + 1
   - [x] 3.12 Export the store hook (`useWindowStore`)
 
-- [ ] 4.0 Create App Registry System
-  - [ ] 4.1 Create `src/apps/PlaceholderApp.tsx` - a simple placeholder component displaying app name/info
-  - [ ] 4.2 Create `src/registry/appRegistry.ts`
-  - [ ] 4.3 Define `AppRegistryEntry` type with `component` and `defaultConfig` (title, icon, etc.)
-  - [ ] 4.4 Create `appRegistry` Map/Record mapping `componentType` strings to registry entries
-  - [ ] 4.5 Register placeholder app(s) in the registry (e.g., 'placeholder', 'about')
-  - [ ] 4.6 Export helper function `getApp(componentType: string)` to retrieve component from registry
-  - [ ] 4.7 Add JSDoc comments explaining how to add MFE apps in the future
+- [x] 4.0 Create App Registry System
+  - [x] 4.1 Create `src/apps/PlaceholderApp.tsx` - a simple placeholder component displaying app name/info
+  - [x] 4.2 Create `src/registry/appRegistry.ts`
+  - [x] 4.3 Define `AppRegistryEntry` type with `component` and `defaultConfig` (title, icon, etc.)
+  - [x] 4.4 Create `appRegistry` Map/Record mapping `componentType` strings to registry entries
+  - [x] 4.5 Register placeholder app(s) in the registry (e.g., 'placeholder', 'about')
+  - [x] 4.6 Export helper function `getApp(componentType: string)` to retrieve component from registry
+  - [x] 4.7 Add JSDoc comments explaining how to add MFE apps in the future
 
 - [ ] 5.0 Build Atomic Components (Atoms & Molecules)
   - [ ] 5.1 Create `src/components/atoms/Button.tsx` - generic button with variants (icon-only, with-text)
