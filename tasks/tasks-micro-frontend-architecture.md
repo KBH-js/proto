@@ -127,16 +127,16 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 7.7 Create `src/remotes.d.ts` with module declaration for `remoteCalculator/CalculatorApp`
   - [x] 7.8 Verify host compiles without TypeScript errors
 
-- [ ] 8.0 Implement Host Context System
-  - [ ] 8.1 Create `src/context` directory
-  - [ ] 8.2 Create `src/context/HostContext.tsx`
-  - [ ] 8.3 Define `HostContextValue` interface with `theme`, `locale` properties
-  - [ ] 8.4 Create `HostContext` using `React.createContext<HostContextValue | null>(null)`
-  - [ ] 8.5 Create `HostProvider` component that provides context values
-  - [ ] 8.6 Create `useHostContext` hook with null check and fallback defaults
-  - [ ] 8.7 Export `HostContext`, `HostProvider`, `useHostContext`, and `HostContextValue`
-  - [ ] 8.8 Wrap root app component with `HostProvider` in `src/App.tsx`
-  - [ ] 8.9 Add JSDoc comments documenting Custom Events API for future bidirectional communication
+- [x] 8.0 Implement Host Context System
+  - [x] 8.1 Create `src/context` directory
+  - [x] 8.2 Create `src/context/HostContext.tsx`
+  - [x] 8.3 Define `HostContextValue` interface with `theme`, `locale` properties
+  - [x] 8.4 Create `HostContext` using `React.createContext<HostContextValue | null>(null)`
+  - [x] 8.5 Create `HostProvider` component that provides context values
+  - [x] 8.6 Create `useHostContext` hook with null check and fallback defaults
+  - [x] 8.7 Export `HostContext`, `HostProvider`, `useHostContext`, and `HostContextValue`
+  - [x] 8.8 Wrap root app component with `HostProvider` in `src/App.tsx`
+  - [x] 8.9 Add JSDoc comments documenting Custom Events API for future bidirectional communication
 
 - [ ] 9.0 Create Error Boundary & Loading States
   - [ ] 9.1 Create `src/components/shared` directory
