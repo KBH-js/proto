@@ -117,15 +117,15 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 6.7 Verify `pnpm dev` launches standalone calculator on port 5001
   - [x] 6.8 Test calculator works in standalone mode
 
-- [ ] 7.0 Configure Module Federation for Host
-  - [ ] 7.1 Install `@originjs/vite-plugin-federation` in host (root package.json)
-  - [ ] 7.2 Update `vite.config.ts` to import federation plugin
-  - [ ] 7.3 Configure federation with `name: 'host'`
-  - [ ] 7.4 Add remote: `remoteCalculator: 'http://localhost:5001/assets/remoteEntry.js'`
-  - [ ] 7.5 Configure shared dependencies matching remote (react, react-dom as singletons)
-  - [ ] 7.6 Set build target to `esnext` for top-level await support
-  - [ ] 7.7 Create `src/remotes.d.ts` with module declaration for `remoteCalculator/CalculatorApp`
-  - [ ] 7.8 Verify host compiles without TypeScript errors
+- [x] 7.0 Configure Module Federation for Host
+  - [x] 7.1 Install `@originjs/vite-plugin-federation` in host (root package.json)
+  - [x] 7.2 Update `vite.config.ts` to import federation plugin
+  - [x] 7.3 Configure federation with `name: 'host'`
+  - [x] 7.4 Add remote: `remoteCalculator: 'http://localhost:5001/assets/remoteEntry.js'`
+  - [x] 7.5 Configure shared dependencies matching remote (react, react-dom as singletons)
+  - [x] 7.6 Set build target to `esnext` for top-level await support
+  - [x] 7.7 Create `src/remotes.d.ts` with module declaration for `remoteCalculator/CalculatorApp`
+  - [x] 7.8 Verify host compiles without TypeScript errors
 
 - [ ] 8.0 Implement Host Context System
   - [ ] 8.1 Create `src/context` directory

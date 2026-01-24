@@ -6,8 +6,9 @@ import { PlaceholderApp, AboutApp, SettingsApp } from '../apps/PlaceholderApp';
  * Registry entry for an application
  */
 export interface AppRegistryEntry {
-  /** The React component to render */
-  component: ComponentType<unknown>;
+  /** The React component to render (accepts any props) */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: ComponentType<any>;
   /** Default configuration for this app */
   defaultConfig: AppConfig;
 }
