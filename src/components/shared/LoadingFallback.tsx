@@ -1,3 +1,5 @@
+import { Loader2 } from 'lucide-react';
+
 /**
  * Loading Fallback Component
  * 
@@ -24,20 +26,18 @@ export function LoadingFallback({
   size = 'md' 
 }: LoadingFallbackProps) {
   const sizeClasses = {
-    sm: 'w-6 h-6 border-2',
-    md: 'w-10 h-10 border-3',
-    lg: 'w-16 h-16 border-4',
+    sm: 'w-6 h-6',
+    md: 'w-10 h-10',
+    lg: 'w-16 h-16',
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-background-surface p-6">
+    <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-6">
       {/* Spinner */}
-      <div
+      <Loader2
         className={`
           ${sizeClasses[size]}
-          border-foreground-tertiary
-          border-t-accent-primary
-          rounded-full
+          text-purple-500
           animate-spin
         `}
         role="status"
@@ -46,7 +46,7 @@ export function LoadingFallback({
       
       {/* Loading Text */}
       {message && (
-        <p className="mt-4 text-foreground-secondary text-sm animate-pulse">
+        <p className="mt-4 text-gray-500 text-sm animate-pulse">
           {message}
         </p>
       )}
