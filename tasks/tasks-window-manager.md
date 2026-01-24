@@ -132,13 +132,13 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 8.6 Desktop: implement double-click handler that calls `openWindow` with app's componentType
   - [x] 8.7 Desktop: position icons in a grid or vertical list on left side
 
-- [ ] 9.0 Assemble Main Layout and Integration
-  - [ ] 9.1 Create `src/components/templates/WindowManagerLayout.tsx`
-  - [ ] 9.2 WindowManagerLayout: render Desktop as base layer
-  - [ ] 9.3 WindowManagerLayout: subscribe to `windows` array from store
-  - [ ] 9.4 WindowManagerLayout: map and render WindowFrame for each window in array
-  - [ ] 9.5 WindowManagerLayout: render Taskbar as top layer
-  - [ ] 9.6 Update `src/App.tsx` to render WindowManagerLayout
-  - [ ] 9.7 Ensure viewport is 100vw/100vh with no scroll, overflow hidden
-  - [ ] 9.8 Add minimum width check or message for viewports < 1024px (desktop only)
-  - [ ] 9.9 Verify complete flow: double-click icon → window opens → drag/resize → minimize/maximize/restore → close
+- [x] 9.0 Assemble Main Layout and Integration
+  - [x] 9.1 Create `src/components/templates/WindowManagerLayout.tsx`
+  - [x] 9.2 WindowManagerLayout: render Desktop as base layer
+  - [x] 9.3 WindowManagerLayout: subscribe to `windows` array from store
+  - [x] 9.4 WindowManagerLayout: map and render WindowFrame for each window in array
+  - [x] 9.5 WindowManagerLayout: render Taskbar as top layer
+  - [x] 9.6 Update `src/App.tsx` to render WindowManagerLayout
+  - [x] 9.7 Ensure viewport is 100vw/100vh with no scroll, overflow hidden
+  - [x] 9.8 Add minimum width check or message for viewports < 1024px (desktop only)
+  - [x] 9.9 Verify complete flow: double-click icon → window opens → drag/resize → minimize/maximize/restore → close

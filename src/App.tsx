@@ -1,9 +1,7 @@
+import { WindowManagerLayout } from './components/templates/WindowManagerLayout';
+
 function App() {
-  return (
-    <div>
-      <h1>Window Manager</h1>
-    </div>
-  )
+  return <WindowManagerLayout />;
 }
 
-export default App
+export default App;
