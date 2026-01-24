@@ -1,12 +1,38 @@
+import { Suspense, useRef, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import { WindowState, DEFAULT_MIN_SIZE } from '../../types/window.types';
 import { useWindowStore } from '../../store/windowStore';
 import { getApp } from '../../registry/appRegistry';
 import { TitleBar, DRAG_HANDLE_CLASS } from './TitleBar';
+import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { LoadingFallback } from '../shared/LoadingFallback';
+import { useToastStore, federationLogger } from '../../store/toastStore';
 
 interface WindowFrameProps {
   /** The window state object */
   window: WindowState;
+}
+
+/**
+ * Wrapper component that tracks when a remote app finishes loading
+ * Calls onLoad callback when children are rendered (meaning Suspense resolved)
+ */
+function RemoteLoadTracker({ 
+  children, 
+  onLoad, 
+  isRemote 
+}: { 
+  children: React.ReactNode; 
+  onLoad: () => void;
+  isRemote: boolean;
+}) {
+  useEffect(() => {
+    if (isRemote) {
+      onLoad();
+    }
+  }, [onLoad, isRemote]);
+  
+  return <>{children}</>;
 }
 
 /**
@@ -24,12 +50,41 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
     updateWindowPosition,
     updateWindowSize,
   } = useWindowStore();
+  
+  const addToast = useToastStore((state) => state.addToast);
 
   const isActive = activeWindowId === win.id;
+  
+  // Track load time for remote apps
+  const loadStartTime = useRef<number>(Date.now());
+  const hasLoggedRef = useRef(false);
 
   // Get the app component from registry
   const appEntry = getApp(win.componentType);
   const AppComponent = appEntry?.component;
+  const isRemote = appEntry?.isRemote ?? false;
+  const remotePort = appEntry?.remotePort;
+  const remoteModule = appEntry?.remoteModule;
+
+  // Callback when remote component loads successfully
+  const handleRemoteLoaded = () => {
+    // Use ref to prevent double logging in StrictMode
+    if (isRemote && !hasLoggedRef.current && remoteModule) {
+      hasLoggedRef.current = true;
+      
+      const loadTime = Date.now() - loadStartTime.current;
+      
+      // Styled console log
+      federationLogger.moduleLoaded(remoteModule, loadTime);
+      
+      // Toast notification
+      addToast({
+        type: 'system',
+        message: `Remote Module '${remoteModule}' loaded in ${loadTime}ms`,
+        duration: 4000,
+      });
+    }
+  };
 
   // Don't render if minimized
   if (win.isMinimized) {
@@ -106,12 +161,20 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           onClose={() => closeWindow(win.id)}
           onMinimize={() => minimizeWindow(win.id)}
           onMaximize={handleMaximizeToggle}
+          isRemote={isRemote}
+          remotePort={remotePort}
         />
 
         {/* Content Area */}
         <div className="flex-1 bg-white overflow-auto">
           {AppComponent ? (
-            <AppComponent />
+            <ErrorBoundary appName={win.title} onClose={() => closeWindow(win.id)}>
+              <Suspense fallback={<LoadingFallback message={`Loading ${win.title}...`} />}>
+                <RemoteLoadTracker onLoad={handleRemoteLoaded} isRemote={isRemote}>
+                  <AppComponent />
+                </RemoteLoadTracker>
+              </Suspense>
+            </ErrorBoundary>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
               App not found: {win.componentType}

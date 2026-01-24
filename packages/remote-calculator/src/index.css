@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Calculator-specific base styles */
+body {
+  @apply bg-background-primary text-foreground-primary;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Ensure full height for standalone mode */
+html, body, #root {
+  @apply h-full m-0 p-0;
+}

@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, LazyExoticComponent, lazy } from 'react';
 import { AppConfig, Size } from '../types/window.types';
 import { PlaceholderApp, AboutApp, SettingsApp } from '../apps/PlaceholderApp';
 
@@ -6,11 +6,32 @@ import { PlaceholderApp, AboutApp, SettingsApp } from '../apps/PlaceholderApp';
  * Registry entry for an application
  */
 export interface AppRegistryEntry {
-  /** The React component to render */
-  component: ComponentType<unknown>;
+  /** The React component to render (accepts any props) */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
   /** Default configuration for this app */
   defaultConfig: AppConfig;
+  /** Whether this is a remote micro-frontend loaded via Module Federation */
+  isRemote?: boolean;
+  /** Port the remote is served from (for technical indicator display) */
+  remotePort?: number;
+  /** Module name for logging (e.g., 'remoteCalculator/CalculatorApp') */
+  remoteModule?: string;
 }
+
+/**
+ * Lazy-loaded Calculator App from Remote Micro-Frontend
+ * 
+ * This component is loaded dynamically via Module Federation from
+ * the remote-calculator package running on port 5001.
+ * 
+ * Note: If the remote fails to load, a page refresh is required to retry.
+ * This is a known limitation of Module Federation (browser/runtime caching).
+ * 
+ * The import path 'remoteCalculator/CalculatorApp' is mapped in vite.config.ts
+ * to http://localhost:5001/assets/remoteEntry.js
+ */
+const LazyCalculatorApp = lazy(() => import('remoteCalculator/CalculatorApp'));
 
 /**
  * Application Registry
@@ -70,6 +91,25 @@ export const appRegistry: Record<string, AppRegistryEntry> = {
       icon: '⚙️',
       defaultSize: { w: 500, h: 400 },
     },
+  },
+  
+  /**
+   * Calculator App (Remote Micro-Frontend)
+   * 
+   * Loaded dynamically via Module Federation from packages/remote-calculator.
+   * Requires the remote dev server to be running on port 5001.
+   */
+  calculator: {
+    component: LazyCalculatorApp,
+    defaultConfig: {
+      componentType: 'calculator',
+      title: 'Calculator',
+      icon: '🧮',
+      defaultSize: { w: 320, h: 480 },
+    },
+    isRemote: true,
+    remotePort: 5001,
+    remoteModule: 'remoteCalculator/CalculatorApp',
   },
 };
 

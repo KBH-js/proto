@@ -13,6 +13,10 @@ interface TitleBarProps {
   onMinimize: () => void;
   /** Maximize/Restore button handler */
   onMaximize: () => void;
+  /** Whether this window contains a remote micro-frontend */
+  isRemote?: boolean;
+  /** Port the remote is served from (for display) */
+  remotePort?: number;
 }
 
 /** CSS class name used by react-rnd for drag handle */
@@ -29,6 +33,8 @@ export function TitleBar({
   onClose,
   onMinimize,
   onMaximize,
+  isRemote = false,
+  remotePort,
 }: TitleBarProps) {
   const handleDoubleClick = () => {
     onMaximize();
@@ -41,9 +47,9 @@ export function TitleBar({
         flex items-center h-9 px-3
         rounded-t-lg
         select-none
-        ${isActive
-          ? 'bg-gray-200'
-          : 'bg-gray-300'
+        ${isRemote
+          ? (isActive ? 'bg-gradient-to-r from-cyan-900/30 to-gray-200' : 'bg-gradient-to-r from-cyan-900/20 to-gray-300')
+          : (isActive ? 'bg-gray-200' : 'bg-gray-300')
         }
         ${!isMaximized ? 'cursor-move' : 'cursor-default'}
       `}
@@ -59,6 +65,26 @@ export function TitleBar({
         />
       </div>
 
+      {/* Remote Badge */}
+      {isRemote && (
+        <div className="flex-shrink-0 ml-2">
+          <span
+            className={`
+              inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+              ${isActive 
+                ? 'bg-cyan-500 text-white shadow-sm shadow-cyan-500/50' 
+                : 'bg-cyan-600/50 text-cyan-100'
+              }
+            `}
+            title={remotePort ? `Loaded from localhost:${remotePort}` : 'Remote micro-frontend'}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            REMOTE
+            {remotePort && <span className="text-cyan-200 font-normal">:{remotePort}</span>}
+          </span>
+        </div>
+      )}
+
       {/* Centered title */}
       <div className="flex-1 text-center">
         <span
@@ -71,8 +97,8 @@ export function TitleBar({
         </span>
       </div>
 
-      {/* Spacer for balance (same width as controls) */}
-      <div className="flex-shrink-0 w-[52px]" />
+      {/* Spacer for balance (same width as controls + badge space) */}
+      <div className={`flex-shrink-0 ${isRemote ? 'w-[120px]' : 'w-[52px]'}`} />
     </div>
   );
 }
