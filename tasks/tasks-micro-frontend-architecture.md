@@ -89,23 +89,23 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 4.6 Configure shared dependencies: `react` and `react-dom` as singletons
   - [x] 4.7 Set dev server port to `5001` in vite config
   - [x] 4.8 Set build target to `esnext` for top-level await support
-  - [ ] 4.9 Verify federation config is valid (no build errors) — requires Task 5.0
+  - [x] 4.9 Verify federation config is valid (no build errors)
 
-- [ ] 5.0 Implement Calculator App Component
-  - [ ] 5.1 Create `src/CalculatorApp.tsx` as a functional component
-  - [ ] 5.2 Define state: `display` (string), `previousValue` (number|null), `operation` (string|null), `waitingForOperand` (boolean)
-  - [ ] 5.3 Implement `inputDigit(digit)` function for number button clicks
-  - [ ] 5.4 Implement `inputDecimal()` function for decimal point
-  - [ ] 5.5 Implement `clearAll()` function for C button
-  - [ ] 5.6 Implement `performOperation(nextOperation)` for +, -, ×, ÷ buttons
-  - [ ] 5.7 Implement `calculate(left, right, op)` helper for actual math
-  - [ ] 5.8 Create display UI showing current value
-  - [ ] 5.9 Create number pad grid (7-8-9, 4-5-6, 1-2-3, 0-.)
-  - [ ] 5.10 Create operation buttons column (+, -, ×, ÷, =)
-  - [ ] 5.11 Create clear button (C)
-  - [ ] 5.12 Style using Tailwind with shared theme tokens (colors, rounded corners)
-  - [ ] 5.13 Ensure component handles division by zero gracefully
-  - [ ] 5.14 Export component as default export
+- [x] 5.0 Implement Calculator App Component
+  - [x] 5.1 Create `src/CalculatorApp.tsx` as a functional component
+  - [x] 5.2 Define state: `display` (string), `previousValue` (number|null), `operation` (string|null), `waitingForOperand` (boolean)
+  - [x] 5.3 Implement `inputDigit(digit)` function for number button clicks
+  - [x] 5.4 Implement `inputDecimal()` function for decimal point
+  - [x] 5.5 Implement `clearAll()` function for C button
+  - [x] 5.6 Implement `performOperation(nextOperation)` for +, -, ×, ÷ buttons
+  - [x] 5.7 Implement `calculate(left, right, op)` helper for actual math
+  - [x] 5.8 Create display UI showing current value
+  - [x] 5.9 Create number pad grid (7-8-9, 4-5-6, 1-2-3, 0-.)
+  - [x] 5.10 Create operation buttons column (+, -, ×, ÷, =)
+  - [x] 5.11 Create clear button (C)
+  - [x] 5.12 Style using Tailwind with shared theme tokens (colors, rounded corners)
+  - [x] 5.13 Ensure component handles division by zero gracefully
+  - [x] 5.14 Export component as default export
 
 - [ ] 6.0 Set Up Remote Standalone Mode
   - [ ] 6.1 Create `src/MockHostProvider.tsx` with hardcoded default context values
