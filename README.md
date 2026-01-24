@@ -20,22 +20,16 @@
 Host(OS)와 Remote(App)가 어떻게 독립적으로 배포되고 런타임에 통합되는지 보여줍니다.
 
 ```mermaid
-graph TD
-    User[User Browser] -->|Access| Host["Host App - Web-OS"]
-    Host -->|Dynamic Import| Remote1["Remote App - Calculator"]
+graph LR
+    User[👤 User Browser] -->|Access| Host[🖥️ Host App]
+    Host <-.->|Module Federation| Remote[📦 Remote App]
     
-    subgraph HostApp["Host App :5000"]
-        Store[Zustand Store]
-        Registry[App Registry]
-        Desktop[Desktop UI]
-    end
+    Host --- H1[Zustand Store]
+    Host --- H2[App Registry]
+    Host --- H3[Window Manager]
     
-    subgraph RemoteApp["Remote App :5001"]
-        Calc[Calculator Component]
-    end
-    
-    Registry -.->|Federation| Calc
-    Desktop -->|Dispatch Actions| Store
+    Remote --- R1[Calculator]
+    Remote --- R2[Future Apps...]
 ```
 
 ## 🚀 Technical Decision
