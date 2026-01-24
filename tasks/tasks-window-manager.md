@@ -123,14 +123,14 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 7.7 Taskbar: pass `isActive` prop based on `activeWindowId`
   - [x] 7.8 Taskbar: implement click handler - if minimized: restore + focus; if visible: minimize
 
-- [ ] 8.0 Build Desktop with App Launcher
-  - [ ] 8.1 Create `src/components/organisms/Desktop.tsx`
-  - [ ] 8.2 Desktop: full viewport size, positioned behind windows (low z-index)
-  - [ ] 8.3 Desktop: apply background color or gradient
-  - [ ] 8.4 Desktop: define array of available apps (from registry) to show as icons
-  - [ ] 8.5 Desktop: render DesktopIcon for each available app
-  - [ ] 8.6 Desktop: implement double-click handler that calls `openWindow` with app's componentType
-  - [ ] 8.7 Desktop: position icons in a grid or vertical list on left side
+- [x] 8.0 Build Desktop with App Launcher
+  - [x] 8.1 Create `src/components/organisms/Desktop.tsx`
+  - [x] 8.2 Desktop: full viewport size, positioned behind windows (low z-index)
+  - [x] 8.3 Desktop: apply background color or gradient
+  - [x] 8.4 Desktop: define array of available apps (from registry) to show as icons
+  - [x] 8.5 Desktop: render DesktopIcon for each available app
+  - [x] 8.6 Desktop: implement double-click handler that calls `openWindow` with app's componentType
+  - [x] 8.7 Desktop: position icons in a grid or vertical list on left side
 
 - [ ] 9.0 Assemble Main Layout and Integration
   - [ ] 9.1 Create `src/components/templates/WindowManagerLayout.tsx`
