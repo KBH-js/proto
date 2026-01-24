@@ -95,23 +95,23 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 5.8 Create `src/components/molecules/DesktopIcon.tsx` - icon + label, double-click handler
   - [x] 5.9 Add props to DesktopIcon: `icon`, `label`, `onDoubleClick`
 
-- [ ] 6.0 Build Window Frame with Drag/Resize (react-rnd)
-  - [ ] 6.1 Create `src/components/organisms/TitleBar.tsx`
-  - [ ] 6.2 TitleBar: render WindowControls on left, centered title text, apply drag handle class
-  - [ ] 6.3 TitleBar: style for active (bright) vs inactive (muted) states via prop
-  - [ ] 6.4 TitleBar: implement double-click on title bar to toggle maximize/restore
-  - [ ] 6.5 Create `src/components/organisms/WindowFrame.tsx`
-  - [ ] 6.6 WindowFrame: integrate `<Rnd>` component from react-rnd
-  - [ ] 6.7 WindowFrame: configure Rnd with `position`, `size`, `minWidth`/`minHeight` (200x150), `dragHandleClassName`
-  - [ ] 6.8 WindowFrame: implement `onDragStop` to update position in Zustand store
-  - [ ] 6.9 WindowFrame: implement `onResizeStop` to update size in Zustand store
-  - [ ] 6.10 WindowFrame: implement `onMouseDown` to call `focusWindow` (bring to front)
-  - [ ] 6.11 WindowFrame: apply dynamic `zIndex` from window state
-  - [ ] 6.12 WindowFrame: conditionally hide (display: none or return null) when `isMinimized`
-  - [ ] 6.13 WindowFrame: disable drag/resize when `isMaximized`
-  - [ ] 6.14 WindowFrame: render TitleBar and content area (children from app registry)
-  - [ ] 6.15 WindowFrame: dynamically resolve and render component from appRegistry based on `componentType`
-  - [ ] 6.16 WindowFrame: style with border/shadow, distinguish active vs inactive window
+- [x] 6.0 Build Window Frame with Drag/Resize (react-rnd)
+  - [x] 6.1 Create `src/components/organisms/TitleBar.tsx`
+  - [x] 6.2 TitleBar: render WindowControls on left, centered title text, apply drag handle class
+  - [x] 6.3 TitleBar: style for active (bright) vs inactive (muted) states via prop
+  - [x] 6.4 TitleBar: implement double-click on title bar to toggle maximize/restore
+  - [x] 6.5 Create `src/components/organisms/WindowFrame.tsx`
+  - [x] 6.6 WindowFrame: integrate `<Rnd>` component from react-rnd
+  - [x] 6.7 WindowFrame: configure Rnd with `position`, `size`, `minWidth`/`minHeight` (200x150), `dragHandleClassName`
+  - [x] 6.8 WindowFrame: implement `onDragStop` to update position in Zustand store
+  - [x] 6.9 WindowFrame: implement `onResizeStop` to update size in Zustand store
+  - [x] 6.10 WindowFrame: implement `onMouseDown` to call `focusWindow` (bring to front)
+  - [x] 6.11 WindowFrame: apply dynamic `zIndex` from window state
+  - [x] 6.12 WindowFrame: conditionally hide (display: none or return null) when `isMinimized`
+  - [x] 6.13 WindowFrame: disable drag/resize when `isMaximized`
+  - [x] 6.14 WindowFrame: render TitleBar and content area (children from app registry)
+  - [x] 6.15 WindowFrame: dynamically resolve and render component from appRegistry based on `componentType`
+  - [x] 6.16 WindowFrame: style with border/shadow, distinguish active vs inactive window
 
 - [ ] 7.0 Build Taskbar Component
   - [ ] 7.1 Create `src/components/organisms/Taskbar.tsx`
