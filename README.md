@@ -12,7 +12,6 @@
 ### 🔑 Key Features
 * **Micro-Frontends:** `Module Federation`을 통해 계산기(Calculator) 등 외부 앱을 런타임에 동적으로 로딩
 * **Window Management:** `Zustand` 기반의 전역 상태 관리로 창의 포커스(Z-index), 최소화/최대화, 드래그 앤 드롭 구현
-* **Clean Architecture:** 비즈니스 로직과 UI 컴포넌트(Window Frame)의 철저한 분리
 
 ## 🏗️ Architecture
 
@@ -61,7 +60,7 @@ graph TD
 
 ## 🤖 AI-Driven Development Log
 
-이 프로젝트는 Cursor를 활용한 Rapid Prototyping 프로세스로 개발되었습니다. 개발 과정에서 생성된 PRD와 Task 리스트는 `/tasks` 폴더에서 확인하실 수 있습니다.
+이 프로젝트는 [PRD 기반 워크플로우](https://github.com/snarktank/ai-dev-tasks)를 활용하여 개발되었습니다. 개발 과정에서 생성된 PRD와 Task 리스트는 `/tasks` 폴더에서 확인하실 수 있습니다.
 
 ## 🛠️ Installation & Run
 
@@ -78,4 +77,4 @@ pnpm build
 pnpm preview
 ```
 
-> **Note:** Production에서는 Host와 Remote가 각각 별도의 Vercel 프로젝트로 배포됩니다.
+> **Note:** Host와 Remote가 각각 별도의 Vercel 프로젝트로 배포되어 있습니다.
