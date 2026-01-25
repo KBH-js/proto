@@ -6,6 +6,7 @@
 
 > **Live Demo:** [https://proto-six-iota.vercel.app/]
 
+<br><br>
 
 ## 🎯 Project Overview
 이 프로젝트는 웹 브라우저 상에서 **'데스크탑 OS 경험(Windowing System)'**을 제공하는 마이크로 프론트엔드 아키텍처 데모를 **'Clean Room Implementation'** 방식으로 재구현했습니다.
@@ -14,6 +15,7 @@
 * **Micro-Frontends:** `Module Federation`을 통해 계산기(Calculator) 등 외부 앱을 런타임에 동적으로 로딩
 * **Window Management:** `Zustand` 기반의 전역 상태 관리로 창의 포커스(Z-index), 최소화/최대화, 드래그 앤 드롭 구현
 
+<br><br>
 
 ## 🏗️ Architecture
 
@@ -53,6 +55,7 @@ graph TD
     class ReactLib shared
 ```
 
+<br><br>
 
 ## 🚀 Technical Decision
 
@@ -61,11 +64,13 @@ graph TD
 * **의존성 공유:** React 등 공통 라이브러리를 공유하여 번들 사이즈 최적화
 * **심리스한 UX:** iframe의 고질적인 문제(모달 잘림, 통신 복잡도) 해결
 
+<br><br>
 
 ## 🤖 AI-Driven Development Log
 
 이 프로젝트는 [PRD 기반 워크플로우](https://github.com/snarktank/ai-dev-tasks)를 활용하여 개발되었습니다. 개발 과정에서 생성된 PRD와 Task 리스트는 `/tasks` 폴더에서 확인하실 수 있습니다.
 
+<br><br>
 
 ## 🛠️ Installation & Run
 
