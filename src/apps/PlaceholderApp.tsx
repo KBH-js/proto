@@ -46,7 +46,7 @@ export function AboutApp() {
           <Monitor className="w-8 h-8 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">KBH-OS</h2>
+          <h2 className="text-2xl font-bold text-gray-800">KBH-Desktop</h2>
           <p className="text-gray-500">Version 1.0.0 (Micro-Frontend)</p>
         </div>
       </div>
@@ -157,7 +157,7 @@ export function SettingsApp() {
           <div>
             <h3 className="font-medium text-gray-700 mb-1">About</h3>
             <p className="text-sm text-gray-500">
-              KBH-OS v1.0.0 — Micro-Frontend Portfolio Demo
+              KBH-Desktop v1.0.0 — Micro-Frontend Portfolio Demo
             </p>
           </div>
         </div>

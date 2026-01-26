@@ -7,7 +7,7 @@ interface BootScreenProps {
 }
 
 const bootMessages = [
-  { text: 'Initializing KBH-OS v1.0.0...', icon: Terminal, delay: 0 },
+  { text: 'Initializing KBH-Desktop v1.0.0...', icon: Terminal, delay: 0 },
   { text: 'Loading Remote Modules via Module Federation...', icon: Wifi, delay: 250 },
   { text: 'Starting window manager...', icon: Loader2, delay: 500 },
   { text: 'System ready.', icon: CheckCircle2, delay: 750 },
@@ -60,7 +60,7 @@ export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps)
       <div className="mb-8 text-center">
         <div className="flex items-center justify-center gap-3 mb-2">
           <Terminal className="w-10 h-10 text-green-400" />
-          <h1 className="text-3xl font-bold text-green-400 tracking-wider">KBH-OS</h1>
+          <h1 className="text-3xl font-bold text-green-400 tracking-wider">KBH-Desktop</h1>
         </div>
         <p className="text-green-600 text-xs">Micro-Frontend Architecture Demo</p>
       </div>
@@ -103,7 +103,7 @@ export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps)
 
       {/* Blinking cursor effect */}
       <div className="mt-4 flex items-center gap-1 text-green-400">
-        <span className="text-xs">root@kbh-os:~$</span>
+        <span className="text-xs">root@kbh-desktop:~$</span>
         <span className="w-2 h-4 bg-green-400 animate-pulse" />
       </div>
     </div>

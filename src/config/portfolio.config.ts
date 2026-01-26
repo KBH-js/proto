@@ -28,7 +28,7 @@ export const portfolioConfig = {
   // Resume Configuration
   // ==========================================================================
   resume: {
-    externalUrl: 'https://drive.google.com/file/d/1495QmVmyYEEJuA8ZxIpX8SW3-tvF72YK/view?usp=sharing', // e.g., 'https://drive.google.com/your-resume-link'
+    externalUrl: 'https://drive.google.com/file/d/1BBgtA6_ieEF_RAfXL0rYhCek4xepqWQL/view?usp=sharing', // e.g., 'https://drive.google.com/your-resume-link'
   },
 
   // ==========================================================================

@@ -1,4 +1,4 @@
-# 🖥️ Web-OS Window Manager (Micro-Frontends Demo)
+# 🖥️ Web-based Desktop Environment (Micro-Frontends Demo)
 
 ![Deploy Status](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)
 ![Tech Stack](https://img.shields.io/badge/React_19-Zustand-blue)
@@ -9,7 +9,7 @@
 <br><br>
 
 ## 🎯 Project Overview
-이 프로젝트는 웹 브라우저 상에서 **'데스크탑 OS 경험(Windowing System)'**을 제공하는 마이크로 프론트엔드 아키텍처 데모를 **'Clean Room Implementation'** 방식으로 재구현했습니다.
+이 프로젝트는 웹 브라우저 상에서 **'데스크탑 경험'**을 제공하는 마이크로 프론트엔드 아키텍처 데모를 **'Clean Room Implementation'** 방식으로 미니멀하게 재구현했습니다.
 
 ### 🔑 Key Features
 * **Micro-Frontends:** `Module Federation`을 통해 계산기(Calculator) 등 외부 앱을 런타임에 동적으로 로딩
@@ -20,7 +20,7 @@
 ## 🏗️ Architecture
 
 ### Module Federation Structure
-Host(OS)와 Remote(App)가 독립적으로 배포되고 런타임에 통합되는 것을 간단히 보여주는 다이어그램입니다.
+Host(Desktop)와 Remote(App)가 독립적으로 배포되고 런타임에 통합되는 것을 간단히 보여주는 다이어그램입니다.
 
 ```mermaid
 graph TD

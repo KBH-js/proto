@@ -154,7 +154,7 @@ export function Taskbar() {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">KBH-OS</h3>
+                  <h3 className="text-white font-semibold">KBH-Desktop</h3>
                 </div>
               </div>
             </div>

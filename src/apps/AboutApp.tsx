@@ -32,7 +32,7 @@ export function AboutApp() {
             <Terminal className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">KBH-OS에 오신 것을 환영합니다</h1>
+            <h1 className="text-xl font-bold">KBH-Desktop에 오신 것을 환영합니다</h1>
             <p className="text-sm text-white/80">Micro-Frontend 포트폴리오 데모</p>
           </div>
         </div>
@@ -44,7 +44,7 @@ export function AboutApp() {
         <section>
           <p className="text-gray-600 text-sm leading-relaxed">
             이 프로젝트는 <strong>Module Federation</strong>을 활용한 마이크로 프론트엔드 아키텍처를 
-            데스크탑 OS 형태로 시연하는 포트폴리오입니다. 각 앱 아이콘을 더블클릭하여 실행해보세요.
+            데스크탑 형태로 시연하는 포트폴리오입니다. 각 앱 아이콘을 더블클릭하여 실행해보세요.
           </p>
         </section>
 
