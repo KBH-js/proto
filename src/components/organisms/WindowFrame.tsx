@@ -9,15 +9,12 @@ import { LoadingFallback } from '../shared/LoadingFallback';
 import { useToastStore, federationLogger } from '../../store/toastStore';
 
 interface WindowFrameProps {
-  /** The window state object */
   window: WindowState;
 }
 
-/**
- * Wrapper component that tracks when a remote app finishes loading
- * Calls onLoad callback when children are rendered (meaning Suspense resolved)
- */
-function RemoteLoadTracker({ 
+// Fires onLoad once its children render, i.e. once Suspense has resolved
+// the lazy remote module.
+function RemoteLoadTracker({
   children, 
   onLoad, 
   isRemote 
@@ -35,10 +32,7 @@ function RemoteLoadTracker({
   return <>{children}</>;
 }
 
-/**
- * Window frame component with drag and resize functionality.
- * Uses react-rnd for smooth drag/resize interactions.
- */
+/** react-rnd based window body: drag, resize, focus, minimize/maximize */
 export function WindowFrame({ window: win }: WindowFrameProps) {
   const {
     activeWindowId,
@@ -54,29 +48,23 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   const addToast = useToastStore((state) => state.addToast);
 
   const isActive = activeWindowId === win.id;
-  
-  // Track load time for remote apps
+
   const loadStartTime = useRef<number>(Date.now());
   const hasLoggedRef = useRef(false);
 
-  // Get the app component from registry
   const appEntry = getApp(win.componentType);
   const AppComponent = appEntry?.component;
   const isRemote = appEntry?.isRemote ?? false;
   const remoteModule = appEntry?.remoteModule;
 
-  // Callback when remote component loads successfully
   const handleRemoteLoaded = () => {
-    // Use ref to prevent double logging in StrictMode
+    // hasLoggedRef prevents double logging under StrictMode
     if (isRemote && !hasLoggedRef.current && remoteModule) {
       hasLoggedRef.current = true;
-      
+
       const loadTime = Date.now() - loadStartTime.current;
-      
-      // Styled console log
+
       federationLogger.moduleLoaded(remoteModule, loadTime);
-      
-      // Toast notification
       addToast({
         type: 'system',
         message: `Remote Module '${remoteModule}' loaded in ${loadTime}ms`,
@@ -85,7 +73,6 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
     }
   };
 
-  // Don't render if minimized
   if (win.isMinimized) {
     return null;
   }
@@ -152,7 +139,6 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           }
         `}
       >
-        {/* Title Bar */}
         <TitleBar
           title={win.title}
           isActive={isActive}
@@ -163,7 +149,6 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           isRemote={isRemote}
         />
 
-        {/* Content Area */}
         <div className="flex-1 bg-white overflow-auto">
           {AppComponent ? (
             <ErrorBoundary appName={win.title} onClose={() => closeWindow(win.id)}>

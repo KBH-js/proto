@@ -13,28 +13,22 @@ const bootMessages = [
   { text: 'System ready.', icon: CheckCircle2, delay: 750 },
 ];
 
-/**
- * Boot screen with terminal-style loading animation.
- * Shows a series of boot messages before revealing the main desktop.
- */
+/** Terminal-style boot animation shown before the desktop appears */
 export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps) {
   const [visibleMessages, setVisibleMessages] = useState<number>(0);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Show messages progressively
     const messageTimers = bootMessages.map((msg, index) => {
       return setTimeout(() => {
         setVisibleMessages(index + 1);
       }, msg.delay);
     });
 
-    // Start fade out animation
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
     }, duration - 200);
 
-    // Complete boot after duration
     const completeTimer = setTimeout(() => {
       onBootComplete();
     }, duration);

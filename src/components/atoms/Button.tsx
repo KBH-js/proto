@@ -21,9 +21,6 @@ const sizeStyles: Record<ButtonSize, string> = {
   lg: 'px-4 py-2 text-base',
 };
 
-/**
- * Generic button component with variants
- */
 export function Button({
   variant = 'default',
   size = 'md',

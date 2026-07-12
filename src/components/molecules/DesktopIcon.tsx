@@ -9,7 +9,6 @@ import {
   LucideIcon
 } from 'lucide-react';
 
-// Map of icon names to Lucide components
 const iconMap: Record<string, LucideIcon> = {
   'file-text': FileText,
   'git-branch': GitBranch,
@@ -21,23 +20,15 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 interface DesktopIconProps {
-  /** Icon to display (lucide icon name or emoji) */
+  /** Lucide icon name (from iconMap) or an emoji fallback */
   icon: string;
-  /** Label text below the icon */
   label: string;
-  /** Double-click handler to launch the app */
   onDoubleClick: () => void;
 }
 
-/**
- * Desktop application icon with label.
- * Double-click to launch the associated application.
- * Supports both lucide-react icons (by name) and emojis.
- */
 export function DesktopIcon({ icon, label, onDoubleClick }: DesktopIconProps) {
   const IconComponent = iconMap[icon];
-  
-  // Determine icon color based on icon type
+
   const getIconColor = () => {
     switch (icon) {
       case 'info': return 'text-blue-400';

@@ -1,11 +1,9 @@
 import { ReactNode } from 'react';
 
 interface IconProps {
-  /** The icon content - can be emoji, SVG, or any React node */
+  /** Emoji, SVG, or any other React node */
   children: ReactNode;
-  /** Size of the icon */
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** Additional CSS classes */
   className?: string;
 }
 
@@ -16,10 +14,6 @@ const sizeStyles = {
   xl: 'text-2xl w-8 h-8',
 };
 
-/**
- * Icon wrapper component for consistent icon sizing and styling.
- * Supports emoji, inline SVG, or any other icon format.
- */
 export function Icon({ children, size = 'md', className = '' }: IconProps) {
   return (
     <span
