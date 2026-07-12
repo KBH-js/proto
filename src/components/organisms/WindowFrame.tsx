@@ -1,7 +1,9 @@
 import { Suspense, lazy, useCallback, useRef, useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
-import { WindowState, DEFAULT_MIN_SIZE } from '../../types/window.types';
+import { WindowState, Position, SnapZone, DEFAULT_MIN_SIZE } from '../../types/window.types';
 import { useWindowStore } from '../../store/windowStore';
+import { useSnapPreviewStore } from '../../store/snapPreviewStore';
+import { detectSnapZone, getViewport } from '../../utils/windowGeometry';
 import { useAppRegistry } from '../../registry/appRegistry';
 import { loadRemoteComponent, forceRefreshRemote } from '../../federation/runtime';
 import { TitleBar, DRAG_HANDLE_CLASS } from './TitleBar';
@@ -12,6 +14,34 @@ import { useToastStore, federationLogger } from '../../store/toastStore';
 interface WindowFrameProps {
   /** The window state object */
   window: WindowState;
+}
+
+/** Pointer movement (px) before a drag un-tiles a snapped window */
+const UNSNAP_SLOP = 2;
+
+/** Must match .animate-window-minimize's duration in index.css */
+const MINIMIZE_ANIMATION_MS = 150;
+
+/**
+ * Extract viewport pointer coordinates from react-draggable's event,
+ * which may be a mouse or touch event (touchend carries the pointer
+ * only in changedTouches).
+ */
+function getPointerFromEvent(e: unknown): Position | null {
+  const ev = e as {
+    touches?: TouchList;
+    changedTouches?: TouchList;
+    clientX?: number;
+    clientY?: number;
+  };
+  if (ev.touches || ev.changedTouches) {
+    const touch = ev.touches?.[0] ?? ev.changedTouches?.[0];
+    return touch ? { x: touch.clientX, y: touch.clientY } : null;
+  }
+  if (typeof ev.clientX === 'number' && typeof ev.clientY === 'number') {
+    return { x: ev.clientX, y: ev.clientY };
+  }
+  return null;
 }
 
 /**
@@ -41,18 +71,38 @@ function RemoteLoadTracker({
  * Uses react-rnd for smooth drag/resize interactions.
  */
 export function WindowFrame({ window: win }: WindowFrameProps) {
-  const {
-    activeWindowId,
-    focusWindow,
-    closeWindow,
-    minimizeWindow,
-    maximizeWindow,
-    restoreWindow,
-    updateWindowPosition,
-    updateWindowSize,
-  } = useWindowStore();
-  
+  // Individual selectors: actions are referentially stable, so this
+  // component only re-renders when activeWindowId (or its own props) change
+  const activeWindowId = useWindowStore((state) => state.activeWindowId);
+  const focusWindow = useWindowStore((state) => state.focusWindow);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
+  const minimizeWindow = useWindowStore((state) => state.minimizeWindow);
+  const maximizeWindow = useWindowStore((state) => state.maximizeWindow);
+  const restoreWindow = useWindowStore((state) => state.restoreWindow);
+  const snapWindow = useWindowStore((state) => state.snapWindow);
+  const unsnapWindow = useWindowStore((state) => state.unsnapWindow);
+  const updateWindowPosition = useWindowStore((state) => state.updateWindowPosition);
+  const updateWindowSize = useWindowStore((state) => state.updateWindowSize);
+
+  const setPreviewZone = useSnapPreviewStore((state) => state.setZone);
   const addToast = useToastStore((state) => state.addToast);
+
+  // Drag-time snap tracking. Refs, not state: onDrag fires per mousemove
+  // and must not re-render; the preview store re-renders only SnapPreview.
+  const dragStartPointerRef = useRef<Position | null>(null);
+  const armedZoneRef = useRef<SnapZone | null>(null);
+
+  // Transient: plays the minimize animation before committing to the store
+  const [isMinimizing, setIsMinimizing] = useState(false);
+
+  const handleMinimize = () => {
+    if (isMinimizing) return;
+    setIsMinimizing(true);
+    setTimeout(() => {
+      setIsMinimizing(false);
+      minimizeWindow(win.id);
+    }, MINIMIZE_ANIMATION_MS);
+  };
 
   const isActive = activeWindowId === win.id;
   
@@ -119,10 +169,51 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
     return null;
   }
 
+  const handleDragStart = (e: unknown) => {
+    dragStartPointerRef.current = getPointerFromEvent(e);
+    armedZoneRef.current = null;
+  };
+
+  const handleDrag = (e: unknown) => {
+    const pointer = getPointerFromEvent(e);
+    if (!pointer) return;
+
+    // Dragging a tiled window restores its pre-snap size under the cursor
+    if (win.snapZone) {
+      const start = dragStartPointerRef.current;
+      const moved =
+        !start ||
+        Math.abs(pointer.x - start.x) > UNSNAP_SLOP ||
+        Math.abs(pointer.y - start.y) > UNSNAP_SLOP;
+      if (!moved) return;
+      unsnapWindow(win.id, pointer);
+    }
+
+    const zone = detectSnapZone(pointer.x, pointer.y, getViewport());
+    if (zone !== armedZoneRef.current) {
+      armedZoneRef.current = zone;
+      setPreviewZone(zone);
+    }
+  };
+
   const handleDragStop = (
     _e: unknown,
     data: { x: number; y: number }
   ) => {
+    const zone = armedZoneRef.current;
+    armedZoneRef.current = null;
+    setPreviewZone(null);
+
+    if (zone) {
+      // Snap commits its own geometry — don't also commit the drop position
+      snapWindow(win.id, zone);
+      return;
+    }
+
+    // Still snapped here means the pointer never moved (plain click on the
+    // titlebar) — keep the tile instead of committing a no-op position
+    if (win.snapZone) return;
+
     updateWindowPosition(win.id, { x: data.x, y: data.y });
   };
 
@@ -161,6 +252,8 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       minWidth={DEFAULT_MIN_SIZE.w}
       minHeight={DEFAULT_MIN_SIZE.h}
       dragHandleClassName={DRAG_HANDLE_CLASS}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
       onMouseDown={handleMouseDown}
@@ -174,10 +267,12 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       <div
         className={`
           flex flex-col h-full
-          rounded-lg overflow-hidden
+          rounded-2xl overflow-hidden
+          origin-bottom
+          ${isMinimizing ? 'animate-window-minimize' : 'animate-window-open'}
           ${isActive
-            ? 'shadow-2xl ring-1 ring-black/10'
-            : 'shadow-lg ring-1 ring-black/5'
+            ? 'shadow-2xl ring-1 ring-white/40'
+            : 'shadow-lg ring-1 ring-white/20'
           }
         `}
       >
@@ -187,9 +282,10 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           isActive={isActive}
           isMaximized={win.isMaximized}
           onClose={() => closeWindow(win.id)}
-          onMinimize={() => minimizeWindow(win.id)}
+          onMinimize={handleMinimize}
           onMaximize={handleMaximizeToggle}
           isRemote={isRemote}
+          icon={appEntry?.defaultConfig.icon}
         />
 
         {/* Content Area */}

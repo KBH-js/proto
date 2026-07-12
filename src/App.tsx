@@ -3,6 +3,9 @@ import { WindowManagerLayout } from './components/templates/WindowManagerLayout'
 import { ToastContainer } from './components/shared/ToastContainer';
 import { BootScreen } from './components/shared/BootScreen';
 import { initializeAppRegistry, useAppRegistry } from './registry/appRegistry';
+import { useWindowStore } from './store/windowStore';
+
+const RESIZE_DEBOUNCE_MS = 150;
 
 function App() {
   const [bootAnimationDone, setBootAnimationDone] = useState(false);
@@ -12,6 +15,23 @@ function App() {
   // Idempotent — guarded against StrictMode double-invocation internally.
   useEffect(() => {
     initializeAppRegistry();
+  }, []);
+
+  // Refit windows (maximized/snapped/floating) when the viewport changes
+  useEffect(() => {
+    let timer: number | undefined;
+    const handleResize = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        useWindowStore.getState().handleViewportResize();
+      }, RESIZE_DEBOUNCE_MS);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   // Boot screen stays up until the animation finishes AND the app catalog

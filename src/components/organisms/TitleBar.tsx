@@ -1,5 +1,6 @@
 import { WindowControls } from '../molecules/WindowControls';
 import { isDevelopment } from '../../config/portfolio.config';
+import { getAppIcon } from '../shared/appIcons';
 
 interface TitleBarProps {
   title: string;
@@ -10,6 +11,8 @@ interface TitleBarProps {
   onMaximize: () => void;
   /** Whether this window contains a remote micro-frontend */
   isRemote?: boolean;
+  /** Registry icon name shown next to the title */
+  icon?: string;
 }
 
 /** CSS class name used by react-rnd for drag handle */
@@ -23,10 +26,13 @@ export function TitleBar({
   onMinimize,
   onMaximize,
   isRemote = false,
+  icon,
 }: TitleBarProps) {
   const handleDoubleClick = () => {
     onMaximize();
   };
+
+  const IconComponent = icon ? getAppIcon(icon) : undefined;
 
   const remoteBadgeLabel = isDevelopment ? 'MFE:DEV' : 'MFE';
   const remoteTooltip = isDevelopment 
@@ -38,12 +44,10 @@ export function TitleBar({
       className={`
         ${DRAG_HANDLE_CLASS}
         flex items-center h-9 px-3
-        rounded-t-lg
+        rounded-t-2xl
         select-none
-        ${isRemote
-          ? (isActive ? 'bg-gradient-to-r from-cyan-900/30 to-gray-200' : 'bg-gradient-to-r from-cyan-900/20 to-gray-300')
-          : (isActive ? 'bg-gray-200' : 'bg-gray-300')
-        }
+        border-b border-white/30
+        ${isActive ? 'glass-chrome' : 'glass-chrome-muted'}
         ${!isMaximized ? 'cursor-move' : 'cursor-default'}
       `}
       onDoubleClick={handleDoubleClick}
@@ -75,7 +79,12 @@ export function TitleBar({
         </div>
       )}
 
-      <div className="flex-1 text-center">
+      <div className="flex-1 flex items-center justify-center gap-1.5 min-w-0">
+        {IconComponent && (
+          <IconComponent
+            className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-gray-600' : 'text-gray-400'}`}
+          />
+        )}
         <span
           className={`
             text-sm font-medium truncate

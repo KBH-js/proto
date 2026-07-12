@@ -17,7 +17,8 @@
       "name": "host",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["dev"],
-      "port": 5173
+      "port": 5173,
+      "autoPort": true
     }
   ]
 }

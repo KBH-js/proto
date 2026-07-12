@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /*
+   * Liquid-glass chrome: translucent white over a saturating blur, with
+   * a specular top highlight. Borders are applied per usage site.
+   */
+  .glass-chrome {
+    @apply bg-white/55 backdrop-blur-2xl backdrop-saturate-150;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-chrome-muted {
+    @apply bg-white/35 backdrop-blur-2xl backdrop-saturate-100;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,6 +28,38 @@ html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+/* Window open/restore: subtle scale-up + fade */
+@keyframes window-open {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-window-open {
+  animation: window-open 180ms ease-out;
+}
+
+/* Window minimize: shrink and fade toward the taskbar */
+@keyframes window-minimize {
+  from {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.9) translateY(24px);
+    opacity: 0;
+  }
+}
+
+.animate-window-minimize {
+  animation: window-minimize 150ms ease-in forwards;
 }
 
 /* Toast slide-in animation */

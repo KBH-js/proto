@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { useWindowStore } from '../../store/windowStore';
 import { useAppRegistry } from '../../registry/appRegistry';
-import { TASKBAR_HEIGHT, AppConfig } from '../../types/window.types';
+import { TASKBAR_HEIGHT } from '../../types/window.types';
 import { DesktopIcon } from '../molecules/DesktopIcon';
+import { useAppLauncher } from '../../hooks/useAppLauncher';
 
 /**
  * Desktop component with app launcher icons.
@@ -11,24 +11,12 @@ import { DesktopIcon } from '../molecules/DesktopIcon';
  * remote catalog resolves at runtime.
  */
 export function Desktop() {
-  const openWindow = useWindowStore((state) => state.openWindow);
+  const launchApp = useAppLauncher();
   const entries = useAppRegistry((state) => state.entries);
   const availableApps = useMemo(
     () => Object.values(entries).map((entry) => entry.defaultConfig),
     [entries],
   );
-
-  const handleAppLaunch = (app: AppConfig) => {
-    // If app has an external URL, open it in a new tab
-    if (app.externalUrl) {
-      window.open(app.externalUrl, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    
-    // Otherwise, open as a window
-    console.log('Launching app:', app.componentType, app.title);
-    openWindow(app.componentType, app.title);
-  };
 
   return (
     <div
@@ -38,11 +26,16 @@ export function Desktop() {
         zIndex: 0,
       }}
     >
-      {/* Background gradient - macOS-inspired */}
+      {/* Wallpaper — layered deep-blue/teal gradients (macOS-inspired) */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+          background: `
+            radial-gradient(120% 90% at 78% 12%, rgba(56, 189, 248, 0.38) 0%, transparent 55%),
+            radial-gradient(100% 80% at 12% 85%, rgba(45, 212, 191, 0.32) 0%, transparent 55%),
+            radial-gradient(90% 90% at 45% 50%, rgba(59, 130, 246, 0.28) 0%, transparent 65%),
+            linear-gradient(160deg, #0a1c33 0%, #0e3055 45%, #14486e 72%, #0a2440 100%)
+          `,
         }}
       />
 
@@ -53,7 +46,7 @@ export function Desktop() {
             key={app.componentType}
             icon={app.icon}
             label={app.title}
-            onDoubleClick={() => handleAppLaunch(app)}
+            onLaunch={() => launchApp(app)}
           />
         ))}
       </div>
