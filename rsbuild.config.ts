@@ -41,7 +41,9 @@ export default defineConfig({
     entry: { index: './src/main.tsx' },
   },
   server: {
-    port: 5173,
+    // PORT override lets tooling run the host on a free port; the host
+    // itself has no fixed-port requirement (remotes do — see packages/*)
+    port: Number(process.env.PORT) || 5173,
     strictPort: true,
   },
 });

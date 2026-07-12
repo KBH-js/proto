@@ -31,7 +31,7 @@ Remote (각 `packages/remote-*`): `pnpm dev` — Rsbuild MF 플러그인은 dev 
 
 - `src/federation/` — MF 런타임 헬퍼(`runtime.ts`: registerAppRemotes/forceRefreshRemote/loadRemoteComponent)와 카탈로그 fetch/검증(`catalog.ts`).
 - `src/registry/appRegistry.ts` — zustand 스토어. 로컬 앱은 정적 시드, remote 앱은 `initializeAppRegistry()`가 manifest에서 머지. `status: loading|ready|degraded` — manifest 실패 시 로컬 앱만 노출(크래시 금지).
-- `src/store/windowStore.ts` — Zustand 전역 스토어. 창 열기/닫기/포커스(z-index)/최소화/최대화/이동/리사이즈.
+- `src/store/windowStore.ts` — Zustand 전역 스토어(`persist`로 localStorage에 창 배치 저장). 창 열기(싱글 인스턴스 + cascade)/닫기/포커스(zIndex 정규화)/최소화/최대화/Aero 스냅/이동/리사이즈. 지오메트리 계산은 `src/utils/windowGeometry.ts` 공유(스냅 rect, 엣지 감지, viewport clamp — rehydrate/resize 재사용).
 - `src/components/` — atomic design (atoms/molecules/organisms/templates/shared). `organisms/WindowFrame.tsx`가 react-rnd 기반 창 본체 + remote lazy 로딩/재시도 소유.
 - `src/config/portfolio.config.ts` — 소유자 정보, 소셜 링크, 이력서 URL 등 포트폴리오 설정.
 - `packages/shared` — 디자인 토큰(`theme.js`)만 export하는 패키지, 빌드 스텝 없음. remote들은 독립 배포를 위해 로컬 복사본(`src/theme.js`) 사용.

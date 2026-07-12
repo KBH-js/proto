@@ -323,13 +323,22 @@ export const useWindowStore = create<WindowStore>()(
 
         const viewport = getViewport();
         const size = clampSize(w.prevSize ?? getDefaultSize(), viewport);
-        // Keep the grab point proportionally under the pointer
-        const ratio = w.size.w > 0 ? (pointer.x - w.position.x) / w.size.w : 0.5;
-        const position = clampPosition(
-          { x: Math.round(pointer.x - size.w * ratio), y: w.position.y },
-          size,
-          viewport,
-        );
+
+        // Keep the current position whenever the pointer still lands on
+        // the restored titlebar: changing the controlled position while
+        // react-draggable is mid-drag re-bases its state and drops the
+        // drag deltas accumulated until React commits, making the window
+        // trail the cursor. Only re-base when the grab point would fall
+        // outside the restored width.
+        const pointerOnTitlebar =
+          pointer.x >= w.position.x && pointer.x <= w.position.x + size.w;
+        const position = pointerOnTitlebar
+          ? w.position
+          : clampPosition(
+              { x: Math.round(pointer.x - size.w / 2), y: w.position.y },
+              size,
+              viewport,
+            );
 
         return {
           ...w,
