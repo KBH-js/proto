@@ -10,7 +10,7 @@
       "remote": {
         "name": "remoteCalculator",
         "module": "CalculatorApp",
-        "entryUrl": "https://REPLACE-WITH-CALCULATOR-DEPLOYMENT.vercel.app/mf-manifest.json",
+        "entryUrl": "https://remote-calculator-sage.vercel.app/mf-manifest.json",
         "devEntryUrl": "http://localhost:5001/mf-manifest.json"
       }
     },
@@ -23,7 +23,7 @@
       "remote": {
         "name": "remoteNotes",
         "module": "NotesApp",
-        "entryUrl": "https://REPLACE-WITH-NOTES-DEPLOYMENT.vercel.app/mf-manifest.json",
+        "entryUrl": "https://remote-notes.vercel.app/mf-manifest.json",
         "devEntryUrl": "http://localhost:5002/mf-manifest.json"
       }
     }
