@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "remote-calculator",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["-C", "packages/remote-calculator", "preview"],
+      "port": 5001
+    },
+    {
+      "name": "host",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev"],
+      "port": 5173
+    }
+  ]
+}

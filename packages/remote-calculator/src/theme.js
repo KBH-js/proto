@@ -1,9 +1,5 @@
-/**
- * Shared Theme Tokens (inlined for independent deployment)
- * 
- * This is a copy of @proto/shared/theme for Vercel deployment.
- * Keep in sync with the main theme file.
- */
+// Copy of @proto/shared/theme, inlined so the remote deploys to Vercel
+// without the workspace package. Keep in sync with packages/shared/theme.js.
 
 export const colors = {
   background: {

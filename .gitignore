@@ -18,6 +18,10 @@ Thumbs.db
 .env
 .env.local
 
+# Claude Code (local-only files)
+.claude/settings.local.json
+.claude/worktrees/
+
 # Logs
 *.log
 npm-debug.log*

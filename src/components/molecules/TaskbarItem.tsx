@@ -12,7 +12,6 @@ import {
   LucideIcon
 } from 'lucide-react';
 
-// Map of icon names to Lucide components
 const iconMap: Record<string, LucideIcon> = {
   'file-text': FileText,
   'git-branch': GitBranch,
@@ -24,18 +23,11 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 interface TaskbarItemProps {
-  /** The window state object */
   window: WindowState;
-  /** Whether this window is currently active/focused */
   isActive: boolean;
-  /** Click handler for the taskbar item */
   onClick: () => void;
 }
 
-/**
- * Individual taskbar item showing a window's icon and title.
- * Indicates active state and minimized state visually.
- */
 export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
   const app = getApp(window.componentType);
   const iconName = app?.defaultConfig.icon ?? 'package';
@@ -63,8 +55,7 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
       <span className="text-sm text-white truncate max-w-[120px]">
         {window.title}
       </span>
-      
-      {/* Active indicator dot */}
+
       {isActive && (
         <span className="w-1.5 h-1.5 rounded-full bg-white ml-1" />
       )}

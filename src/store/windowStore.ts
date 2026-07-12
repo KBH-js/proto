@@ -10,40 +10,26 @@ import {
   DEFAULT_MIN_SIZE,
 } from '../types/window.types';
 
-/**
- * Helper function to calculate the next z-index (highest + 1)
- */
 const getNextZIndex = (windows: WindowState[]): number => {
   if (windows.length === 0) return BASE_Z_INDEX;
   const maxZ = Math.max(...windows.map((w) => w.zIndex));
   return maxZ + 1;
 };
 
-/**
- * Calculate default window size (50% of viewport)
- */
 const getDefaultSize = (): Size => ({
   w: Math.floor(window.innerWidth * 0.5),
   h: Math.floor((window.innerHeight - TASKBAR_HEIGHT) * 0.5),
 });
 
-/**
- * Calculate centered position for a window
- */
 const getCenteredPosition = (size: Size): Position => ({
   x: Math.floor((window.innerWidth - size.w) / 2),
   y: Math.floor((window.innerHeight - TASKBAR_HEIGHT - size.h) / 2),
 });
 
-/**
- * Zustand store for window management
- */
 export const useWindowStore = create<WindowStore>((set, get) => ({
-  // Initial state
   windows: [],
   activeWindowId: null,
 
-  // Actions
   openWindow: (componentType: string, title: string) => {
     const size = getDefaultSize();
     const position = getCenteredPosition(size);
@@ -157,7 +143,6 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
         windows: windows.map((w) => {
           if (w.id !== id) return w;
 
-          // Restore from minimized state
           if (w.isMinimized) {
             return {
               ...w,
@@ -166,7 +151,6 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
             };
           }
 
-          // Restore from maximized state
           if (w.isMaximized) {
             return {
               ...w,
@@ -194,7 +178,6 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   updateWindowSize: (id: string, size: Size) => {
-    // Enforce minimum size
     const constrainedSize: Size = {
       w: Math.max(size.w, DEFAULT_MIN_SIZE.w),
       h: Math.max(size.h, DEFAULT_MIN_SIZE.h),

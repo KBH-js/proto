@@ -1,9 +1,6 @@
 import { Info, CheckCircle2, AlertTriangle, XCircle, Zap, X } from 'lucide-react';
 import { useToastStore, Toast } from '../../store/toastStore';
 
-/**
- * Individual Toast Component
- */
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
   const typeStyles = {
     info: 'bg-blue-900/90 border-blue-500',
@@ -49,15 +46,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
   );
 }
 
-/**
- * Toast Container - Displays system notifications
- * 
- * Positioned at bottom-right of the screen.
- * Used for technical notifications like:
- * - Module Federation events
- * - Remote app loading status
- * - Performance metrics
- */
+/** Bottom-right system notifications (Module Federation events, etc.) */
 export function ToastContainer() {
   const { toasts, removeToast } = useToastStore();
 
@@ -77,21 +66,3 @@ export function ToastContainer() {
     </div>
   );
 }
-
-/**
- * CSS for slide-in animation (add to index.css or global styles)
- * 
- * @keyframes slide-in-right {
- *   from {
- *     transform: translateX(100%);
- *     opacity: 0;
- *   }
- *   to {
- *     transform: translateX(0);
- *     opacity: 1;
- *   }
- * }
- * .animate-slide-in-right {
- *   animation: slide-in-right 0.3s ease-out;
- * }
- */
