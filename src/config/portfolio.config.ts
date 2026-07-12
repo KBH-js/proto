@@ -12,7 +12,8 @@ export const portfolioConfig = {
   },
 
   resume: {
-    externalUrl: 'https://drive.google.com/file/d/1BBgtA6_ieEF_RAfXL0rYhCek4xepqWQL/view?usp=sharing',
+    /** Served from public/ — replace public/resume.pdf to update the resume */
+    pdfUrl: '/resume.pdf',
   },
 } as const;
 
