@@ -16,10 +16,6 @@ import {
   ChevronUp
 } from 'lucide-react';
 
-/**
- * About App - Explains the portfolio contents in Korean
- * Includes architecture diagram (merged from Architecture.app)
- */
 export function AboutApp() {
   const [showArchitecture, setShowArchitecture] = useState(false);
 

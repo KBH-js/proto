@@ -2,16 +2,10 @@ interface WindowControlsProps {
   onClose: () => void;
   onMinimize: () => void;
   onMaximize: () => void;
-  /** Whether the window is currently active/focused */
   isActive?: boolean;
 }
 
-/**
- * macOS-style window control buttons (traffic lights)
- * - Red: Close
- * - Yellow: Minimize
- * - Green: Maximize
- */
+/** macOS-style traffic light buttons (close / minimize / maximize) */
 export function WindowControls({
   onClose,
   onMinimize,
@@ -20,7 +14,6 @@ export function WindowControls({
 }: WindowControlsProps) {
   return (
     <div className="flex items-center gap-2 group">
-      {/* Close Button - Red */}
       <button
         onClick={onClose}
         className={`
@@ -31,8 +24,7 @@ export function WindowControls({
         `}
         aria-label="Close window"
       />
-      
-      {/* Minimize Button - Yellow */}
+
       <button
         onClick={onMinimize}
         className={`
@@ -43,8 +35,7 @@ export function WindowControls({
         `}
         aria-label="Minimize window"
       />
-      
-      {/* Maximize Button - Green */}
+
       <button
         onClick={onMaximize}
         className={`

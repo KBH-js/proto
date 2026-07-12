@@ -2,17 +2,11 @@ import { WindowControls } from '../molecules/WindowControls';
 import { isDevelopment } from '../../config/portfolio.config';
 
 interface TitleBarProps {
-  /** Window title to display */
   title: string;
-  /** Whether the window is currently active/focused */
   isActive: boolean;
-  /** Whether the window is maximized */
   isMaximized: boolean;
-  /** Close button handler */
   onClose: () => void;
-  /** Minimize button handler */
   onMinimize: () => void;
-  /** Maximize/Restore button handler */
   onMaximize: () => void;
   /** Whether this window contains a remote micro-frontend */
   isRemote?: boolean;
@@ -21,10 +15,6 @@ interface TitleBarProps {
 /** CSS class name used by react-rnd for drag handle */
 export const DRAG_HANDLE_CLASS = 'window-drag-handle';
 
-/**
- * Window title bar with macOS-style traffic light controls.
- * The title bar serves as the drag handle for moving windows.
- */
 export function TitleBar({
   title,
   isActive,
@@ -38,7 +28,6 @@ export function TitleBar({
     onMaximize();
   };
 
-  // Remote badge label and tooltip based on environment
   const remoteBadgeLabel = isDevelopment ? 'MFE:DEV' : 'MFE';
   const remoteTooltip = isDevelopment 
     ? 'Module Federation - Development (localhost)' 
@@ -59,7 +48,6 @@ export function TitleBar({
       `}
       onDoubleClick={handleDoubleClick}
     >
-      {/* Traffic light controls on the left */}
       <div className="flex-shrink-0">
         <WindowControls
           onClose={onClose}
@@ -69,7 +57,6 @@ export function TitleBar({
         />
       </div>
 
-      {/* Remote Badge */}
       {isRemote && (
         <div className="flex-shrink-0 ml-2">
           <span
@@ -88,7 +75,6 @@ export function TitleBar({
         </div>
       )}
 
-      {/* Centered title */}
       <div className="flex-1 text-center">
         <span
           className={`

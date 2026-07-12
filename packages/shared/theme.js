@@ -1,21 +1,6 @@
-/**
- * Shared Theme Tokens for Proto OS
- * 
- * These tokens are used by both the host app and all remote micro-frontends
- * to ensure consistent styling across the entire system.
- * 
- * Usage in tailwind.config.js:
- * ```js
- * const { colors, spacing, borderRadius, fontFamily } = require('@proto/shared/theme');
- * // or
- * import { colors, spacing, borderRadius, fontFamily } from '@proto/shared/theme';
- * ```
- */
+// Design tokens shared by the host and remote micro-frontends,
+// consumed from each package's tailwind.config.js.
 
-/**
- * Color palette for the OS
- * Designed for a dark theme with blue accents
- */
 export const colors = {
   // Background colors
   background: {
@@ -78,10 +63,7 @@ export const colors = {
   },
 };
 
-/**
- * Spacing scale (in pixels, converted to rem in Tailwind)
- * Based on 4px grid system
- */
+// 4px grid
 export const spacing = {
   px: '1px',
   0: '0',
@@ -109,9 +91,6 @@ export const spacing = {
   32: '8rem',        // 128px
 };
 
-/**
- * Border radius values
- */
 export const borderRadius = {
   none: '0',
   sm: '0.25rem',     // 4px - subtle rounding
@@ -123,9 +102,6 @@ export const borderRadius = {
   full: '9999px',    // Circular
 };
 
-/**
- * Font family stacks
- */
 export const fontFamily = {
   sans: [
     'Inter',
@@ -150,9 +126,6 @@ export const fontFamily = {
   ],
 };
 
-/**
- * Font sizes with line heights
- */
 export const fontSize = {
   xs: ['0.75rem', { lineHeight: '1rem' }],       // 12px
   sm: ['0.875rem', { lineHeight: '1.25rem' }],   // 14px
@@ -164,9 +137,6 @@ export const fontSize = {
   '4xl': ['2.25rem', { lineHeight: '2.5rem' }],  // 36px
 };
 
-/**
- * Box shadow values
- */
 export const boxShadow = {
   sm: '0 1px 2px 0 rgba(0, 0, 0, 0.3)',
   DEFAULT: '0 2px 4px 0 rgba(0, 0, 0, 0.4)',
@@ -177,9 +147,6 @@ export const boxShadow = {
   'window-focused': '0 12px 48px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4)',
 };
 
-/**
- * Z-index scale for layering
- */
 export const zIndex = {
   desktop: 0,
   window: 10,
@@ -190,16 +157,12 @@ export const zIndex = {
   taskbar: 9999,
 };
 
-/**
- * Transition presets
- */
 export const transition = {
   fast: '150ms ease-in-out',
   normal: '200ms ease-in-out',
   slow: '300ms ease-in-out',
 };
 
-// Default export with all tokens
 export default {
   colors,
   spacing,

@@ -123,8 +123,7 @@ packages/remote-myapp/
     ├── env.d.ts            # /// <reference types="@rsbuild/core/types" />
     ├── main.tsx            # import('./bootstrap')  ← async boundary
     ├── bootstrap.tsx       # standalone render
-    ├── App.tsx             # standalone wrapper (MockHostProvider)
-    └── MockHostProvider.tsx
+    └── App.tsx             # standalone page wrapper
 ```
 
 ### Step 2: rsbuild.config.ts
@@ -186,13 +185,12 @@ Already-loaded remotes keep working even if their server goes down (module code 
 | | Integration (in host) | Standalone (`pnpm dev`) |
 |---|---|---|
 | Entry | exposed module via `loadRemote` | `main.tsx` → `bootstrap.tsx` |
-| Context | host `HostContext` (if wired) | `MockHostProvider` |
 | Global styles | host owns `body` | `standalone.css` |
 | React | shared singleton from host scope | own instance |
 
 ## Host–Remote Communication
 
-Unchanged from the original design — `HostContext` for read-only state and Custom Events for bidirectional messaging:
+There is currently no host↔remote state bridge (an unused `HostContext` was removed as dead code). When one becomes necessary, the documented convention is Custom Events on `window`:
 
 | Prefix | Direction | Example |
 |--------|-----------|---------|

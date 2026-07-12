@@ -23,7 +23,6 @@ interface StartMenuLink {
   copyable?: boolean;
 }
 
-// Build external links from portfolio config
 const externalLinks: StartMenuLink[] = [
   {
     icon: <Github className="w-5 h-5" />,
@@ -40,16 +39,12 @@ const externalLinks: StartMenuLink[] = [
   {
     icon: <Mail className="w-5 h-5" />,
     label: 'Email',
-    href: portfolioConfig.owner.email, // Raw email address
+    href: portfolioConfig.owner.email,
     description: 'Get in touch',
     copyable: true,
   },
 ];
 
-/**
- * Taskbar / Dock component fixed at the bottom of the viewport.
- * Shows all open windows, Start Menu with external links, and allows toggling minimize/restore.
- */
 export function Taskbar() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const startMenuRef = useRef<HTMLDivElement>(null);
@@ -101,14 +96,12 @@ export function Taskbar() {
 
   const handleTaskbarItemClick = (windowId: string, isMinimized: boolean, isActive: boolean) => {
     if (isMinimized) {
-      // Restore and focus the minimized window
       restoreWindow(windowId);
       focusWindow(windowId);
     } else if (isActive) {
-      // Only minimize if clicking the already-active window
+      // Only minimize when clicking the already-active window
       minimizeWindow(windowId);
     } else {
-      // Bring non-active visible window to focus
       focusWindow(windowId);
     }
   };
@@ -163,7 +156,6 @@ export function Taskbar() {
             <div className="p-2">
               <p className="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider">Connect</p>
               {externalLinks.map((link) => {
-                // Email with copy button
                 if (link.copyable) {
                   return (
                     <div
@@ -190,7 +182,6 @@ export function Taskbar() {
                   );
                 }
 
-                // Regular external link
                 return (
                   <a
                     key={link.label}

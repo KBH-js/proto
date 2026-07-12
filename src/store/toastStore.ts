@@ -1,15 +1,11 @@
 import { create } from 'zustand';
 
-/**
- * Toast notification type
- */
 export interface Toast {
   id: string;
   message: string;
   type: 'info' | 'success' | 'warning' | 'error' | 'system';
   /** Duration in milliseconds (0 = manual dismiss) */
   duration: number;
-  /** Timestamp when toast was created */
   timestamp: number;
 }
 
@@ -22,17 +18,9 @@ interface ToastState {
 
 let toastCounter = 0;
 
-/**
- * Toast Store for System Notifications
- * 
- * Used to display technical information like:
- * - Module Federation load events
- * - Remote app connection status
- * - Performance metrics
- */
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
-  
+
   addToast: (toast) => {
     const id = `toast-${++toastCounter}`;
     const newToast: Toast = {
@@ -40,12 +28,11 @@ export const useToastStore = create<ToastState>((set) => ({
       id,
       timestamp: Date.now(),
     };
-    
+
     set((state) => ({
       toasts: [...state.toasts, newToast],
     }));
-    
-    // Auto-remove after duration (if not 0)
+
     if (toast.duration > 0) {
       setTimeout(() => {
         set((state) => ({
@@ -53,30 +40,23 @@ export const useToastStore = create<ToastState>((set) => ({
         }));
       }, toast.duration);
     }
-    
+
     return id;
   },
-  
+
   removeToast: (id) => {
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
     }));
   },
-  
+
   clearAll: () => {
     set({ toasts: [] });
   },
 }));
 
-/**
- * Styled Console Logger for Module Federation Events
- * 
- * Creates visually distinct console output for technical information.
- */
+/** Styled console logging for Module Federation events */
 export const federationLogger = {
-  /**
-   * Log a successful module load
-   */
   moduleLoaded: (moduleName: string, loadTimeMs: number) => {
     console.log(
       `%c[Module Federation]%c Remote module %c${moduleName}%c loaded in %c${loadTimeMs}ms`,
@@ -87,10 +67,7 @@ export const federationLogger = {
       'color: #ffd93d; font-weight: bold;'
     );
   },
-  
-  /**
-   * Log a module load failure
-   */
+
   moduleFailed: (moduleName: string, error: string) => {
     console.log(
       `%c[Module Federation]%c Failed to load %c${moduleName}%c: ${error}`,
@@ -100,10 +77,7 @@ export const federationLogger = {
       'color: #aaa;'
     );
   },
-  
-  /**
-   * Log connection established with remote
-   */
+
   connectionEstablished: (remoteName: string, url: string) => {
     console.log(
       `%c[Module Federation]%c Connection established with %c${remoteName}%c at %c${url}`,
@@ -114,25 +88,8 @@ export const federationLogger = {
       'color: #aaa; font-style: italic;'
     );
   },
-  
-  /**
-   * Log host context shared with remote
-   */
-  contextShared: (theme: string, locale: string) => {
-    console.log(
-      `%c[Host Context]%c Shared state → theme: %c${theme}%c, locale: %c${locale}`,
-      'background: #6c5ce7; color: white; font-weight: bold; padding: 2px 6px; border-radius: 3px;',
-      'color: #a29bfe;',
-      'color: #ffeaa7; font-weight: bold;',
-      'color: #a29bfe;',
-      'color: #ffeaa7; font-weight: bold;'
-    );
-  },
-  
-  /**
-   * Print the Module Federation banner once the runtime-registered
-   * remote catalog is known (called from initializeAppRegistry).
-   */
+
+  /** Prints the boot banner with the runtime-registered remote catalog */
   printBanner: (remotes: Array<{ name: string; url: string }> = []) => {
     const WIDTH = 67; // inner width between the ║ borders
 
