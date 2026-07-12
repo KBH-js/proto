@@ -5,13 +5,20 @@ import {
   WindowStore,
   Position,
   Size,
+  SnapZone,
   BASE_Z_INDEX,
   TASKBAR_HEIGHT,
   DEFAULT_MIN_SIZE,
   CASCADE_OFFSET,
 } from '../types/window.types';
 import { getAppDefaultSize } from '../registry/appRegistry';
-import { clampSize, getViewport, getWorkAreaHeight } from '../utils/windowGeometry';
+import {
+  clampPosition,
+  clampSize,
+  getSnapRect,
+  getViewport,
+  getWorkAreaHeight,
+} from '../utils/windowGeometry';
 
 /**
  * Raise the given window to the top and compact all zIndexes to
@@ -173,17 +180,77 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
       windows: state.windows.map((w) => {
         if (w.id !== id) return w;
 
-        // Store current position/size for restore
+        // Keep the original floating rect when already snapped, so
+        // restore never lands on a tiled geometry
+        const keepPrev = w.snapZone !== undefined && w.prevSize !== undefined;
+
         return {
           ...w,
-          prevPosition: w.position,
-          prevSize: w.size,
+          prevPosition: keepPrev ? w.prevPosition : w.position,
+          prevSize: keepPrev ? w.prevSize : w.size,
+          snapZone: undefined,
           isMaximized: true,
           position: { x: 0, y: 0 },
           size: {
             w: window.innerWidth,
             h: window.innerHeight - TASKBAR_HEIGHT,
           },
+        };
+      }),
+    }));
+  },
+
+  snapWindow: (id: string, zone: SnapZone) => {
+    if (zone === 'top') {
+      get().maximizeWindow(id);
+      return;
+    }
+
+    const { position, size } = getSnapRect(zone, getViewport());
+
+    set((state) => ({
+      windows: state.windows.map((w) => {
+        if (w.id !== id) return w;
+
+        // Chained snaps (left → right) must keep the original floating rect
+        const keepPrev =
+          (w.snapZone !== undefined || w.isMaximized) && w.prevSize !== undefined;
+
+        return {
+          ...w,
+          prevPosition: keepPrev ? w.prevPosition : w.position,
+          prevSize: keepPrev ? w.prevSize : w.size,
+          snapZone: zone,
+          isMaximized: false,
+          position,
+          size,
+        };
+      }),
+    }));
+  },
+
+  unsnapWindow: (id: string, pointer: Position) => {
+    set((state) => ({
+      windows: state.windows.map((w) => {
+        if (w.id !== id || w.snapZone === undefined) return w;
+
+        const viewport = getViewport();
+        const size = clampSize(w.prevSize ?? getDefaultSize(), viewport);
+        // Keep the grab point proportionally under the pointer
+        const ratio = w.size.w > 0 ? (pointer.x - w.position.x) / w.size.w : 0.5;
+        const position = clampPosition(
+          { x: Math.round(pointer.x - size.w * ratio), y: w.position.y },
+          size,
+          viewport,
+        );
+
+        return {
+          ...w,
+          snapZone: undefined,
+          prevPosition: undefined,
+          prevSize: undefined,
+          position,
+          size,
         };
       }),
     }));
@@ -225,7 +292,13 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   updateWindowPosition: (id: string, position: Position) => {
     set((state) => ({
       windows: state.windows.map((w) =>
-        w.id === id ? { ...w, position } : w
+        w.id === id
+          ? {
+              ...w,
+              position: clampPosition(position, w.size, getViewport()),
+              snapZone: undefined,
+            }
+          : w
       ),
     }));
   },
@@ -236,9 +309,10 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
       h: Math.max(size.h, DEFAULT_MIN_SIZE.h),
     };
 
+    // Manual resize un-tiles the window
     set((state) => ({
       windows: state.windows.map((w) =>
-        w.id === id ? { ...w, size: constrainedSize } : w
+        w.id === id ? { ...w, size: constrainedSize, snapZone: undefined } : w
       ),
     }));
   },

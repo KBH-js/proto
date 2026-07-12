@@ -1,6 +1,7 @@
 import { useWindowStore } from '../../store/windowStore';
 import { Desktop } from '../organisms/Desktop';
 import { WindowFrame } from '../organisms/WindowFrame';
+import { SnapPreview } from '../organisms/SnapPreview';
 import { Taskbar } from '../organisms/Taskbar';
 
 export function WindowManagerLayout() {
@@ -13,6 +14,8 @@ export function WindowManagerLayout() {
       {windows.map((win) => (
         <WindowFrame key={win.id} window={win} />
       ))}
+
+      <SnapPreview />
 
       <Taskbar />
     </div>
