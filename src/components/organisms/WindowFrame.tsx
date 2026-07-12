@@ -252,10 +252,10 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       <div
         className={`
           flex flex-col h-full
-          rounded-lg overflow-hidden
+          rounded-2xl overflow-hidden
           ${isActive
-            ? 'shadow-2xl ring-1 ring-black/10'
-            : 'shadow-lg ring-1 ring-black/5'
+            ? 'shadow-2xl ring-1 ring-white/40'
+            : 'shadow-lg ring-1 ring-white/20'
           }
         `}
       >

@@ -5,7 +5,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        // macOS system blue — primary accent across the shell
+        accent: '#0A84FF',
+      },
+    },
   },
   plugins: [],
 }

@@ -38,12 +38,10 @@ export function TitleBar({
       className={`
         ${DRAG_HANDLE_CLASS}
         flex items-center h-9 px-3
-        rounded-t-lg
+        rounded-t-2xl
         select-none
-        ${isRemote
-          ? (isActive ? 'bg-gradient-to-r from-cyan-900/30 to-gray-200' : 'bg-gradient-to-r from-cyan-900/20 to-gray-300')
-          : (isActive ? 'bg-gray-200' : 'bg-gray-300')
-        }
+        border-b border-white/30
+        ${isActive ? 'glass-chrome' : 'glass-chrome-muted'}
         ${!isMaximized ? 'cursor-move' : 'cursor-default'}
       `}
       onDoubleClick={handleDoubleClick}

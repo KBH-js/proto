@@ -22,7 +22,7 @@ export function AboutApp() {
   return (
     <div className="flex flex-col h-full bg-white overflow-auto">
       {/* Header */}
-      <div className="p-5 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+      <div className="p-5 bg-gradient-to-r from-sky-600 to-blue-700 text-white">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
             <Terminal className="w-7 h-7" />
@@ -102,10 +102,10 @@ export function AboutApp() {
         <section>
           <button
             onClick={() => setShowArchitecture(!showArchitecture)}
-            className="w-full flex items-center justify-between text-sm font-semibold text-gray-800 uppercase tracking-wider mb-3 hover:text-purple-600 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-semibold text-gray-800 uppercase tracking-wider mb-3 hover:text-blue-600 transition-colors"
           >
             <span className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-purple-500" />
+              <Layers className="w-4 h-4 text-blue-500" />
               시스템 아키텍처
             </span>
             {showArchitecture ? (
@@ -123,34 +123,34 @@ export function AboutApp() {
                 
                 <div className="flex flex-col items-center gap-3">
                   {/* User Browser */}
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 rounded-lg border border-blue-200">
-                    <Globe className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-medium text-blue-700">User Browser</span>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
+                    <Globe className="w-4 h-4 text-slate-600" />
+                    <span className="text-xs font-medium text-slate-700">User Browser</span>
                   </div>
-                  
+
                   <ArrowDown className="w-4 h-4 text-gray-400" />
-                  
+
                   {/* Host App */}
-                  <div className="w-full bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg p-3 border border-purple-200">
+                  <div className="w-full bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg p-3 border border-blue-200">
                     <div className="flex items-center gap-2 mb-2">
-                      <Server className="w-4 h-4 text-purple-600" />
-                      <span className="text-xs font-semibold text-purple-700">Host App (Web-OS)</span>
-                      <span className="text-[10px] bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full ml-auto">
+                      <Server className="w-4 h-4 text-blue-600" />
+                      <span className="text-xs font-semibold text-blue-700">Host App (Web-OS)</span>
+                      <span className="text-[10px] bg-blue-200 text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
                         Vercel
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-3 gap-1.5 text-[10px]">
-                      <div className="bg-white/70 rounded p-1.5 text-center border border-purple-100">
-                        <Package className="w-3 h-3 mx-auto mb-0.5 text-purple-500" />
+                      <div className="bg-white/70 rounded p-1.5 text-center border border-blue-100">
+                        <Package className="w-3 h-3 mx-auto mb-0.5 text-blue-500" />
                         <span className="text-gray-600">Zustand</span>
                       </div>
-                      <div className="bg-white/70 rounded p-1.5 text-center border border-purple-100">
-                        <Layers className="w-3 h-3 mx-auto mb-0.5 text-purple-500" />
+                      <div className="bg-white/70 rounded p-1.5 text-center border border-blue-100">
+                        <Layers className="w-3 h-3 mx-auto mb-0.5 text-blue-500" />
                         <span className="text-gray-600">Registry</span>
                       </div>
-                      <div className="bg-white/70 rounded p-1.5 text-center border border-purple-100">
-                        <Monitor className="w-3 h-3 mx-auto mb-0.5 text-purple-500" />
+                      <div className="bg-white/70 rounded p-1.5 text-center border border-blue-100">
+                        <Monitor className="w-3 h-3 mx-auto mb-0.5 text-blue-500" />
                         <span className="text-gray-600">Desktop</span>
                       </div>
                     </div>
@@ -199,7 +199,7 @@ export function AboutApp() {
             {[
               { name: 'React 19', color: 'bg-cyan-100 text-cyan-700' },
               { name: 'TypeScript', color: 'bg-blue-100 text-blue-700' },
-              { name: 'Module Federation', color: 'bg-purple-100 text-purple-700' },
+              { name: 'Module Federation', color: 'bg-sky-100 text-sky-700' },
               { name: 'Zustand', color: 'bg-orange-100 text-orange-700' },
               { name: 'Tailwind', color: 'bg-teal-100 text-teal-700' },
             ].map((tech) => (

@@ -21,8 +21,8 @@ export function SnapPreview() {
       className="
         absolute pointer-events-none
         rounded-2xl
-        bg-white/25 backdrop-blur-sm
-        border-2 border-white/50
+        bg-white/20 backdrop-blur-sm backdrop-saturate-150
+        border-2 border-accent/60
         shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]
         transition-all duration-150 ease-out
       "

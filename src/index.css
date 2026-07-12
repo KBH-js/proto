@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /*
+   * Liquid-glass chrome: translucent white over a saturating blur, with
+   * a specular top highlight. Borders are applied per usage site.
+   */
+  .glass-chrome {
+    @apply bg-white/55 backdrop-blur-2xl backdrop-saturate-150;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-chrome-muted {
+    @apply bg-white/35 backdrop-blur-2xl backdrop-saturate-100;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;

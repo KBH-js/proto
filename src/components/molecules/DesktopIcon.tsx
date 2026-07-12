@@ -35,7 +35,7 @@ export function DesktopIcon({ icon, label, onDoubleClick }: DesktopIconProps) {
     switch (icon) {
       case 'info': return 'text-blue-400';
       case 'file-text': return 'text-red-400';
-      case 'git-branch': return 'text-purple-400';
+      case 'git-branch': return 'text-sky-400';
       case 'calculator': return 'text-orange-400';
       case 'monitor': return 'text-blue-400';
       case 'settings': return 'text-gray-300';

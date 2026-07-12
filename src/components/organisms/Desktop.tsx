@@ -38,11 +38,16 @@ export function Desktop() {
         zIndex: 0,
       }}
     >
-      {/* Background gradient - macOS-inspired */}
+      {/* Wallpaper — layered deep-blue/teal gradients (macOS-inspired) */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+          background: `
+            radial-gradient(120% 90% at 78% 12%, rgba(56, 189, 248, 0.38) 0%, transparent 55%),
+            radial-gradient(100% 80% at 12% 85%, rgba(45, 212, 191, 0.32) 0%, transparent 55%),
+            radial-gradient(90% 90% at 45% 50%, rgba(59, 130, 246, 0.28) 0%, transparent 65%),
+            linear-gradient(160deg, #0a1c33 0%, #0e3055 45%, #14486e 72%, #0a2440 100%)
+          `,
         }}
       />
 
