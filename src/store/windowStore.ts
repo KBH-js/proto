@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import {
   WindowState,
@@ -18,7 +19,82 @@ import {
   getSnapRect,
   getViewport,
   getWorkAreaHeight,
+  Viewport,
 } from '../utils/windowGeometry';
+
+/**
+ * Refit one window to the given viewport: maximized/snapped windows are
+ * recomputed from their zone, floating windows are clamped on screen.
+ */
+const fitWindowToViewport = (w: WindowState, viewport: Viewport): WindowState => {
+  const prevSize = w.prevSize ? clampSize(w.prevSize, viewport) : undefined;
+  const prevPosition =
+    w.prevPosition && prevSize
+      ? clampPosition(w.prevPosition, prevSize, viewport)
+      : undefined;
+
+  if (w.isMaximized) {
+    const rect = getSnapRect('top', viewport);
+    return { ...w, ...rect, prevPosition, prevSize };
+  }
+  if (w.snapZone) {
+    const rect = getSnapRect(w.snapZone, viewport);
+    return { ...w, ...rect, prevPosition, prevSize };
+  }
+
+  const size = clampSize(w.size, viewport);
+  const position = clampPosition(w.position, size, viewport);
+  return { ...w, position, size, prevPosition, prevSize };
+};
+
+const isValidPoint = (p: unknown): p is { x: number; y: number } =>
+  typeof p === 'object' && p !== null &&
+  Number.isFinite((p as Position).x) && Number.isFinite((p as Position).y);
+
+const isValidSize = (s: unknown): s is Size =>
+  typeof s === 'object' && s !== null &&
+  Number.isFinite((s as Size).w) && Number.isFinite((s as Size).h);
+
+const isValidWindow = (w: unknown): w is WindowState => {
+  const win = w as WindowState;
+  return (
+    typeof win === 'object' && win !== null &&
+    typeof win.id === 'string' &&
+    typeof win.title === 'string' &&
+    typeof win.componentType === 'string' &&
+    typeof win.isMinimized === 'boolean' &&
+    typeof win.isMaximized === 'boolean' &&
+    typeof win.zIndex === 'number' &&
+    isValidPoint(win.position) &&
+    isValidSize(win.size)
+  );
+};
+
+/**
+ * Rebuild persisted windows for the current viewport: drop malformed
+ * entries, refit geometry, compact zIndexes, and derive the active
+ * window (topmost non-minimized). Windows whose app isn't registered
+ * yet are kept — the remote catalog resolves asynchronously.
+ */
+const sanitizeWindows = (
+  raw: unknown,
+  viewport: Viewport,
+): { windows: WindowState[]; activeWindowId: string | null } => {
+  const list = Array.isArray(raw) ? raw.filter(isValidWindow) : [];
+
+  const ordered = [...list].sort((a, b) => a.zIndex - b.zIndex);
+  const windows = list.map((w) => ({
+    ...fitWindowToViewport(w, viewport),
+    zIndex: BASE_Z_INDEX + ordered.indexOf(w),
+  }));
+
+  const visible = windows.filter((w) => !w.isMinimized);
+  const activeWindowId = visible.length
+    ? visible.reduce((prev, curr) => (prev.zIndex > curr.zIndex ? prev : curr)).id
+    : null;
+
+  return { windows, activeWindowId };
+};
 
 /**
  * Raise the given window to the top and compact all zIndexes to
@@ -74,7 +150,9 @@ const getCascadePosition = (size: Size, openCount: number): Position => {
   return { x: base.x + offset, y: base.y + offset };
 };
 
-export const useWindowStore = create<WindowStore>((set, get) => ({
+export const useWindowStore = create<WindowStore>()(
+  persist(
+    (set, get) => ({
   windows: [],
   activeWindowId: null,
 
@@ -316,4 +394,30 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
       ),
     }));
   },
-}));
+
+  handleViewportResize: () => {
+    const viewport = getViewport();
+    set((state) => ({
+      windows: state.windows.map((w) => fitWindowToViewport(w, viewport)),
+    }));
+  },
+    }),
+    {
+      name: 'proto-desktop:windows',
+      version: 1,
+      storage: createJSONStorage(() => localStorage),
+      // activeWindowId is derived on rehydrate; drag-time state never persists
+      partialize: (state) => ({ windows: state.windows }),
+      migrate: (persisted, version) =>
+        version === 1 ? (persisted as { windows: WindowState[] }) : { windows: [] },
+      // Spread current first so store actions survive the merge
+      merge: (persisted, current) => ({
+        ...current,
+        ...sanitizeWindows(
+          (persisted as { windows?: unknown } | undefined)?.windows,
+          getViewport(),
+        ),
+      }),
+    },
+  ),
+);

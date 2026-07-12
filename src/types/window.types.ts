@@ -72,6 +72,8 @@ export interface WindowStore {
   unsnapWindow: (id: string, pointer: Position) => void;
   updateWindowPosition: (id: string, position: Position) => void;
   updateWindowSize: (id: string, size: Size) => void;
+  /** Refits every window (maximized/snapped/floating) after a viewport resize */
+  handleViewportResize: () => void;
 }
 
 export const DEFAULT_MIN_SIZE: Size = { w: 200, h: 150 };
