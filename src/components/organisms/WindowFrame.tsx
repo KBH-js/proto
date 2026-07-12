@@ -19,6 +19,9 @@ interface WindowFrameProps {
 /** Pointer movement (px) before a drag un-tiles a snapped window */
 const UNSNAP_SLOP = 2;
 
+/** Must match .animate-window-minimize's duration in index.css */
+const MINIMIZE_ANIMATION_MS = 150;
+
 /**
  * Extract viewport pointer coordinates from react-draggable's event,
  * which may be a mouse or touch event (touchend carries the pointer
@@ -88,6 +91,18 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   // and must not re-render; the preview store re-renders only SnapPreview.
   const dragStartPointerRef = useRef<Position | null>(null);
   const armedZoneRef = useRef<SnapZone | null>(null);
+
+  // Transient: plays the minimize animation before committing to the store
+  const [isMinimizing, setIsMinimizing] = useState(false);
+
+  const handleMinimize = () => {
+    if (isMinimizing) return;
+    setIsMinimizing(true);
+    setTimeout(() => {
+      setIsMinimizing(false);
+      minimizeWindow(win.id);
+    }, MINIMIZE_ANIMATION_MS);
+  };
 
   const isActive = activeWindowId === win.id;
   
@@ -253,6 +268,8 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
         className={`
           flex flex-col h-full
           rounded-2xl overflow-hidden
+          origin-bottom
+          ${isMinimizing ? 'animate-window-minimize' : 'animate-window-open'}
           ${isActive
             ? 'shadow-2xl ring-1 ring-white/40'
             : 'shadow-lg ring-1 ring-white/20'
@@ -265,7 +282,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           isActive={isActive}
           isMaximized={win.isMaximized}
           onClose={() => closeWindow(win.id)}
-          onMinimize={() => minimizeWindow(win.id)}
+          onMinimize={handleMinimize}
           onMaximize={handleMaximizeToggle}
           isRemote={isRemote}
         />

@@ -30,6 +30,38 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* Window open/restore: subtle scale-up + fade */
+@keyframes window-open {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-window-open {
+  animation: window-open 180ms ease-out;
+}
+
+/* Window minimize: shrink and fade toward the taskbar */
+@keyframes window-minimize {
+  from {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.9) translateY(24px);
+    opacity: 0;
+  }
+}
+
+.animate-window-minimize {
+  animation: window-minimize 150ms ease-in forwards;
+}
+
 /* Toast slide-in animation */
 @keyframes slide-in-right {
   from {
