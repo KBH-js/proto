@@ -7,65 +7,82 @@
 ## Features
 
 - **Window Management** — Zustand 기반 전역 상태로 창 포커스(z-index), 최소화/최대화, 드래그·리사이즈 구현
-- **Micro-Frontends** — Module Federation으로 계산기(Calculator) 앱을 런타임에 동적 로딩. Host와 Remote는 별도의 Vercel 프로젝트로 독립 배포
+- **Runtime Micro-Frontends** — Module Federation 2.x 런타임 API로 Calculator, Notes 앱을 동적 등록·로딩. remote 목록은 빌드 타임이 아닌 `remotes.manifest.json`에서 주입되어, manifest 수정만으로 호스트 재배포 없이 remote 추가/이동 가능
+- **장애 격리 & 복구** — remote 서버 장애 시 해당 창만 에러 상태로 격리. 서버 복구 후 창 안의 **Try Again** 버튼으로 페이지 새로고침 없이 그 창만 복구
+- **Rspack 빌드체인** — 호스트/remote 모두 Rsbuild(Rspack) 기반, 호스트는 React Compiler 적용
 
 ## Architecture
 
-Host(Desktop)와 Remote(App)가 독립적으로 배포되고 런타임에 통합됩니다.
+Host(Desktop)가 부팅 시 manifest를 읽어 Remote(App)들을 런타임에 등록하고, 각 Remote는 독립 배포됩니다.
 
 ```mermaid
 graph TD
     classDef host fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef remote fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef shared fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef manifest fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 
     User["👤 User"] -->|Access| Host
 
-    subgraph Host ["Host App"]
-        Registry[App Registry]
-        Store[Zustand Store]
-        Desktop[Desktop UI]
-        Desktop -->|Action| Store
-        Desktop -->|Load| Registry
+    subgraph Host ["Host App (Rsbuild)"]
+        Manifest["remotes.manifest.json"]
+        Runtime["MF Runtime<br/>(registerRemotes / loadRemote)"]
+        Registry["App Registry (Zustand)"]
+        Desktop["Desktop UI"]
+        Manifest -->|fetch at boot| Runtime
+        Runtime --> Registry
+        Desktop -->|Launch| Registry
     end
 
-    subgraph Remote ["Remote App"]
-        Calc[Calculator]
+    subgraph Remotes ["Independent Remotes (Rsbuild)"]
+        Calc["Calculator :5001"]
+        Notes["Notes :5002"]
     end
 
-    subgraph Shared ["Shared Deps"]
+    subgraph Shared ["Shared Singletons"]
         ReactLib[React 19]
     end
 
-    Registry -.->|Module Federation| Calc
+    Runtime -.->|mf-manifest.json| Calc
+    Runtime -.->|mf-manifest.json| Notes
     Host -.-> ReactLib
     Calc -.-> ReactLib
+    Notes -.-> ReactLib
 
-    class Registry,Store,Desktop host
-    class Calc remote
+    class Manifest manifest
+    class Runtime,Registry,Desktop host
+    class Calc,Notes remote
     class ReactLib shared
 ```
 
-### Why Module Federation?
+### Why Module Federation 2.x Runtime?
 
-- **의존성 공유** — React 등 공통 라이브러리를 Host와 Remote가 공유해 중복 번들 제거
-- **심리스한 UX** — iframe의 고질적인 문제(모달 잘림, 통신 복잡도) 없이 하나의 화면에 통합
+- **런타임 URL 주입** — remote 위치가 빌드 산출물에 박히지 않아, manifest 편집만으로 remote를 교체·확장
+- **장애 격리·복구** — `registerRemotes(..., { force: true })`로 실패한 remote의 컨테이너 캐시를 초기화하고 창 단위로 재시도. 이전(빌드 타임 방식)에는 전체 새로고침이 유일한 복구 수단이었음
+- **의존성 공유** — React 등 공통 라이브러리를 Host와 Remote가 싱글톤으로 공유해 중복 번들 제거
 
 ## Getting Started
 
-Module Federation 특성상 Remote는 빌드 후 preview 모드로 서빙해야 하며, Host보다 먼저 실행합니다.
+Rsbuild MF 플러그인은 dev 모드에서 remote 컨테이너를 바로 서빙합니다 (build + preview 불필요):
 
 ```bash
 pnpm install
 
-# Terminal 1: Remote (Calculator) — http://localhost:5001
-cd packages/remote-calculator
-pnpm build && pnpm preview
+# Terminal 1: 모든 Remote를 dev 모드로 — :5001 Calculator, :5002 Notes
+pnpm dev:remotes
 
 # Terminal 2: Host — http://localhost:5173
 pnpm dev
 ```
 
+### 장애 복구 데모
+
+1. Calculator와 Notes 창을 연다 — 둘 다 정상 동작
+2. Notes dev 서버를 종료하고 페이지를 새로고침한 뒤 Notes를 연다 → Notes 창만 에러, Calculator는 정상
+3. Notes 서버 재기동 후 에러 창의 **Try Again** 클릭 → 페이지 새로고침 없이 해당 창만 복구
+
+자세한 아키텍처와 remote 추가 절차는 [REMOTES.md](./REMOTES.md)를 참고하세요.
+
 ## Tech Stack
 
-React 19 · TypeScript · Vite · Zustand · Tailwind CSS · @originjs/vite-plugin-federation
+React 19 · TypeScript · Rsbuild (Rspack) · Module Federation 2.x · Zustand · Tailwind CSS · React Compiler

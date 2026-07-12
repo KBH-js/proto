@@ -1,11 +1,12 @@
-import { 
-  FileText, 
-  GitBranch, 
-  Calculator, 
-  Monitor, 
-  Settings, 
+import {
+  FileText,
+  GitBranch,
+  Calculator,
+  Monitor,
+  Settings,
   Package,
   Info,
+  StickyNote,
   LucideIcon
 } from 'lucide-react';
 
@@ -17,6 +18,7 @@ const iconMap: Record<string, LucideIcon> = {
   'settings': Settings,
   'package': Package,
   'info': Info,
+  'sticky-note': StickyNote,
 };
 
 interface DesktopIconProps {
@@ -37,6 +39,7 @@ export function DesktopIcon({ icon, label, onDoubleClick }: DesktopIconProps) {
       case 'calculator': return 'text-orange-400';
       case 'monitor': return 'text-blue-400';
       case 'settings': return 'text-gray-300';
+      case 'sticky-note': return 'text-yellow-400';
       default: return 'text-white';
     }
   };

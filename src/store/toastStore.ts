@@ -78,32 +78,44 @@ export const federationLogger = {
     );
   },
 
-  printBanner: () => {
-    // __REMOTE_CALCULATOR_URL__ is a build-time define (see vite.config.ts)
-    const remoteCalcUrl = typeof __REMOTE_CALCULATOR_URL__ !== 'undefined'
-      ? __REMOTE_CALCULATOR_URL__
-      : 'http://localhost:5001/assets/remoteEntry.js';
+  connectionEstablished: (remoteName: string, url: string) => {
+    console.log(
+      `%c[Module Federation]%c Connection established with %c${remoteName}%c at %c${url}`,
+      'background: #1a1a2e; color: #00d8ff; font-weight: bold; padding: 2px 6px; border-radius: 3px;',
+      'color: #bada55;',
+      'color: #00d8ff; font-weight: bold;',
+      'color: #bada55;',
+      'color: #aaa; font-style: italic;'
+    );
+  },
 
-    const remoteHost = (() => {
+  /** Prints the boot banner with the runtime-registered remote catalog */
+  printBanner: (remotes: Array<{ name: string; url: string }> = []) => {
+    const WIDTH = 67; // inner width between the ║ borders
+
+    const line = (content: string) => `║${content.padEnd(WIDTH)}║`;
+    const remoteHost = (url: string) => {
       try {
-        const url = new URL(remoteCalcUrl);
-        return `${url.protocol}//${url.host}`;
+        const parsed = new URL(url);
+        return `${parsed.protocol}//${parsed.host}`;
       } catch {
-        return remoteCalcUrl;
+        return url;
       }
-    })();
+    };
 
-    const hostUrl = window.location.origin;
+    const remoteLines = remotes.length > 0
+      ? remotes.map((r) => line(`    • ${r.name} → ${remoteHost(r.url)}`))
+      : [line('    (no remotes registered)')];
 
     console.log(
       `%c
-╔═══════════════════════════════════════════════════════════════════╗
-║             🚀 Proto OS - Micro-Frontend Architecture             ║
-╠═══════════════════════════════════════════════════════════════════╣
-║  Host: ${hostUrl.padEnd(55)}║
-║  Remotes:                                                         ║
-║    • remoteCalculator → ${remoteHost.padEnd(39)}║
-╚═══════════════════════════════════════════════════════════════════╝
+╔${'═'.repeat(WIDTH)}╗
+${line('           🚀 Proto OS - Micro-Frontend Architecture')}
+╠${'═'.repeat(WIDTH)}╣
+${line(`  Host: ${window.location.origin}`)}
+${line('  Remotes (registered at runtime):')}
+${remoteLines.join('\n')}
+╚${'═'.repeat(WIDTH)}╝
 `,
       'color: #00d8ff; font-family: monospace;'
     );

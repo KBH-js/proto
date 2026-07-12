@@ -1,45 +1,45 @@
 # CLAUDE.md
 
-pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation으로 Remote 앱(`packages/remote-calculator`)을 런타임에 로딩한다. 테스트는 없다.
+pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-calculator`, `packages/remote-notes`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 없다.
 
 ## Commands
 
 Host (루트):
 
 ```bash
-pnpm dev        # http://localhost:5173
-pnpm build      # tsc -b && vite build
-pnpm lint       # eslint . (호스트에만 lint 스크립트 있음)
+pnpm dev          # http://localhost:5173
+pnpm dev:remotes  # 모든 remote를 dev 모드로 병렬 실행 (:5001, :5002)
+pnpm build        # tsc -b && rsbuild build
+pnpm lint         # eslint . (호스트에만 lint 스크립트 있음)
 pnpm preview
 ```
 
-Remote (`packages/remote-calculator`):
+Remote (각 `packages/remote-*`): `pnpm dev` — Rsbuild MF 플러그인은 dev 모드에서 컨테이너를 바로 서빙한다 (build+preview 불필요).
 
-```bash
-pnpm build && pnpm preview   # http://localhost:5001
-```
+## Module Federation 구조 (중요)
 
-## Module Federation 제약 (중요)
-
-- `@originjs/vite-plugin-federation`은 Remote를 dev 모드로 서빙하지 못한다. Remote는 반드시 `build && preview`로 띄우고, **Host보다 먼저** 실행해야 한다.
-- Remote 코드 변경은 재빌드(`pnpm build && pnpm preview`)해야 Host에 반영된다.
-- Remote 로딩 실패 후 재시도는 페이지 새로고침이 필요하다 (federation 런타임/브라우저 캐싱).
-- React/ReactDOM은 singleton으로 공유되며 Host와 Remote의 `requiredVersion`(`^19.0.0`)이 일치해야 한다. Host는 `generate: true`, Remote는 `generate: false`.
-- 양쪽 vite config 모두 `build.target: 'esnext'` 필수 (top-level await).
-- Remote의 프로덕션 URL은 Host 빌드 시 `VITE_REMOTE_CALCULATOR_URL` 환경변수로 주입 (미설정 시 localhost:5001). Host와 Remote는 별도의 Vercel 프로젝트로 배포된다.
+- Host는 빌드 타임에 **remote를 선언하지 않는다**. 부팅 시 `public/remotes.manifest.json`을 fetch → `registerRemotes()` 런타임 등록 (`src/federation/runtime.ts`, `src/federation/catalog.ts`).
+- Remote 추가/이동은 manifest 수정으로 끝난다 — Host 재빌드 불필요. dev에선 `devEntryUrl`, prod에선 `entryUrl`(각 remote의 `mf-manifest.json`) 사용.
+- 모든 엔트리는 async boundary 필수: `main.tsx`는 `import('./bootstrap')` 한 줄. 어기면 "loadShareSync failed" 에러.
+- **exposed 모듈이 자기 CSS를 직접 import**해야 호스트에서 스타일이 주입된다. `body`/`html` 전역 규칙은 `standalone.css`(standalone 엔트리 전용)에만 — exposed 그래프에 넣으면 호스트 document를 오염시킨다.
+- Remote 로드 실패는 해당 창의 ErrorBoundary에 격리된다. **Try Again** = `registerRemotes([...], { force: true })`로 컨테이너 캐시 초기화 + 새 `React.lazy` 래퍼 교체. 래퍼는 반드시 `useState`로 보관 — `useMemo`는 React Compiler가 재계산을 건너뛰어 캐시된 rejection이 재사용된다 (WindowFrame.tsx).
+- React/ReactDOM은 singleton 공유, `requiredVersion: '^19.0.0'` 양쪽 일치 필수.
+- Remote dev 서버는 절대 URL `dev.assetPrefix` 필수 (cross-origin 청크 로드). prod는 `ASSET_PREFIX` env.
+- React Compiler는 호스트에만, `@rsbuild/plugin-babel`(pluginReact보다 앞) 경유.
 
 ## Architecture
 
+- `src/federation/` — MF 런타임 헬퍼(`runtime.ts`: registerAppRemotes/forceRefreshRemote/loadRemoteComponent)와 카탈로그 fetch/검증(`catalog.ts`).
+- `src/registry/appRegistry.ts` — zustand 스토어. 로컬 앱은 정적 시드, remote 앱은 `initializeAppRegistry()`가 manifest에서 머지. `status: loading|ready|degraded` — manifest 실패 시 로컬 앱만 노출(크래시 금지).
 - `src/store/windowStore.ts` — Zustand 전역 스토어. 창 열기/닫기/포커스(z-index)/최소화/최대화/이동/리사이즈.
-- `src/registry/appRegistry.ts` — componentType 문자열 → 컴포넌트/기본 설정 매핑. 앱 추가는 여기에 엔트리를 등록하는 것으로 끝난다. `externalUrl`만 있는 엔트리(Resume)는 창 대신 외부 링크로 열린다.
-- `src/components/` — atomic design (atoms/molecules/organisms/templates/shared). `organisms/WindowFrame.tsx`가 react-rnd 기반 창 본체.
+- `src/components/` — atomic design (atoms/molecules/organisms/templates/shared). `organisms/WindowFrame.tsx`가 react-rnd 기반 창 본체 + remote lazy 로딩/재시도 소유.
 - `src/config/portfolio.config.ts` — 소유자 정보, 소셜 링크, 이력서 URL 등 포트폴리오 설정.
-- `src/remotes.d.ts` — remote 모듈 import에 대한 타입 선언.
-- `packages/shared` — 디자인 토큰(`theme.js`)만 export하는 패키지, 빌드 스텝 없음.
+- `packages/shared` — 디자인 토큰(`theme.js`)만 export하는 패키지, 빌드 스텝 없음. remote들은 독립 배포를 위해 로컬 복사본(`src/theme.js`) 사용.
 
 ## 새 Remote 추가 절차
 
-1. `packages/remote-<name>`에 Vite + federation 설정으로 패키지 생성 — `name`, `filename: 'remoteEntry.js'`, `exposes`, singleton `shared` 설정. 고유 포트 사용 (`strictPort`, `cors: true`).
-2. Host `vite.config.ts`의 `remotes`에 entry URL 등록.
-3. `src/remotes.d.ts`에 모듈 선언 추가.
-4. `src/registry/appRegistry.ts`에 `lazy(() => import('remote<Name>/...'))` 엔트리 추가 (`isRemote: true`).
+1. `packages/remote-notes`를 미러링해 패키지 생성 — rsbuild.config.ts(`name`, `exposes`, singleton `shared`, `dts: false`, 고유 포트, `dev.assetPrefix`), async boundary 엔트리, exposed 모듈에 `import './index.css'`.
+2. `public/remotes.manifest.json`에 앱 엔트리 추가 — **호스트 코드 수정 없음**. 아이콘이 새 이름이면 `DesktopIcon.tsx`/`TaskbarItem.tsx`의 iconMap에 추가.
+3. 배포 시: 새 Vercel 프로젝트(root: 해당 패키지), CORS 헤더 유지(vercel.json), `ASSET_PREFIX` env 설정 후 manifest의 `entryUrl` 갱신.
+
+상세 문서: [REMOTES.md](./REMOTES.md)

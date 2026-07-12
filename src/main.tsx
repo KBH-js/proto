@@ -1,14 +1,9 @@
-import React, { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-
-// Debug: Expose Host's React instance for shared dependency verification
-// Remote apps can compare their React with window.HOST_REACT to confirm singleton
-(window as unknown as { HOST_REACT: typeof React }).HOST_REACT = React;
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+/**
+ * Host Entry Point (async boundary)
+ *
+ * Module Federation shared modules (react/react-dom) cannot be imported
+ * eagerly from the entry chunk. This dynamic import creates the async
+ * boundary that lets the MF runtime negotiate shared modules first.
+ * The real render logic lives in bootstrap.tsx.
+ */
+import('./bootstrap');

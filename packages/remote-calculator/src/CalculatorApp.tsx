@@ -1,4 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+// CSS must be imported by the exposed module itself so it is part of the
+// federated module graph and gets injected when the host loads this app.
+import './index.css';
 
 type Operation = '+' | '-' | '×' | '÷' | null;
 
@@ -54,41 +57,6 @@ function formatDisplay(value: number): string {
 export default function CalculatorApp() {
   const [state, setState] = useState<CalculatorState>(initialState);
   const { display, previousValue, operation } = state;
-
-  // Debug: verify the React singleton is actually shared via Module Federation.
-  // Compares createElement rather than the module object, which stays accurate
-  // even if the bundler wraps modules in a Proxy.
-  useEffect(() => {
-    const hostReact = (window as unknown as { HOST_REACT?: typeof React }).HOST_REACT;
-
-    if (!hostReact) {
-      console.warn('[Shared Dependency Check] HOST_REACT not found. Running standalone?');
-      return;
-    }
-
-    const remoteReact = React;
-    const instanceEqual = hostReact === remoteReact;
-    const createElementEqual = hostReact.createElement === remoteReact.createElement;
-
-    console.group('🔍 Module Federation Debug');
-    console.log('Host React Version:', hostReact.version);
-    console.log('Remote React Version:', remoteReact.version);
-    console.log(
-      `%cInstance Equal: ${instanceEqual}`,
-      instanceEqual ? 'color: green; font-weight: bold;' : 'color: orange;'
-    );
-    console.log(
-      `%ccreateElement Equal: ${createElementEqual}`,
-      createElementEqual ? 'color: green; font-weight: bold;' : 'color: red; font-weight: bold;'
-    );
-
-    if (createElementEqual) {
-      console.log('✅ Shared dependency working - same React core functions');
-    } else {
-      console.warn('❌ Duplicate React instances - createElement differs!');
-    }
-    console.groupEnd();
-  }, []);
 
   const inputDigit = useCallback((digit: string) => {
     setState((prev) => {
