@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { useWindowStore } from '../../store/windowStore';
 import { useAppRegistry } from '../../registry/appRegistry';
-import { TASKBAR_HEIGHT, AppConfig } from '../../types/window.types';
+import { TASKBAR_HEIGHT } from '../../types/window.types';
 import { DesktopIcon } from '../molecules/DesktopIcon';
+import { useAppLauncher } from '../../hooks/useAppLauncher';
 
 /**
  * Desktop component with app launcher icons.
@@ -11,24 +11,12 @@ import { DesktopIcon } from '../molecules/DesktopIcon';
  * remote catalog resolves at runtime.
  */
 export function Desktop() {
-  const openWindow = useWindowStore((state) => state.openWindow);
+  const launchApp = useAppLauncher();
   const entries = useAppRegistry((state) => state.entries);
   const availableApps = useMemo(
     () => Object.values(entries).map((entry) => entry.defaultConfig),
     [entries],
   );
-
-  const handleAppLaunch = (app: AppConfig) => {
-    // If app has an external URL, open it in a new tab
-    if (app.externalUrl) {
-      window.open(app.externalUrl, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    
-    // Otherwise, open as a window
-    console.log('Launching app:', app.componentType, app.title);
-    openWindow(app.componentType, app.title);
-  };
 
   return (
     <div
@@ -58,7 +46,7 @@ export function Desktop() {
             key={app.componentType}
             icon={app.icon}
             label={app.title}
-            onLaunch={() => handleAppLaunch(app)}
+            onLaunch={() => launchApp(app)}
           />
         ))}
       </div>

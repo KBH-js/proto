@@ -1,17 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useWindowStore } from '../../store/windowStore';
 import { useToastStore } from '../../store/toastStore';
+import { useAppRegistry } from '../../registry/appRegistry';
+import { useAppLauncher } from '../../hooks/useAppLauncher';
+import { getAppIcon } from '../shared/appIcons';
 import { TASKBAR_HEIGHT, TASKBAR_Z_INDEX } from '../../types/window.types';
 import { TaskbarItem } from '../molecules/TaskbarItem';
 import { portfolioConfig } from '../../config/portfolio.config';
-import { 
-  Terminal, 
-  Github, 
-  Linkedin, 
-  Mail, 
+import {
+  Terminal,
+  Github,
+  Linkedin,
+  Mail,
   ExternalLink,
   User,
-  Copy
+  Copy,
+  Package
 } from 'lucide-react';
 
 interface StartMenuLink {
@@ -49,13 +53,18 @@ export function Taskbar() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const startMenuRef = useRef<HTMLDivElement>(null);
   
-  const {
-    windows,
-    activeWindowId,
-    minimizeWindow,
-    restoreWindow,
-    focusWindow,
-  } = useWindowStore();
+  const windows = useWindowStore((state) => state.windows);
+  const activeWindowId = useWindowStore((state) => state.activeWindowId);
+  const minimizeWindow = useWindowStore((state) => state.minimizeWindow);
+  const restoreWindow = useWindowStore((state) => state.restoreWindow);
+  const focusWindow = useWindowStore((state) => state.focusWindow);
+
+  const entries = useAppRegistry((state) => state.entries);
+  const availableApps = useMemo(
+    () => Object.values(entries).map((entry) => entry.defaultConfig),
+    [entries],
+  );
+  const launchApp = useAppLauncher();
 
   const addToast = useToastStore((state) => state.addToast);
 
@@ -150,6 +159,30 @@ export function Taskbar() {
                   <h3 className="text-gray-800 font-semibold">KBH-Desktop</h3>
                 </div>
               </div>
+            </div>
+
+            {/* Apps */}
+            <div className="p-2 border-b border-black/5">
+              <p className="px-2 py-1 text-xs text-gray-500 uppercase tracking-wider">Apps</p>
+              {availableApps.map((app) => {
+                const AppIcon = getAppIcon(app.icon) ?? Package;
+                return (
+                  <button
+                    key={app.componentType}
+                    onClick={() => {
+                      launchApp(app);
+                      setIsStartMenuOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 transition-colors group"
+                  >
+                    <AppIcon className="w-5 h-5 text-gray-500 group-hover:text-gray-800 transition-colors" />
+                    <span className="flex-1 text-left text-sm text-gray-800">{app.title}</span>
+                    {app.externalUrl && (
+                      <ExternalLink className="w-3 h-3 text-gray-400 group-hover:text-gray-600" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             {/* External Links */}

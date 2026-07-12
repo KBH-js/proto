@@ -71,18 +71,18 @@ function RemoteLoadTracker({
  * Uses react-rnd for smooth drag/resize interactions.
  */
 export function WindowFrame({ window: win }: WindowFrameProps) {
-  const {
-    activeWindowId,
-    focusWindow,
-    closeWindow,
-    minimizeWindow,
-    maximizeWindow,
-    restoreWindow,
-    snapWindow,
-    unsnapWindow,
-    updateWindowPosition,
-    updateWindowSize,
-  } = useWindowStore();
+  // Individual selectors: actions are referentially stable, so this
+  // component only re-renders when activeWindowId (or its own props) change
+  const activeWindowId = useWindowStore((state) => state.activeWindowId);
+  const focusWindow = useWindowStore((state) => state.focusWindow);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
+  const minimizeWindow = useWindowStore((state) => state.minimizeWindow);
+  const maximizeWindow = useWindowStore((state) => state.maximizeWindow);
+  const restoreWindow = useWindowStore((state) => state.restoreWindow);
+  const snapWindow = useWindowStore((state) => state.snapWindow);
+  const unsnapWindow = useWindowStore((state) => state.unsnapWindow);
+  const updateWindowPosition = useWindowStore((state) => state.updateWindowPosition);
+  const updateWindowSize = useWindowStore((state) => state.updateWindowSize);
 
   const setPreviewZone = useSnapPreviewStore((state) => state.setZone);
   const addToast = useToastStore((state) => state.addToast);
@@ -285,6 +285,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           onMinimize={handleMinimize}
           onMaximize={handleMaximizeToggle}
           isRemote={isRemote}
+          icon={appEntry?.defaultConfig.icon}
         />
 
         {/* Content Area */}

@@ -1,28 +1,7 @@
 import { WindowState } from '../../types/window.types';
 import { getApp } from '../../registry/appRegistry';
-import {
-  FileText,
-  GitBranch,
-  Calculator,
-  Monitor,
-  Settings,
-  Package,
-  Info,
-  StickyNote,
-  FileIcon,
-  LucideIcon
-} from 'lucide-react';
-
-const iconMap: Record<string, LucideIcon> = {
-  'file-text': FileText,
-  'git-branch': GitBranch,
-  'calculator': Calculator,
-  'monitor': Monitor,
-  'settings': Settings,
-  'package': Package,
-  'info': Info,
-  'sticky-note': StickyNote,
-};
+import { getAppIcon } from '../shared/appIcons';
+import { Package } from 'lucide-react';
 
 interface TaskbarItemProps {
   window: WindowState;
@@ -32,8 +11,7 @@ interface TaskbarItemProps {
 
 export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
   const app = getApp(window.componentType);
-  const iconName = app?.defaultConfig.icon ?? 'package';
-  const IconComponent = iconMap[iconName];
+  const IconComponent = getAppIcon(app?.defaultConfig.icon ?? '') ?? Package;
 
   return (
     <button
@@ -49,11 +27,7 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
       `}
       title={window.title}
     >
-      {IconComponent ? (
-        <IconComponent className="w-5 h-5 text-gray-700" />
-      ) : (
-        <FileIcon className="w-5 h-5 text-gray-700" />
-      )}
+      <IconComponent className="w-5 h-5 text-gray-700" />
       <span className="text-sm text-gray-800 truncate max-w-[120px]">
         {window.title}
       </span>
