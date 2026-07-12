@@ -8,12 +8,33 @@ import {
   BASE_Z_INDEX,
   TASKBAR_HEIGHT,
   DEFAULT_MIN_SIZE,
+  CASCADE_OFFSET,
 } from '../types/window.types';
+import { getAppDefaultSize } from '../registry/appRegistry';
+import { clampSize, getViewport, getWorkAreaHeight } from '../utils/windowGeometry';
 
-const getNextZIndex = (windows: WindowState[]): number => {
-  if (windows.length === 0) return BASE_Z_INDEX;
-  const maxZ = Math.max(...windows.map((w) => w.zIndex));
-  return maxZ + 1;
+/**
+ * Raise the given window to the top and compact all zIndexes to
+ * BASE_Z_INDEX..BASE_Z_INDEX+n-1, so they never grow past the taskbar.
+ * Returns the same array reference when nothing changed.
+ */
+const raiseAndNormalize = (windows: WindowState[], id: string): WindowState[] => {
+  const order = [...windows].sort((a, b) => a.zIndex - b.zIndex).map((w) => w.id);
+  const idx = order.indexOf(id);
+  if (idx !== -1) {
+    order.splice(idx, 1);
+    order.push(id);
+  }
+  const rank = new Map(order.map((windowId, i) => [windowId, BASE_Z_INDEX + i]));
+
+  let changed = false;
+  const next = windows.map((w) => {
+    const zIndex = rank.get(w.id) ?? w.zIndex;
+    if (zIndex === w.zIndex) return w;
+    changed = true;
+    return { ...w, zIndex };
+  });
+  return changed ? next : windows;
 };
 
 const getDefaultSize = (): Size => ({
@@ -26,28 +47,67 @@ const getCenteredPosition = (size: Size): Position => ({
   y: Math.floor((window.innerHeight - TASKBAR_HEIGHT - size.h) / 2),
 });
 
+/**
+ * Center + cascade: each already-open window pushes the new one
+ * CASCADE_OFFSET px down-right, wrapping back to center when the
+ * window would leave the work area.
+ */
+const getCascadePosition = (size: Size, openCount: number): Position => {
+  const viewport = getViewport();
+  const base = getCenteredPosition(size);
+  const room = Math.max(
+    0,
+    Math.min(
+      viewport.width - size.w - base.x,
+      getWorkAreaHeight(viewport) - size.h - base.y,
+    ),
+  );
+  const steps = Math.floor(room / CASCADE_OFFSET) + 1;
+  const offset = (openCount % steps) * CASCADE_OFFSET;
+  return { x: base.x + offset, y: base.y + offset };
+};
+
 export const useWindowStore = create<WindowStore>((set, get) => ({
   windows: [],
   activeWindowId: null,
 
   openWindow: (componentType: string, title: string) => {
-    const size = getDefaultSize();
-    const position = getCenteredPosition(size);
     const { windows } = get();
+
+    // Single instance: relaunching an open app restores and focuses it
+    const existing = windows.find((w) => w.componentType === componentType);
+    if (existing) {
+      set((state) => ({
+        windows: raiseAndNormalize(
+          state.windows.map((w) =>
+            w.id === existing.id ? { ...w, isMinimized: false } : w
+          ),
+          existing.id,
+        ),
+        activeWindowId: existing.id,
+      }));
+      return;
+    }
+
+    const size = clampSize(
+      getAppDefaultSize(componentType, getDefaultSize()),
+      getViewport(),
+    );
+    const position = getCascadePosition(size, windows.length);
 
     const newWindow: WindowState = {
       id: uuidv4(),
       title,
       position,
       size,
-      zIndex: getNextZIndex(windows),
+      zIndex: BASE_Z_INDEX + windows.length,
       isMinimized: false,
       isMaximized: false,
       componentType,
     };
 
     set((state) => ({
-      windows: [...state.windows, newWindow],
+      windows: raiseAndNormalize([...state.windows, newWindow], newWindow.id),
       activeWindowId: newWindow.id,
     }));
   },
@@ -75,13 +135,8 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   focusWindow: (id: string) => {
-    const { windows } = get();
-    const nextZIndex = getNextZIndex(windows);
-
     set((state) => ({
-      windows: state.windows.map((w) =>
-        w.id === id ? { ...w, zIndex: nextZIndex } : w
-      ),
+      windows: raiseAndNormalize(state.windows, id),
       activeWindowId: id,
     }));
   },
@@ -136,34 +191,32 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
 
   restoreWindow: (id: string) => {
     set((state) => {
-      const { windows } = state;
-      const nextZIndex = getNextZIndex(windows);
+      const windows = state.windows.map((w) => {
+        if (w.id !== id) return w;
+
+        if (w.isMinimized) {
+          return {
+            ...w,
+            isMinimized: false,
+          };
+        }
+
+        if (w.isMaximized) {
+          return {
+            ...w,
+            isMaximized: false,
+            position: w.prevPosition ?? getCenteredPosition(w.prevSize ?? getDefaultSize()),
+            size: w.prevSize ?? getDefaultSize(),
+            prevPosition: undefined,
+            prevSize: undefined,
+          };
+        }
+
+        return w;
+      });
 
       return {
-        windows: windows.map((w) => {
-          if (w.id !== id) return w;
-
-          if (w.isMinimized) {
-            return {
-              ...w,
-              isMinimized: false,
-              zIndex: nextZIndex,
-            };
-          }
-
-          if (w.isMaximized) {
-            return {
-              ...w,
-              isMaximized: false,
-              position: w.prevPosition ?? getCenteredPosition(w.prevSize ?? getDefaultSize()),
-              size: w.prevSize ?? getDefaultSize(),
-              prevPosition: undefined,
-              prevSize: undefined,
-            };
-          }
-
-          return w;
-        }),
+        windows: raiseAndNormalize(windows, id),
         activeWindowId: id,
       };
     });

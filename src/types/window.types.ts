@@ -54,5 +54,9 @@ export interface WindowStore {
 
 export const DEFAULT_MIN_SIZE: Size = { w: 200, h: 150 };
 export const TASKBAR_HEIGHT = 52;
+/** Must match TitleBar's h-9 — used to keep titlebars reachable above the taskbar */
+export const TITLEBAR_HEIGHT = 36;
 export const BASE_Z_INDEX = 100;
 export const TASKBAR_Z_INDEX = 9999;
+/** Offset applied per already-open window when opening a new one */
+export const CASCADE_OFFSET = 24;
