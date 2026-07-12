@@ -58,7 +58,7 @@ export function Desktop() {
             key={app.componentType}
             icon={app.icon}
             label={app.title}
-            onDoubleClick={() => handleAppLaunch(app)}
+            onLaunch={() => handleAppLaunch(app)}
           />
         ))}
       </div>

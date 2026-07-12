@@ -13,6 +13,7 @@ import {
   CASCADE_OFFSET,
 } from '../types/window.types';
 import { getAppDefaultSize } from '../registry/appRegistry';
+import { isSmallScreen } from '../utils/device';
 import {
   clampPosition,
   clampSize,
@@ -174,20 +175,28 @@ export const useWindowStore = create<WindowStore>()(
       return;
     }
 
+    const viewport = getViewport();
     const size = clampSize(
       getAppDefaultSize(componentType, getDefaultSize()),
-      getViewport(),
+      viewport,
     );
     const position = getCascadePosition(size, windows.length);
+
+    // Small screens get no useful floating layout — open maximized,
+    // keeping the floating rect for restore
+    const openMaximized = isSmallScreen();
+    const maximizedRect = getSnapRect('top', viewport);
 
     const newWindow: WindowState = {
       id: uuidv4(),
       title,
-      position,
-      size,
+      position: openMaximized ? maximizedRect.position : position,
+      size: openMaximized ? maximizedRect.size : size,
+      prevPosition: openMaximized ? position : undefined,
+      prevSize: openMaximized ? size : undefined,
       zIndex: BASE_Z_INDEX + windows.length,
       isMinimized: false,
-      isMaximized: false,
+      isMaximized: openMaximized,
       componentType,
     };
 

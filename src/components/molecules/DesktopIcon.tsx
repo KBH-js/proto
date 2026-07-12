@@ -9,6 +9,7 @@ import {
   StickyNote,
   LucideIcon
 } from 'lucide-react';
+import { isTouchDevice } from '../../utils/device';
 
 const iconMap: Record<string, LucideIcon> = {
   'file-text': FileText,
@@ -25,11 +26,16 @@ interface DesktopIconProps {
   /** Lucide icon name (from iconMap) or an emoji fallback */
   icon: string;
   label: string;
-  onDoubleClick: () => void;
+  onLaunch: () => void;
 }
 
-export function DesktopIcon({ icon, label, onDoubleClick }: DesktopIconProps) {
+export function DesktopIcon({ icon, label, onLaunch }: DesktopIconProps) {
   const IconComponent = iconMap[icon];
+
+  // Touch devices have no double-click — launch on a single tap there
+  const launchProps = isTouchDevice()
+    ? { onClick: onLaunch }
+    : { onDoubleClick: onLaunch };
 
   const getIconColor = () => {
     switch (icon) {
@@ -46,7 +52,7 @@ export function DesktopIcon({ icon, label, onDoubleClick }: DesktopIconProps) {
 
   return (
     <button
-      onDoubleClick={onDoubleClick}
+      {...launchProps}
       className="
         flex flex-col items-center gap-1 p-2 rounded-lg
         w-20 cursor-pointer
