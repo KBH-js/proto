@@ -1,8 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+// CSS must be imported by the exposed module itself so it is part of the
+// federated module graph and gets injected when the host loads this app.
+import './index.css';
 
 /**
  * Calculator App Component
- * 
+ *
  * A simple calculator with basic arithmetic operations.
  * Designed to be consumed by the host app via Module Federation,
  * but can also run standalone for development/testing.
@@ -72,40 +75,6 @@ function formatDisplay(value: number): string {
 export default function CalculatorApp() {
   const [state, setState] = useState<CalculatorState>(initialState);
   const { display, previousValue, operation } = state;
-
-  // Debug: Verify React singleton (shared dependency via Module Federation)
-  useEffect(() => {
-    const hostReact = (window as unknown as { HOST_REACT?: typeof React }).HOST_REACT;
-    
-    if (!hostReact) {
-      console.warn('[Shared Dependency Check] HOST_REACT not found. Running standalone?');
-      return;
-    }
-
-    const remoteReact = React;
-    const instanceEqual = hostReact === remoteReact;
-    // Compare internal core function - more accurate even if bundler wraps objects in Proxy
-    const createElementEqual = hostReact.createElement === remoteReact.createElement;
-
-    console.group('🔍 Module Federation Debug');
-    console.log('Host React Version:', hostReact.version);
-    console.log('Remote React Version:', remoteReact.version);
-    console.log(
-      `%cInstance Equal: ${instanceEqual}`,
-      instanceEqual ? 'color: green; font-weight: bold;' : 'color: orange;'
-    );
-    console.log(
-      `%ccreateElement Equal: ${createElementEqual}`,
-      createElementEqual ? 'color: green; font-weight: bold;' : 'color: red; font-weight: bold;'
-    );
-    
-    if (createElementEqual) {
-      console.log('✅ Shared dependency working - same React core functions');
-    } else {
-      console.warn('❌ Duplicate React instances - createElement differs!');
-    }
-    console.groupEnd();
-  }, []);
 
   /**
    * Handle digit input (0-9)

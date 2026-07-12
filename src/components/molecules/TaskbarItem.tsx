@@ -1,13 +1,14 @@
 import { WindowState } from '../../types/window.types';
 import { getApp } from '../../registry/appRegistry';
-import { 
-  FileText, 
-  GitBranch, 
-  Calculator, 
-  Monitor, 
-  Settings, 
+import {
+  FileText,
+  GitBranch,
+  Calculator,
+  Monitor,
+  Settings,
   Package,
   Info,
+  StickyNote,
   FileIcon,
   LucideIcon
 } from 'lucide-react';
@@ -21,6 +22,7 @@ const iconMap: Record<string, LucideIcon> = {
   'settings': Settings,
   'package': Package,
   'info': Info,
+  'sticky-note': StickyNote,
 };
 
 interface TaskbarItemProps {

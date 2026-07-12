@@ -1,5 +1,5 @@
 import { Component, ReactNode } from 'react';
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle, RotateCcw, X } from 'lucide-react';
 import { federationLogger } from '../../store/toastStore';
 
 /**
@@ -29,6 +29,13 @@ interface ErrorBoundaryProps {
   fallback?: ReactNode;
   /** Callback to close the window (used for remote app failures) */
   onClose?: () => void;
+  /**
+   * Callback to retry loading the failed app (remote apps only).
+   * Must invalidate the failed module (fresh lazy wrapper + force
+   * re-registration) BEFORE this boundary re-renders its children —
+   * see WindowFrame.handleRetry.
+   */
+  onRetry?: () => void;
 }
 
 interface ErrorBoundaryState {
@@ -70,9 +77,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     console.error('Component stack:', errorInfo.componentStack);
   }
 
+  /**
+   * Retry loading the failed app: let the parent invalidate the failed
+   * module first, then clear the error so the fresh children render.
+   */
+  handleRetry = (): void => {
+    this.props.onRetry?.();
+    this.setState({ hasError: false, error: null });
+  };
+
   render(): ReactNode {
     const { hasError, error } = this.state;
-    const { appName = 'Application', children, fallback, onClose } = this.props;
+    const { appName = 'Application', children, fallback, onClose, onRetry } = this.props;
 
     if (hasError) {
       // Use custom fallback if provided
@@ -95,7 +111,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           
           {/* Secondary Message */}
           <p className="text-gray-500 text-sm mb-4 max-w-xs">
-            The remote application could not be loaded. Please ensure the service is running and try opening the app again.
+            The remote application could not be loaded. Make sure the remote service is running, then try again — only this window is affected.
           </p>
           
           {/* Error Details (collapsed by default in production) */}
@@ -110,16 +126,27 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </details>
           )}
           
-          {/* Close Button */}
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
-            >
-              <X className="w-4 h-4" />
-              <span>Close Window</span>
-            </button>
-          )}
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            {onRetry && (
+              <button
+                onClick={this.handleRetry}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Try Again</span>
+              </button>
+            )}
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <X className="w-4 h-4" />
+                <span>Close Window</span>
+              </button>
+            )}
+          </div>
         </div>
       );
     }

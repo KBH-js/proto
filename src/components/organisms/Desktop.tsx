@@ -1,15 +1,22 @@
+import { useMemo } from 'react';
 import { useWindowStore } from '../../store/windowStore';
-import { getAvailableApps } from '../../registry/appRegistry';
+import { useAppRegistry } from '../../registry/appRegistry';
 import { TASKBAR_HEIGHT, AppConfig } from '../../types/window.types';
 import { DesktopIcon } from '../molecules/DesktopIcon';
 
 /**
  * Desktop component with app launcher icons.
  * Positioned behind all windows with a gradient background.
+ * Subscribes to the app registry so icons appear when the
+ * remote catalog resolves at runtime.
  */
 export function Desktop() {
   const openWindow = useWindowStore((state) => state.openWindow);
-  const availableApps = getAvailableApps();
+  const entries = useAppRegistry((state) => state.entries);
+  const availableApps = useMemo(
+    () => Object.values(entries).map((entry) => entry.defaultConfig),
+    [entries],
+  );
 
   const handleAppLaunch = (app: AppConfig) => {
     // If app has an external URL, open it in a new tab

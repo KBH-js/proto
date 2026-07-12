@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "calculator",
+      "title": "Calculator",
+      "icon": "calculator",
+      "type": "remote",
+      "defaultSize": { "w": 320, "h": 480 },
+      "remote": {
+        "name": "remoteCalculator",
+        "module": "CalculatorApp",
+        "entryUrl": "https://REPLACE-WITH-CALCULATOR-DEPLOYMENT.vercel.app/mf-manifest.json",
+        "devEntryUrl": "http://localhost:5001/mf-manifest.json"
+      }
+    },
+    {
+      "id": "notes",
+      "title": "Notes",
+      "icon": "sticky-note",
+      "type": "remote",
+      "defaultSize": { "w": 380, "h": 420 },
+      "remote": {
+        "name": "remoteNotes",
+        "module": "NotesApp",
+        "entryUrl": "https://REPLACE-WITH-NOTES-DEPLOYMENT.vercel.app/mf-manifest.json",
+        "devEntryUrl": "http://localhost:5002/mf-manifest.json"
+      }
+    }
+  ]
+}

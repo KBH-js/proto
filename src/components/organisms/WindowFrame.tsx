@@ -1,8 +1,9 @@
-import { Suspense, useRef, useEffect } from 'react';
+import { Suspense, lazy, useCallback, useRef, useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import { WindowState, DEFAULT_MIN_SIZE } from '../../types/window.types';
 import { useWindowStore } from '../../store/windowStore';
-import { getApp } from '../../registry/appRegistry';
+import { useAppRegistry } from '../../registry/appRegistry';
+import { loadRemoteComponent, forceRefreshRemote } from '../../federation/runtime';
 import { TitleBar, DRAG_HANDLE_CLASS } from './TitleBar';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { LoadingFallback } from '../shared/LoadingFallback';
@@ -59,11 +60,39 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   const loadStartTime = useRef<number>(Date.now());
   const hasLoggedRef = useRef(false);
 
-  // Get the app component from registry
-  const appEntry = getApp(win.componentType);
-  const AppComponent = appEntry?.component;
+  // Get the app entry from the registry (reactive — remote apps appear
+  // after the catalog resolves at runtime)
+  const appEntry = useAppRegistry((state) => state.entries[win.componentType]);
+  const remote = appEntry?.remote;
   const isRemote = appEntry?.isRemote ?? false;
-  const remoteModule = appEntry?.remoteModule;
+  const remoteModule = remote ? `${remote.name}/${remote.module}` : undefined;
+
+  // Remote apps get a per-window lazy wrapper that loads through the MF
+  // runtime — failures reject into this window's ErrorBoundary only.
+  // React.lazy permanently caches a rejected load promise, so retry must
+  // produce a FRESH wrapper. The wrapper lives in useState (not useMemo):
+  // state updates survive React Compiler memoization, guaranteeing the
+  // stale wrapper is actually replaced on retry.
+  const [remoteComponent, setRemoteComponent] = useState(() =>
+    remote ? lazy(() => loadRemoteComponent(`${remote.name}/${remote.module}`)) : null,
+  );
+
+  const AppComponent = appEntry?.component ?? remoteComponent;
+
+  // Recovery flow for a failed remote load: reset the MF runtime's cached
+  // container for this remote (force re-registration), then swap in a
+  // fresh lazy wrapper. Other windows — including healthy windows of the
+  // SAME remote — are unaffected: their module code is already running
+  // in the React tree.
+  const handleRetry = useCallback(() => {
+    if (!remote) return;
+    forceRefreshRemote({ name: remote.name, entry: remote.entry });
+    hasLoggedRef.current = false;
+    loadStartTime.current = Date.now();
+    setRemoteComponent(() =>
+      lazy(() => loadRemoteComponent(`${remote.name}/${remote.module}`)),
+    );
+  }, [remote]);
 
   // Callback when remote component loads successfully
   const handleRemoteLoaded = () => {
@@ -166,7 +195,11 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
         {/* Content Area */}
         <div className="flex-1 bg-white overflow-auto">
           {AppComponent ? (
-            <ErrorBoundary appName={win.title} onClose={() => closeWindow(win.id)}>
+            <ErrorBoundary
+              appName={win.title}
+              onClose={() => closeWindow(win.id)}
+              onRetry={isRemote ? handleRetry : undefined}
+            >
               <Suspense fallback={<LoadingFallback message={`Loading ${win.title}...`} />}>
                 <RemoteLoadTracker onLoad={handleRemoteLoaded} isRemote={isRemote}>
                   <AppComponent />

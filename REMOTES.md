@@ -1,480 +1,237 @@
 # Remote Micro-Frontend Architecture
 
-This document describes the Module Federation architecture used to integrate remote micro-frontend applications into the Proto OS host.
+This document describes the **Module Federation 2.x runtime architecture** used to integrate remote micro-frontend applications into the Proto OS host.
 
 ## Overview
 
-The Proto OS uses **Module Federation** (via `@originjs/vite-plugin-federation`) to load remote applications at runtime. This enables:
+The host is built with **Rsbuild (Rspack)** and `@module-federation/rsbuild-plugin`, but declares **no remotes at build time**. Instead:
 
-- **Independent deployability**: Remotes can be updated without redeploying the host
-- **Team autonomy**: Different teams can own different micro-frontends
-- **Technology flexibility**: Remotes could use different versions or even different frameworks (with limitations)
-- **Graceful degradation**: Host continues working if a remote is unavailable
+1. At boot, the host fetches the **app catalog** (`public/remotes.manifest.json`).
+2. Each remote is registered with the MF runtime via `registerRemotes()`.
+3. When a window opens, the exposed module is loaded via `loadRemote()` wrapped in a per-window `React.lazy`.
+
+This enables:
+
+- **Runtime URL injection**: remote locations live in a manifest (runtime data), not in build output — add/move/update remotes without rebuilding the host
+- **Independent deployability**: each remote is its own Vercel project with its own release cycle
+- **Failure isolation & recovery**: a failed remote breaks only its own window; the in-window **Try Again** button force-re-registers the remote and reloads just that frame — no page refresh
+- **Shared singletons**: react/react-dom are negotiated through the MF shared scope
 
 ### Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Host (Proto OS)                         │
-│                    http://localhost:5173                    │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │  WindowManager  │  Desktop  │  Taskbar  │  ...      │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                           │                                 │
-│            ┌──────────────┼──────────────┐                 │
-│            ▼              ▼              ▼                 │
-│     ┌──────────┐   ┌──────────┐   ┌──────────┐            │
-│     │ Local    │   │ Remote   │   │ Remote   │            │
-│     │ Apps     │   │ Loader   │   │ Loader   │            │
-│     │ (About,  │   │ (Lazy)   │   │ (Lazy)   │            │
-│     │ Settings)│   └────┬─────┘   └────┬─────┘            │
-│     └──────────┘        │              │                   │
-└─────────────────────────┼──────────────┼───────────────────┘
-                          │              │
-                          ▼              ▼
-              ┌───────────────┐  ┌───────────────┐
-              │ Calculator    │  │ Future Remote │
-              │ Remote        │  │               │
-              │ :5001         │  │ :5002         │
-              └───────────────┘  └───────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                     Host (Proto OS) :5173                     │
+│                                                               │
+│  boot ──► fetch /remotes.manifest.json                        │
+│              │                                                │
+│              ▼                                                │
+│        registerRemotes([{name, entry}, ...])                  │
+│              │                                                │
+│  open window ──► React.lazy(() => loadRemote('name/Module'))  │
+│              │                     │ on failure               │
+│              │                     ▼                          │
+│              │        ErrorBoundary (this window only)        │
+│              │            └─ Try Again ─► force re-register   │
+│              ▼                            + fresh lazy        │
+│     ┌──────────────┐   ┌──────────────┐                       │
+│     │ Local Apps   │   │ Remote Apps  │                       │
+│     │ (About, ...) │   │ (lazy MF)    │                       │
+│     └──────────────┘   └──────┬───────┘                       │
+└───────────────────────────────┼───────────────────────────────┘
+                 ┌──────────────┴──────────────┐
+                 ▼                             ▼
+      ┌───────────────────┐        ┌───────────────────┐
+      │ Calculator :5001  │        │ Notes :5002       │
+      │ mf-manifest.json  │        │ mf-manifest.json  │
+      └───────────────────┘        └───────────────────┘
 ```
 
 ## Quick Start
 
 ### Development Environment
 
-**Important**: Module Federation with `@originjs/vite-plugin-federation` requires remotes to be **built and served in preview mode**, not dev mode.
-
-#### 1. Start the Remote (first)
+Rsbuild serves a real MF container in dev mode — **no build+preview dance**.
 
 ```bash
-cd packages/remote-calculator
-pnpm build && pnpm preview
-```
+# Terminal 1: all remotes in dev mode
+pnpm dev:remotes
 
-This builds the remote and serves it at `http://localhost:5001`.
-
-#### 2. Start the Host (second)
-
-```bash
-# In the repo root
+# Terminal 2: host
 pnpm dev
 ```
 
-Host starts at `http://localhost:5173`.
+| Application | Port | Entry served |
+|-------------|------|--------------|
+| Host OS | 5173 | - |
+| Remote Calculator | 5001 | `/mf-manifest.json`, `/remoteEntry.js` |
+| Remote Notes | 5002 | `/mf-manifest.json`, `/remoteEntry.js` |
 
-#### 3. Access the Application
+> Remotes can start **after** the host — a remote is only contacted when its window opens. If it's down, that window shows an error UI with a retry button.
 
-Open `http://localhost:5173` in your browser. Click the Calculator icon on the desktop to load the remote micro-frontend.
-
-### Startup Order
-
-| Order | Application | Command | URL |
-|-------|-------------|---------|-----|
-| 1 | Remote Calculator | `pnpm build && pnpm preview` | http://localhost:5001 |
-| 2 | Host OS | `pnpm dev` | http://localhost:5173 |
-
-> **Note**: The remote must be running before the host attempts to load it. If the remote is unavailable, the host will display an error boundary.
-
-## Creating a New Remote App
-
-### Step 1: Create Package Directory
-
-```bash
-mkdir -p packages/remote-myapp
-cd packages/remote-myapp
-```
-
-### Step 2: Initialize Package
-
-```bash
-pnpm init
-```
-
-### Step 3: Install Dependencies
-
-```bash
-pnpm add react react-dom
-pnpm add -D vite @vitejs/plugin-react @originjs/vite-plugin-federation typescript @types/react @types/react-dom
-```
-
-### Step 4: Create vite.config.ts
-
-```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import federation from '@originjs/vite-plugin-federation';
-
-export default defineConfig({
-  plugins: [
-    react(),
-    federation({
-      // Unique name for this remote (used by host to reference it)
-      name: 'remoteMyApp',
-      
-      // The generated manifest file that host loads
-      filename: 'remoteEntry.js',
-      
-      // Expose components for the host to consume
-      // Format: { '<import-path>': '<file-path>' }
-      exposes: {
-        './MyAppComponent': './src/MyAppComponent.tsx',
-      },
-      
-      // Shared dependencies - CRITICAL for React apps
-      shared: {
-        react: {
-          singleton: true,           // Only one React instance
-          requiredVersion: '^19.0.0', // Match host version
-        },
-        'react-dom': {
-          singleton: true,
-          requiredVersion: '^19.0.0',
-        },
-      },
-    }),
-  ],
-  
-  server: {
-    port: 5002,          // Choose a unique port
-    strictPort: true,
-    cors: true,
-  },
-  
-  preview: {
-    port: 5002,
-    strictPort: true,
-    cors: true,
-  },
-  
-  build: {
-    target: 'esnext',    // Required for Module Federation
-    minify: false,       // Easier debugging
-    cssCodeSplit: false,
-  },
-});
-```
-
-### Step 5: Create Your Component
-
-```typescript
-// src/MyAppComponent.tsx
-export default function MyAppComponent() {
-  return (
-    <div className="p-4">
-      <h1>My Remote App</h1>
-    </div>
-  );
-}
-```
-
-### Step 6: Add Package Scripts
+## The App Catalog (`public/remotes.manifest.json`)
 
 ```json
 {
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  }
+  "version": 1,
+  "apps": [
+    {
+      "id": "notes",
+      "title": "Notes",
+      "icon": "sticky-note",
+      "type": "remote",
+      "defaultSize": { "w": 380, "h": 420 },
+      "remote": {
+        "name": "remoteNotes",
+        "module": "NotesApp",
+        "entryUrl": "https://<notes-deployment>.vercel.app/mf-manifest.json",
+        "devEntryUrl": "http://localhost:5002/mf-manifest.json"
+      }
+    }
+  ]
 }
 ```
 
-## Registering a Remote in the Host
+- `remote.name` — the MF container name (must match the remote's `rsbuild.config.ts`)
+- `remote.module` — the exposed module without `./` (`exposes: { './NotesApp': ... }` → `"NotesApp"`)
+- `entryUrl` — deployed `mf-manifest.json`; `devEntryUrl` — used when the host runs in dev mode
+- `type: 'local' | 'external'` are reserved for future catalog-driven app types
+- Local apps (About, Resume) stay statically registered in `src/registry/appRegistry.ts`
 
-### Step 1: Add Remote to Host's vite.config.ts
+The manifest is fetched with `cache: 'no-store'`, validated in `src/federation/catalog.ts`, and merged into the registry by `initializeAppRegistry()`. If the fetch fails, the desktop enters a **degraded** state: local apps stay usable and an error toast is shown.
 
-```typescript
-// vite.config.ts (host)
-federation({
-  name: 'host',
-  remotes: {
-    // Add your new remote here
-    remoteMyApp: 'http://localhost:5002/assets/remoteEntry.js',
-  },
-  shared: {
-    react: { singleton: true, requiredVersion: '^19.0.0' },
-    'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
-  },
-}),
+## Creating a New Remote App
+
+### Step 1: Scaffold the package
+
+Mirror `packages/remote-notes` (the minimal reference):
+
+```
+packages/remote-myapp/
+├── index.html              # standalone shell (no <script> tag — Rsbuild injects)
+├── package.json            # dev/build/preview via rsbuild
+├── rsbuild.config.ts
+├── postcss.config.js       # tailwind + autoprefixer
+├── tailwind.config.js      # imports local src/theme.js copy
+├── tsconfig.json
+├── vercel.json             # CORS headers — required (see Deployment)
+└── src/
+    ├── MyApp.tsx           # the exposed module — MUST import './index.css'
+    ├── index.css           # @tailwind directives ONLY (no global body rules!)
+    ├── standalone.css      # body/html rules — standalone entry only
+    ├── theme.js            # local token copy
+    ├── env.d.ts            # /// <reference types="@rsbuild/core/types" />
+    ├── main.tsx            # import('./bootstrap')  ← async boundary
+    ├── bootstrap.tsx       # standalone render
+    ├── App.tsx             # standalone wrapper (MockHostProvider)
+    └── MockHostProvider.tsx
 ```
 
-### Step 2: Add TypeScript Declaration
-
-Create or update `src/remotes.d.ts`:
+### Step 2: rsbuild.config.ts
 
 ```typescript
-// src/remotes.d.ts
-declare module 'remoteMyApp/MyAppComponent' {
-  import { ComponentType } from 'react';
-  const MyAppComponent: ComponentType;
-  export default MyAppComponent;
-}
+import { defineConfig } from '@rsbuild/core';
+import { pluginReact } from '@rsbuild/plugin-react';
+import { pluginModuleFederation } from '@module-federation/rsbuild-plugin';
+
+const DEV_ORIGIN = 'http://localhost:5003'; // unique port
+
+export default defineConfig({
+  plugins: [
+    pluginReact(),
+    pluginModuleFederation({
+      name: 'remoteMyApp',
+      filename: 'remoteEntry.js',
+      exposes: { './MyApp': './src/MyApp.tsx' },
+      shared: {
+        react: { singleton: true, requiredVersion: '^19.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
+      },
+      dts: false,
+    }),
+  ],
+  html: { template: './index.html' },
+  source: { entry: { index: './src/main.tsx' } },
+  server: { port: 5003, strictPort: true, cors: { origin: '*' } },
+  dev: { assetPrefix: DEV_ORIGIN },
+  output: { assetPrefix: process.env.ASSET_PREFIX || 'auto' },
+});
 ```
 
-### Step 3: Add to App Registry
+### Step 3: Register in the manifest — that's it
 
-```typescript
-// src/registry/appRegistry.ts
-import { lazy } from 'react';
+Add an entry to `public/remotes.manifest.json` (see schema above).
+**No host code changes, no host rebuild.** The icon name must exist in the
+`iconMap` of `DesktopIcon.tsx`/`TaskbarItem.tsx` (add it if new).
 
-const LazyMyApp = lazy(() => import('remoteMyApp/MyAppComponent'));
+## Critical Rules (learned the hard way)
 
-export const appRegistry: Record<string, AppRegistryEntry> = {
-  // ... existing apps
-  
-  myapp: {
-    component: LazyMyApp,
-    defaultConfig: {
-      componentType: 'myapp',
-      title: 'My App',
-      icon: '🚀',
-      defaultSize: { w: 400, h: 300 },
-    },
-    isRemote: true,
-  },
-};
-```
+1. **Async boundary everywhere**: every entry (`main.tsx`) that transitively imports a shared module must be a single `import('./bootstrap')`. Otherwise: *"loadShareSync failed... check whether an async boundary is implemented."*
+2. **The exposed module imports its own CSS**: `import './index.css'` must be in the exposed component file, not just the standalone entry — otherwise the app renders unstyled inside the host.
+3. **No global styles in the exposed graph**: `body`/`html` rules live in `standalone.css` (standalone entry only). Anything imported by the exposed module is injected into the **host document** when the remote loads.
+4. **Absolute `dev.assetPrefix`**: without it, the host resolves the remote's chunk URLs against its own origin and dev cross-origin loading breaks.
+
+## Failure Recovery (per-window retry)
+
+Implemented in `src/federation/runtime.ts` + `WindowFrame.tsx` + `ErrorBoundary.tsx`:
+
+1. `loadRemote` failure rejects through the window's `React.lazy` into that window's `ErrorBoundary` — **other windows are unaffected**, including healthy windows of the *same* remote (their module code is already running).
+2. **Try Again** calls `forceRefreshRemote()` → `registerRemotes([remote], { force: true })`, which clears the runtime's cached container/manifest state for that remote.
+3. A **fresh `React.lazy` wrapper** is swapped in via `useState` (a rejected lazy permanently caches its rejection, so the wrapper must be replaced, not re-rendered). The wrapper lives in state — not `useMemo` — so React Compiler memoization cannot skip the replacement.
+
+Already-loaded remotes keep working even if their server goes down (module code is cached in the MF runtime) — failures only surface on **fresh loads** (new page session or force-refresh).
 
 ## Standalone vs Integration Mode
 
-Remote apps can run in two modes:
+| | Integration (in host) | Standalone (`pnpm dev`) |
+|---|---|---|
+| Entry | exposed module via `loadRemote` | `main.tsx` → `bootstrap.tsx` |
+| Context | host `HostContext` (if wired) | `MockHostProvider` |
+| Global styles | host owns `body` | `standalone.css` |
+| React | shared singleton from host scope | own instance |
 
-### Integration Mode (Inside Host)
+## Host–Remote Communication
 
-When loaded via Module Federation into the host:
-- Receives `HostContext` with real host state
-- Shares React instance with host
-- Styled consistently with host theme
-
-### Standalone Mode (Independent Development)
-
-When running `pnpm dev` directly in the remote package:
-- Uses `MockHostProvider` for simulated host context
-- Has its own React instance
-- Useful for rapid development and testing
-
-### Implementing Standalone Mode
-
-1. Create a `MockHostProvider`:
-
-```typescript
-// src/MockHostProvider.tsx
-import { createContext, useContext, ReactNode } from 'react';
-
-export interface HostContextValue {
-  theme: 'light' | 'dark';
-  locale: string;
-}
-
-const defaultValues: HostContextValue = {
-  theme: 'dark',
-  locale: 'en',
-};
-
-const MockHostContext = createContext<HostContextValue | null>(null);
-
-export function useMockHostContext(): HostContextValue {
-  const context = useContext(MockHostContext);
-  return context ?? defaultValues;
-}
-
-export function MockHostProvider({ children }: { children: ReactNode }) {
-  return (
-    <MockHostContext.Provider value={defaultValues}>
-      {children}
-    </MockHostContext.Provider>
-  );
-}
-```
-
-2. Create an `App.tsx` for standalone entry:
-
-```typescript
-// src/App.tsx
-import { MockHostProvider } from './MockHostProvider';
-import MyAppComponent from './MyAppComponent';
-
-export default function App() {
-  return (
-    <MockHostProvider>
-      <MyAppComponent />
-    </MockHostProvider>
-  );
-}
-```
-
-3. Create `main.tsx` that renders standalone app:
-
-```typescript
-// src/main.tsx
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App';
-import './index.css';
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
-```
-
-## Host-Remote Communication
-
-### Read-Only State Access (HostContext)
-
-The host provides a `HostContext` that remotes can consume:
-
-```typescript
-// In remote component
-import { useHostContext } from '../context/HostContext';
-
-function MyRemoteComponent() {
-  const { theme, locale } = useHostContext();
-  
-  return (
-    <div className={theme === 'dark' ? 'bg-gray-800' : 'bg-white'}>
-      Current locale: {locale}
-    </div>
-  );
-}
-```
-
-The `useHostContext` hook gracefully falls back to defaults if running outside the host.
-
-### Bidirectional Communication (Custom Events API)
-
-For remotes to communicate back to the host, use the Custom Events API:
-
-#### Host → Remote (Broadcast)
-
-```typescript
-// Host dispatches
-window.dispatchEvent(new CustomEvent('host:theme-changed', {
-  detail: { theme: 'dark' }
-}));
-
-// Remote listens
-useEffect(() => {
-  const handler = (e: CustomEvent) => {
-    console.log('Theme changed to:', e.detail.theme);
-  };
-  window.addEventListener('host:theme-changed', handler);
-  return () => window.removeEventListener('host:theme-changed', handler);
-}, []);
-```
-
-#### Remote → Host (Request)
-
-```typescript
-// Remote dispatches
-window.dispatchEvent(new CustomEvent('remote:request-fullscreen', {
-  detail: { windowId: 'myapp-1' }
-}));
-
-// Host listens
-useEffect(() => {
-  const handler = (e: CustomEvent) => {
-    maximizeWindow(e.detail.windowId);
-  };
-  window.addEventListener('remote:request-fullscreen', handler);
-  return () => window.removeEventListener('remote:request-fullscreen', handler);
-}, []);
-```
-
-#### Event Naming Convention
+Unchanged from the original design — `HostContext` for read-only state and Custom Events for bidirectional messaging:
 
 | Prefix | Direction | Example |
 |--------|-----------|---------|
 | `host:*` | Host → Remote | `host:theme-changed`, `host:locale-changed` |
-| `remote:*` | Remote → Host | `remote:request-fullscreen`, `remote:close-window` |
+| `remote:*` | Remote → Host | `remote:request-fullscreen` |
+
+## Deployment (Vercel)
+
+Three independent Vercel projects:
+
+| Project | Root directory | Notes |
+|---|---|---|
+| `proto` (host) | repo root | serves `remotes.manifest.json` |
+| `remote-calculator` | `packages/remote-calculator` | CORS headers required |
+| `remote-notes` | `packages/remote-notes` | CORS headers required |
+
+Per remote project:
+
+1. `vercel.json` ships wide-open CORS on `/(.*)`— required so the host can fetch `mf-manifest.json` and chunks cross-origin. Keep it.
+2. Set the env var **`ASSET_PREFIX=https://<deployment-domain>/`** in the Vercel project settings so chunk URLs inside `mf-manifest.json` resolve absolutely.
+3. Deploy, then put the deployed `https://<domain>/mf-manifest.json` into `entryUrl` in the host's `public/remotes.manifest.json` and redeploy the host.
 
 ## Troubleshooting
 
-### "Failed to fetch dynamically imported module"
+### "loadShareSync failed" on boot
+Missing async boundary — see Critical Rules #1.
 
-**Cause**: The remote server is not running or not accessible.
+### Remote renders unstyled inside the host
+The exposed module doesn't import its CSS — see Critical Rules #2. Fallback: set `output.injectStyles: true` in the remote's rsbuild config (styles injected via JS).
 
-**Solutions**:
-1. Ensure the remote is running: `pnpm build && pnpm preview`
-2. Check the port is correct in host's `vite.config.ts`
-3. Check for CORS issues (remote should have `cors: true`)
+### "Failed to get manifest. #RUNTIME-003"
+The remote server is unreachable (or CORS headers are missing in production). Start/redeploy the remote, then use the window's **Try Again** button — no page refresh needed.
 
-### "Multiple React instances" Error
+### Retry does nothing
+The retry must create a *new* lazy wrapper. If you refactor `WindowFrame`, keep the wrapper in `useState` — a memoized wrapper can survive the retry render and replay its cached rejection.
 
-**Cause**: React is being bundled separately in host and remote.
+### Port already in use
 
-**Solution**: Ensure both host and remote have matching `shared` configuration:
-
-```typescript
-shared: {
-  react: { singleton: true, requiredVersion: '^19.0.0' },
-  'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
-}
+```powershell
+# find + kill (Windows PowerShell)
+Get-NetTCPConnection -LocalPort 5001 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
 ```
-
-### Retry After Failure Doesn't Work
-
-**Cause**: This is a known limitation of Module Federation. The browser and federation runtime cache failed requests.
-
-**Solution**: Refresh the entire page to retry loading failed remotes. The "Close Window" button in the error boundary allows users to close the failed window without affecting other open windows.
-
-### Remote Works in Standalone but Not in Host
-
-**Possible causes**:
-1. **Missing TypeScript declaration** - Add module declaration to `src/remotes.d.ts`
-2. **Different React versions** - Ensure `requiredVersion` matches
-3. **Build not updated** - Rebuild the remote: `pnpm build && pnpm preview`
-
-### Changes Not Reflecting
-
-**For remotes**: Module Federation requires a production build. After making changes:
-
-```bash
-cd packages/remote-myapp
-pnpm build && pnpm preview
-```
-
-Then refresh the host page.
-
-### Port Already in Use
-
-```bash
-# Find process using the port
-netstat -ano | findstr :5001
-
-# Kill the process (Windows)
-taskkill /PID <PID> /F
-
-# Kill the process (macOS/Linux)
-kill -9 <PID>
-```
-
-## Shared Theme Tokens
-
-To ensure consistent styling across host and remotes, use the shared theme package:
-
-```typescript
-// In remote's tailwind.config.js
-import theme from '@proto/shared/theme';
-
-export default {
-  theme: {
-    extend: {
-      colors: theme.colors,
-      spacing: theme.spacing,
-      // ... other theme tokens
-    },
-  },
-};
-```
-
-The `@proto/shared` package (`packages/shared`) exports design tokens for:
-- Colors (background, text, accent)
-- Spacing
-- Border radius
-- Font families and sizes
-- Box shadows
-- Z-index values
-- Transitions

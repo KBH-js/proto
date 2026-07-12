@@ -130,35 +130,35 @@ export const federationLogger = {
   },
   
   /**
-   * Print the Module Federation banner on app start
+   * Print the Module Federation banner once the runtime-registered
+   * remote catalog is known (called from initializeAppRegistry).
    */
-  printBanner: () => {
-    // Get remote URL from build-time define (see vite.config.ts)
-    const remoteCalcUrl = typeof __REMOTE_CALCULATOR_URL__ !== 'undefined' 
-      ? __REMOTE_CALCULATOR_URL__ 
-      : 'http://localhost:5001/assets/remoteEntry.js';
-    
-    // Extract hostname for display
-    const remoteHost = (() => {
-      try {
-        const url = new URL(remoteCalcUrl);
-        return `${url.protocol}//${url.host}`;
-      } catch {
-        return remoteCalcUrl;
-      }
-    })();
+  printBanner: (remotes: Array<{ name: string; url: string }> = []) => {
+    const WIDTH = 67; // inner width between the ║ borders
 
-    const hostUrl = window.location.origin;
-    
+    const line = (content: string) => `║${content.padEnd(WIDTH)}║`;
+    const remoteHost = (url: string) => {
+      try {
+        const parsed = new URL(url);
+        return `${parsed.protocol}//${parsed.host}`;
+      } catch {
+        return url;
+      }
+    };
+
+    const remoteLines = remotes.length > 0
+      ? remotes.map((r) => line(`    • ${r.name} → ${remoteHost(r.url)}`))
+      : [line('    (no remotes registered)')];
+
     console.log(
       `%c
-╔═══════════════════════════════════════════════════════════════════╗
-║             🚀 Proto OS - Micro-Frontend Architecture             ║
-╠═══════════════════════════════════════════════════════════════════╣
-║  Host: ${hostUrl.padEnd(55)}║
-║  Remotes:                                                         ║
-║    • remoteCalculator → ${remoteHost.padEnd(39)}║
-╚═══════════════════════════════════════════════════════════════════╝
+╔${'═'.repeat(WIDTH)}╗
+${line('           🚀 Proto OS - Micro-Frontend Architecture')}
+╠${'═'.repeat(WIDTH)}╣
+${line(`  Host: ${window.location.origin}`)}
+${line('  Remotes (registered at runtime):')}
+${remoteLines.join('\n')}
+╚${'═'.repeat(WIDTH)}╝
 `,
       'color: #00d8ff; font-family: monospace;'
     );
