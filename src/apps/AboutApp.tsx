@@ -61,7 +61,7 @@ export function AboutApp() {
                 <div>
                   <h3 className="font-medium text-gray-800">Resume</h3>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    이력서를 새 탭에서 엽니다. (외부 링크)
+                    이력서를 셸 내부 PDF 뷰어 창에서 엽니다.
                   </p>
                 </div>
               </div>

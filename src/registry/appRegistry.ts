@@ -2,7 +2,7 @@ import { ComponentType, LazyExoticComponent } from 'react';
 import { create } from 'zustand';
 import { AppConfig, Size } from '../types/window.types';
 import { AboutApp } from '../apps/AboutApp';
-import { portfolioConfig } from '../config/portfolio.config';
+import { ResumeApp } from '../apps/ResumeApp';
 import { registerAppRemotes, RemoteRegistration } from '../federation/runtime';
 import { fetchAppCatalog, resolveEntryUrl, CatalogApp } from '../federation/catalog';
 import { federationLogger, useToastStore } from '../store/toastStore';
@@ -57,16 +57,16 @@ const staticEntries: Record<string, AppRegistryEntry> = {
   },
 
   /**
-   * Resume - External link to resume PDF
-   * Configure the URL in src/config/portfolio.config.ts
+   * Resume - In-shell PDF viewer window
+   * PDF path is configured in src/config/portfolio.config.ts (public/resume.pdf)
    */
   resume: {
-    // No component - this is an external link
+    component: ResumeApp,
     defaultConfig: {
       componentType: 'resume',
       title: 'Resume',
       icon: 'file-text', // lucide icon name
-      externalUrl: portfolioConfig.resume.externalUrl,
+      defaultSize: { w: 720, h: 820 },
     },
   },
 };
