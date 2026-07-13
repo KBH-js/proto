@@ -6,6 +6,7 @@
   /*
    * Liquid-glass chrome: translucent white over a saturating blur, with
    * a specular top highlight. Borders are applied per usage site.
+   * Still used by the Start-menu dropdown popover.
    */
   .glass-chrome {
     @apply bg-white/55 backdrop-blur-2xl backdrop-saturate-150;
@@ -30,6 +31,211 @@
     @apply bg-slate-900/40 backdrop-blur-2xl backdrop-saturate-100;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
+
+  /* ==========================================================================
+   * Apple Aqua theme — glossy "gel" surfaces, brushed/pinstriped metal
+   * window chrome, and a reflective Dock shelf. Inspired by Mac OS X 10.x.
+   * ======================================================================== */
+
+  /*
+   * Aqua title bar: brushed light-metal gradient with fine pinstripes and a
+   * bright specular top edge. The active bar has stronger contrast; inactive
+   * flattens out. Dark shell swaps to a graphite metal.
+   */
+  .aqua-titlebar {
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.024) 0 1px, transparent 1px 4px),
+      linear-gradient(to bottom, #fdfdfd 0%, #ececec 46%, #dedede 54%, #cfcfcf 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .aqua-titlebar-inactive {
+    background-image: linear-gradient(to bottom, #f7f7f7 0%, #ececec 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .dark .aqua-titlebar {
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px),
+      linear-gradient(to bottom, #3c4353 0%, #2c313d 52%, #262a35 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .aqua-titlebar-inactive {
+    background-image: linear-gradient(to bottom, #2d323d 0%, #262a33 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* Embossed window title — white lift on light metal, dark on graphite. */
+  .aqua-title-text {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .dark .aqua-title-text {
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  /*
+   * Aqua traffic lights: glossy gumdrops. A radial base tint gives the dome
+   * shading; ::before paints the sharp specular glare on the top third. The
+   * inner glyph (×, −, +) is an SVG that fades in on hover of the cluster.
+   */
+  .aqua-traffic {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    border-radius: 9999px;
+    border: 0.5px solid rgba(0, 0, 0, 0.28);
+    box-shadow:
+      inset 0 -1px 1px rgba(0, 0, 0, 0.28),
+      inset 0 1px 1px rgba(255, 255, 255, 0.55),
+      0 0.5px 1px rgba(0, 0, 0, 0.25);
+    transition: filter 0.12s ease;
+  }
+
+  .aqua-traffic::before {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 2.5px;
+    right: 2.5px;
+    height: 42%;
+    border-radius: 9999px;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+  }
+
+  .aqua-traffic:active {
+    filter: brightness(0.9);
+  }
+
+  .aqua-traffic--close {
+    background-image: radial-gradient(circle at 50% 115%, #ff9a86 0%, #ff5f57 45%, #e0443e 100%);
+  }
+
+  .aqua-traffic--min {
+    background-image: radial-gradient(circle at 50% 115%, #ffe08a 0%, #febc2e 45%, #e0a021 100%);
+  }
+
+  .aqua-traffic--max {
+    background-image: radial-gradient(circle at 50% 115%, #a8ef8a 0%, #28c840 45%, #16a02b 100%);
+  }
+
+  .aqua-traffic--muted {
+    background-image: radial-gradient(circle at 50% 115%, #d8d8dc 0%, #bcbcc2 45%, #a4a4ac 100%);
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .aqua-traffic__glyph {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+    color: rgba(0, 0, 0, 0.55);
+    transition: opacity 0.12s ease;
+  }
+
+  .aqua-traffic--close .aqua-traffic__glyph {
+    color: #5a0a04;
+  }
+
+  .aqua-traffic--min .aqua-traffic__glyph {
+    color: #6b4a00;
+  }
+
+  .aqua-traffic--max .aqua-traffic__glyph {
+    color: #0a4d16;
+  }
+
+  .aqua-traffic-cluster:hover .aqua-traffic__glyph {
+    opacity: 1;
+  }
+
+  /*
+   * Aqua gel button: glossy blue lozenge (Start button active state, primary
+   * pills). The ::before is the classic top-half glare. Uses currentColor-free
+   * fixed stops so it reads the same in either shell theme.
+   */
+  .aqua-gel {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(to bottom, #7fbcff 0%, #2b8bff 47%, #0a6fe6 53%, #2f86f0 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.25),
+      0 1px 2px rgba(10, 90, 200, 0.4);
+  }
+
+  .aqua-gel::before {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 3px;
+    right: 3px;
+    height: 44%;
+    border-radius: 9999px;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.05));
+    pointer-events: none;
+  }
+
+  /*
+   * Aqua Dock: a reflective floating glass shelf. Detached from the screen
+   * edges, heavy rounded corners, bright specular top rim, and a soft drop
+   * shadow so it hovers over the desktop like the Mac OS X Dock.
+   */
+  .aqua-dock {
+    @apply backdrop-blur-2xl backdrop-saturate-150;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.78) 0%, rgba(232, 238, 248, 0.6) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -8px 16px rgba(255, 255, 255, 0.35),
+      0 10px 28px rgba(0, 0, 0, 0.3),
+      0 2px 6px rgba(0, 0, 0, 0.18);
+  }
+
+  .dark .aqua-dock {
+    background-image: linear-gradient(to bottom, rgba(48, 55, 72, 0.72) 0%, rgba(20, 26, 38, 0.62) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -8px 16px rgba(0, 0, 0, 0.25),
+      0 10px 28px rgba(0, 0, 0, 0.55),
+      0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/*
+ * Liquid Glass design tokens — the public `--glass-*` surface consumed by the
+ * shared <LiquidGlass> material (packages/shared/glass.css) and exposed in the
+ * Design Tokens app. Light values live on :root; the shell's `.dark` class
+ * (WindowManagerLayout root) flips them for the whole chrome subtree.
+ */
+:root {
+  --glass-blur: 16px;
+  --glass-saturate: 180%;
+  --glass-tint: rgba(255, 255, 255, 0.44);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-edge: rgba(255, 255, 255, 0.55);
+  --glass-inner-shadow: rgba(40, 70, 120, 0.22);
+  --glass-drop: 0 14px 40px -8px rgba(20, 50, 100, 0.28), 0 4px 12px -4px rgba(20, 50, 100, 0.18);
+  --glass-sheen: rgba(255, 255, 255, 0.55);
+  --glass-sheen-2: rgba(255, 255, 255, 0.14);
+  --glass-solid: rgba(245, 248, 252, 0.98);
+  --glass-text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.dark {
+  --glass-tint: rgba(28, 36, 54, 0.44);
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-inner-shadow: rgba(0, 0, 0, 0.5);
+  --glass-drop: 0 16px 44px -8px rgba(0, 0, 0, 0.6), 0 4px 14px -4px rgba(0, 0, 0, 0.45);
+  --glass-sheen: rgba(255, 255, 255, 0.16);
+  --glass-sheen-2: rgba(255, 255, 255, 0.05);
+  --glass-solid: rgba(24, 30, 44, 0.98);
+  --glass-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
 * {

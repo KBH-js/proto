@@ -7,7 +7,11 @@ interface WindowControlsProps {
   isActive?: boolean;
 }
 
-/** macOS-style traffic light buttons (close / minimize / maximize) */
+/**
+ * Aqua-style traffic lights (close / minimize / maximize). Glossy gel
+ * gumdrops that reveal a crisp inner glyph on hover of the cluster — the
+ * glyph is a centered SVG so it stays pixel-aligned at any zoom.
+ */
 export function WindowControls({
   onClose,
   onMinimize,
@@ -15,40 +19,48 @@ export function WindowControls({
   isActive = true,
 }: WindowControlsProps) {
   const { t } = useTranslation();
+
   return (
-    <div className="flex items-center gap-2 group">
+    <div className="aqua-traffic-cluster flex items-center gap-2">
       <button
         onClick={onClose}
-        className={`
-          w-3 h-3 rounded-full transition-all
-          flex items-center justify-center
-          ${isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-400'}
-          group-hover:after:content-['×'] after:text-[10px] after:font-bold after:text-red-900 after:opacity-0 group-hover:after:opacity-100
-        `}
+        className={`aqua-traffic ${isActive ? 'aqua-traffic--close' : 'aqua-traffic--muted'}`}
         aria-label={t('window.close')}
-      />
+      >
+        <svg className="aqua-traffic__glyph" viewBox="0 0 10 10" fill="none">
+          <path
+            d="M3 3 L7 7 M7 3 L3 7"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
 
       <button
         onClick={onMinimize}
-        className={`
-          w-3 h-3 rounded-full transition-all
-          flex items-center justify-center
-          ${isActive ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-400'}
-          group-hover:after:content-['−'] after:text-[10px] after:font-bold after:text-yellow-900 after:opacity-0 group-hover:after:opacity-100
-        `}
+        className={`aqua-traffic ${isActive ? 'aqua-traffic--min' : 'aqua-traffic--muted'}`}
         aria-label={t('window.minimize')}
-      />
+      >
+        <svg className="aqua-traffic__glyph" viewBox="0 0 10 10" fill="none">
+          <path d="M2.5 5 L7.5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      </button>
 
       <button
         onClick={onMaximize}
-        className={`
-          w-3 h-3 rounded-full transition-all
-          flex items-center justify-center
-          ${isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400'}
-          group-hover:after:content-['+'] after:text-[10px] after:font-bold after:text-green-900 after:opacity-0 group-hover:after:opacity-100
-        `}
+        className={`aqua-traffic ${isActive ? 'aqua-traffic--max' : 'aqua-traffic--muted'}`}
         aria-label={t('window.maximize')}
-      />
+      >
+        <svg className="aqua-traffic__glyph" viewBox="0 0 10 10" fill="none">
+          <path
+            d="M5 2.5 L5 7.5 M2.5 5 L7.5 5"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
     </div>
   );
 }

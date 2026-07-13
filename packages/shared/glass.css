@@ -1,0 +1,161 @@
+/*
+ * Liquid Glass material (macOS Tahoe 26 style).
+ *
+ * Shipped from the shared layer so the host and every remote render the same
+ * refracting surface. Pure CSS (no Tailwind directives) so it stays portable
+ * to standalone remotes that don't run the host's PostCSS/Tailwind pipeline.
+ *
+ * Token contract:
+ *   - Public design tokens `--glass-*` (tint, highlight, drop, blur, …) are
+ *     defined by the host in index.css :root / .dark and surfaced in the
+ *     Design Tokens app. They flip with the shell theme.
+ *   - Per-instance geometry `--lg-blur|--lg-saturate|--lg-radius` is set INLINE
+ *     by the <LiquidGlass> component per variant (so inline wins the cascade),
+ *     falling back to the `--glass-*` tokens, then to literals so a remote can
+ *     render this material even without the host tokens present.
+ *
+ * Filter plumbing (two custom-property toggles, one declaration):
+ *   `backdrop-filter` is declared exactly ONCE, as `var(--lg-backdrop)`. This
+ *   is deliberate on two counts:
+ *     1. The build's CSS pipeline drops any rule whose *only* declarations are
+ *        backdrop-filter/-webkit-backdrop-filter — so overrides must flip a
+ *        custom property, never re-declare the filter.
+ *     2. `--lg-blur` is set inline by the component (unbeatable by stylesheet),
+ *        so reduced-transparency can't zero it directly; wrapping the whole
+ *        filter in `--lg-backdrop` lets a stylesheet rule set it to `none`.
+ *   `--lg-refract-fn` toggles just the SVG displacement prefix (empty → plain
+ *   frost; `url(#…)` → refraction), gated by @supports and cleared while
+ *   dragging / reduced-motion.
+ *
+ * Layering per surface (.lg-surface):
+ *   1. backdrop-filter: [refract] blur() saturate()  — frost + optional SVG
+ *                                                       displacement refraction
+ *   2. translucent tint background                    — theme colour of glass
+ *   3. inset box-shadows                              — specular top + hairline
+ *                                                       rim + inner shade edge
+ *   4. ::after sheen                                  — soft diagonal wet gloss
+ */
+
+.lg-surface {
+  /* Empty by default → base frost only. @supports flips it to url(#…). */
+  --lg-refract-fn: ;
+  --lg-backdrop: var(--lg-refract-fn) blur(var(--lg-blur, var(--glass-blur, 16px)))
+    saturate(var(--lg-saturate, var(--glass-saturate, 180%)));
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--lg-radius, 20px);
+  background-color: var(--glass-tint, rgba(255, 255, 255, 0.5));
+  -webkit-backdrop-filter: var(--lg-backdrop);
+  backdrop-filter: var(--lg-backdrop);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight, rgba(255, 255, 255, 0.7)),
+    inset 0 0 0 1px var(--glass-edge, rgba(255, 255, 255, 0.35)),
+    inset 0 -8px 20px -12px var(--glass-inner-shadow, rgba(0, 0, 0, 0.28)),
+    var(--glass-drop, 0 10px 30px rgba(0, 0, 0, 0.28));
+  /* Own compositing layer: keeps drag transforms off the main-thread paint. */
+  transform: translateZ(0);
+}
+
+/* Soft diagonal sheen — the wet "liquid" gloss riding on top of the tint. */
+.lg-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(
+    130deg,
+    var(--glass-sheen, rgba(255, 255, 255, 0.28)) 0%,
+    rgba(255, 255, 255, 0) 34%,
+    rgba(255, 255, 255, 0) 66%,
+    var(--glass-sheen-2, rgba(255, 255, 255, 0.1)) 100%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Author content stacks above the tint/sheen without needing its own z-index. */
+.lg-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * Progressive refraction. Only browsers that accept an SVG filter reference in
+ * backdrop-filter flip the toggle on; everyone else (Safari, older Chrome)
+ * keeps the empty prefix → plain frosted glassmorphism (requirement #1).
+ */
+@supports (backdrop-filter: url("#lg-refract")) {
+  .lg-surface.lg-refract {
+    --lg-refract-fn: url("#lg-refract");
+  }
+  .lg-surface.lg-refract.lg-chroma {
+    --lg-refract-fn: url("#lg-refract-chroma");
+  }
+}
+
+/*
+ * Performance: while a window drags, the host sets `.lg-dragging` on the root.
+ * Clear the toggle back to plain blur so the browser isn't re-running the SVG
+ * filter graph every pointer frame. Compound selectors so this outranks the
+ * @supports setters above (requirement #3).
+ */
+.lg-dragging .lg-surface.lg-refract,
+.lg-dragging .lg-surface.lg-refract.lg-chroma {
+  --lg-refract-fn: ;
+}
+
+/* Variant nudges (extra saturation punch). Colours come from theme tokens. */
+.lg-dock {
+  --lg-saturate: 190%;
+}
+.lg-menu {
+  --lg-saturate: 185%;
+}
+.lg-card {
+  --lg-saturate: 160%;
+}
+.lg-button {
+  --lg-saturate: 150%;
+}
+.lg-button::after {
+  /* Buttons read better with a brighter top gloss and no dark diagonal. */
+  background-image: linear-gradient(
+    to bottom,
+    var(--glass-sheen, rgba(255, 255, 255, 0.5)) 0%,
+    rgba(255, 255, 255, 0) 52%
+  );
+  mix-blend-mode: normal;
+}
+
+/* Text legibility helper — a subtle lift so labels clear WCAG AA on glass. */
+.lg-text {
+  text-shadow: var(--glass-text-shadow, 0 1px 2px rgba(0, 0, 0, 0.28));
+}
+
+/*
+ * Accessibility — reduced transparency: drop the frost entirely and paint an
+ * (almost) opaque solid so foreground text keeps full contrast. Setting the
+ * whole `--lg-backdrop` to none sidesteps the inline `--lg-blur` (requirement #2).
+ */
+@media (prefers-reduced-transparency: reduce) {
+  .lg-surface {
+    --lg-backdrop: none;
+    background-color: var(--glass-solid, rgba(245, 247, 250, 0.98));
+  }
+  .lg-surface::after {
+    opacity: 0.4;
+  }
+}
+
+/*
+ * Accessibility — reduced motion: the displacement map is static (no <animate>),
+ * but drop it anyway so any GPU shimmer under scroll/resize is avoided. Compound
+ * selectors tie the @supports setters and win by source order (requirement #2).
+ */
+@media (prefers-reduced-motion: reduce) {
+  .lg-surface.lg-refract,
+  .lg-surface.lg-refract.lg-chroma {
+    --lg-refract-fn: ;
+  }
+}

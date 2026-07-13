@@ -20,11 +20,11 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
     <button
       onClick={onClick}
       className={`
-        flex items-center gap-2 px-3 py-1.5 rounded-lg
+        flex items-center gap-2 px-3 py-1.5 rounded-xl
         transition-all duration-150
         ${isActive
-          ? 'bg-white/60 dark:bg-white/10 shadow-sm ring-1 ring-white/60 dark:ring-white/15'
-          : 'hover:bg-black/5 dark:hover:bg-white/10'
+          ? 'bg-white/70 dark:bg-white/15 shadow-inner ring-1 ring-white/70 dark:ring-white/20'
+          : 'hover:bg-white/40 dark:hover:bg-white/10'
         }
         ${window.isMinimized ? 'opacity-60' : ''}
       `}

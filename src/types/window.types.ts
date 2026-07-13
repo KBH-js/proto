@@ -77,7 +77,8 @@ export interface WindowStore {
 }
 
 export const DEFAULT_MIN_SIZE: Size = { w: 200, h: 150 };
-export const TASKBAR_HEIGHT = 52;
+/** Reserved bottom strip for the Dock — includes the floating gap above it */
+export const TASKBAR_HEIGHT = 64;
 /** Must match TitleBar's h-9 — used to keep titlebars reachable above the taskbar */
 export const TITLEBAR_HEIGHT = 36;
 export const BASE_Z_INDEX = 100;

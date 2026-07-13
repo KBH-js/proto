@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo, version as reactVersion } from 'react';
+import { LiquidGlass } from '@proto/shared/glass';
 import { useWindowStore } from '../../store/windowStore';
 import { useToastStore } from '../../store/toastStore';
 import { useAppRegistry } from '../../registry/appRegistry';
@@ -134,36 +135,39 @@ export function Taskbar() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 flex items-center px-2"
+      className="fixed bottom-0 left-0 right-0 flex items-end justify-center pointer-events-none"
       style={{
         height: TASKBAR_HEIGHT,
         zIndex: TASKBAR_Z_INDEX,
       }}
     >
-      {/* Liquid-glass background */}
-      <div className="absolute inset-0 glass-chrome border-t border-white/40 dark:border-white/10" />
-
+      {/* Floating Liquid Glass Dock — detached from the screen edges */}
+      <LiquidGlass
+        variant="dock"
+        className="pointer-events-auto flex items-center gap-1 mb-2 mx-3 h-12 px-2"
+      >
       {/* Start Button */}
       <div className="relative" ref={startMenuRef}>
         <button
           onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
           className={`
-            relative flex items-center justify-center w-10 h-10 rounded-lg
+            relative flex items-center justify-center w-10 h-10 rounded-xl
             transition-all duration-200
             ${isStartMenuOpen
-              ? 'bg-accent/20 text-accent'
+              ? 'aqua-gel text-white'
               : 'hover:bg-black/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200'
             }
           `}
           title={t('taskbar.startMenu')}
         >
-          <Terminal className="w-5 h-5" />
+          <Terminal className="relative z-10 w-5 h-5" />
         </button>
 
         {/* Start Menu Dropdown */}
         {isStartMenuOpen && (
-          <div
-            className="absolute bottom-full left-0 mb-2 w-72 glass-chrome rounded-2xl border border-white/50 dark:border-white/10 shadow-2xl overflow-hidden"
+          <LiquidGlass
+            variant="menu"
+            className="absolute bottom-full left-0 mb-3 w-72 overflow-hidden"
             style={{ zIndex: TASKBAR_Z_INDEX + 1 }}
           >
             {/* Header */}
@@ -261,7 +265,7 @@ export function Taskbar() {
                 );
               })}
             </div>
-          </div>
+          </LiquidGlass>
         )}
       </div>
 
@@ -317,6 +321,7 @@ export function Taskbar() {
           {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
       </div>
+      </LiquidGlass>
     </div>
   );
 }

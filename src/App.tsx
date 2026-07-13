@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
+import { LiquidGlassFilters } from '@proto/shared/glass';
 import { WindowManagerLayout } from './components/templates/WindowManagerLayout';
 import { ToastContainer } from './components/shared/ToastContainer';
 import { BootScreen } from './components/shared/BootScreen';
 import { FirstRunTour } from './components/shared/FirstRunTour';
-import { initializeAppRegistry, useAppRegistry } from './registry/appRegistry';
+import { initializeAppRegistry } from './registry/appRegistry';
 import { useWindowStore } from './store/windowStore';
 import { useShortcuts } from './hooks/useShortcuts';
 
 const RESIZE_DEBOUNCE_MS = 150;
 
 function App() {
-  const [bootAnimationDone, setBootAnimationDone] = useState(false);
-  const registryStatus = useAppRegistry((state) => state.status);
+  // BootScreen owns the gate: it holds until the app catalog resolves (it reads
+  // the registry status itself), then calls back to reveal the desktop.
+  const [booting, setBooting] = useState(true);
 
   // Global keyboard shortcuts (Alt+A/I/T/L, Alt+/)
   useShortcuts();
@@ -39,23 +41,17 @@ function App() {
     };
   }, []);
 
-  // Boot screen stays up until the animation finishes AND the app catalog
-  // resolves (ready or degraded) — so the desktop never flashes half-empty.
-  const isBooting = !bootAnimationDone || registryStatus === 'loading';
-
-  const handleBootComplete = () => {
-    setBootAnimationDone(true);
-  };
-
   return (
     <>
-      {isBooting && (
-        <BootScreen onBootComplete={handleBootComplete} duration={1200} />
-      )}
+      {/* Shared Liquid Glass SVG displacement filters — mounted once for the
+          whole federation (host + any remote consuming the singleton). */}
+      <LiquidGlassFilters />
+
+      {booting && <BootScreen onBootComplete={() => setBooting(false)} />}
 
       <WindowManagerLayout />
       <ToastContainer />
-      {!isBooting && <FirstRunTour />}
+      {!booting && <FirstRunTour />}
     </>
   );
 }

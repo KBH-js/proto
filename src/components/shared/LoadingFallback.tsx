@@ -20,11 +20,13 @@ export function LoadingFallback({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-6">
+    // Transparent so the window's Liquid Glass panel shows through while a
+    // remote loads; the accent spinner + lifted label read on the frost.
+    <div className="flex flex-col items-center justify-center h-full p-6">
       <Loader2
         className={`
           ${sizeClasses[size]}
-          text-purple-500
+          text-accent
           animate-spin
         `}
         role="status"
@@ -32,7 +34,7 @@ export function LoadingFallback({
       />
 
       {label && (
-        <p className="mt-4 text-gray-500 text-sm animate-pulse">
+        <p className="lg-text mt-4 text-gray-600 dark:text-gray-300 text-sm animate-pulse">
           {label}
         </p>
       )}

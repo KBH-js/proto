@@ -14,6 +14,14 @@ export default {
       colors: {
         // macOS system blue — primary accent across the shell
         accent: '#0A84FF',
+        // Liquid Glass tint token (see index.css :root/.dark for the value)
+        glass: 'var(--glass-tint)',
+      },
+      backdropBlur: {
+        glass: 'var(--glass-blur)',
+      },
+      boxShadow: {
+        glass: 'var(--glass-drop)',
       },
     },
   },

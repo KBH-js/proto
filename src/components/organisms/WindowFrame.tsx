@@ -1,5 +1,6 @@
 import { Suspense, lazy, useCallback, useRef, useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
+import { LiquidGlass } from '@proto/shared/glass';
 import { WindowState, Position, SnapZone, DEFAULT_MIN_SIZE } from '../../types/window.types';
 import { useWindowStore } from '../../store/windowStore';
 import { useSnapPreviewStore } from '../../store/snapPreviewStore';
@@ -192,6 +193,9 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   const handleDragStart = (e: unknown) => {
     dragStartPointerRef.current = getPointerFromEvent(e);
     armedZoneRef.current = null;
+    // Perf: downgrade Liquid Glass refraction to plain blur while dragging so
+    // the SVG displacement filter isn't recomputed every pointer frame.
+    document.documentElement.classList.add('lg-dragging');
   };
 
   const handleDrag = (e: unknown) => {
@@ -220,6 +224,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
     _e: unknown,
     data: { x: number; y: number }
   ) => {
+    document.documentElement.classList.remove('lg-dragging');
     const zone = armedZoneRef.current;
     armedZoneRef.current = null;
     setPreviewZone(null);
@@ -284,16 +289,14 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       }}
       bounds="parent"
     >
-      <div
+      <LiquidGlass
+        variant="window"
         className={`
           flex flex-col h-full
-          rounded-2xl overflow-hidden
+          overflow-hidden
           origin-bottom
           ${isMinimizing ? 'animate-window-minimize' : 'animate-window-open'}
-          ${isActive
-            ? 'shadow-2xl ring-1 ring-white/40'
-            : 'shadow-lg ring-1 ring-white/20'
-          }
+          ${isActive ? 'ring-1 ring-white/25 dark:ring-white/15' : ''}
         `}
       >
         {/* Title Bar */}
@@ -308,9 +311,10 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           icon={appEntry?.defaultConfig.icon}
         />
 
-        {/* Content Area — host-local apps are theme-aware; remotes paint their
-            own background over this, so the dark fill only shows during load. */}
-        <div className="flex-1 bg-white dark:bg-neutral-900 overflow-auto">
+        {/* Content Area — transparent so the window's Liquid Glass panel shows
+            through. Host-local apps paint their own (often translucent) surface;
+            remotes paint their opaque background over the glass. */}
+        <div className="flex-1 overflow-auto">
           {AppComponent ? (
             <ErrorBoundary
               appName={displayTitle}
@@ -324,12 +328,12 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
               </Suspense>
             </ErrorBoundary>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
+            <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
               {t('window.notFound', { type: win.componentType })}
             </div>
           )}
         </div>
-      </div>
+      </LiquidGlass>
     </Rnd>
   );
 }
