@@ -23,7 +23,7 @@ export function SnapPreview() {
         rounded-2xl
         bg-white/20 backdrop-blur-sm backdrop-saturate-150
         border-2 border-accent/60
-        shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]
+        ring-1 ring-inset ring-white/50
         transition-all duration-150 ease-out
       "
       style={{
