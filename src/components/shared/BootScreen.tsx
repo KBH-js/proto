@@ -1,107 +1,81 @@
 import { useState, useEffect } from 'react';
-import { Terminal, Wifi, CheckCircle2, Loader2 } from 'lucide-react';
+import { Terminal, Loader2 } from 'lucide-react';
+import { LiquidGlass } from '@proto/shared/glass';
+import { wallpaper } from '@proto/shared/theme';
+import { usePrefsStore } from '../../store/prefsStore';
+import { useAppRegistry } from '../../registry/appRegistry';
 import { useTranslation } from '../../i18n';
 
 interface BootScreenProps {
+  /** Called once the splash may be dismissed (registry resolved + min elapsed) */
   onBootComplete: () => void;
-  duration?: number;
+  /** Small floor so an instant catalog resolve doesn't flash the splash */
+  minDuration?: number;
 }
 
-const bootMessages = [
-  { key: 'boot.init', icon: Terminal, delay: 0 },
-  { key: 'boot.loadingRemotes', icon: Wifi, delay: 250 },
-  { key: 'boot.startingWm', icon: Loader2, delay: 500 },
-  { key: 'boot.ready', icon: CheckCircle2, delay: 750 },
-];
-
-/** Terminal-style boot animation shown before the desktop appears */
-export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps) {
-  const [visibleMessages, setVisibleMessages] = useState<number>(0);
-  const [fadeOut, setFadeOut] = useState(false);
+/**
+ * Minimal Liquid Glass boot splash.
+ *
+ * Honest by construction: the spinner runs until the app catalog actually
+ * resolves — `initializeAppRegistry()` flips the registry out of 'loading'
+ * (ready) or 'degraded' — not on a scripted timer. `minDuration` is only a
+ * small floor so a sub-frame resolve doesn't flash. Its sole job is to hold the
+ * desktop until the remote catalog is registered, avoiding a half-empty flash
+ * where remote icons pop in late.
+ *
+ * Self-scopes the `dark` class (it mounts outside the shell root) so glass
+ * tokens + `dark:` variants track the persisted theme, and paints the colour
+ * wallpaper behind a frosted card that refracts it.
+ */
+export function BootScreen({ onBootComplete, minDuration = 400 }: BootScreenProps) {
   const { t } = useTranslation();
+  const isDark = usePrefsStore((s) => s.theme === 'dark');
+  const status = useAppRegistry((s) => s.status);
 
+  const [minElapsed, setMinElapsed] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  // The only timer: a small minimum so instant loads don't flash the splash.
   useEffect(() => {
-    const messageTimers = bootMessages.map((msg, index) => {
-      return setTimeout(() => {
-        setVisibleMessages(index + 1);
-      }, msg.delay);
-    });
+    const timer = setTimeout(() => setMinElapsed(true), minDuration);
+    return () => clearTimeout(timer);
+  }, [minDuration]);
 
-    const fadeTimer = setTimeout(() => {
-      setFadeOut(true);
-    }, duration - 200);
-
-    const completeTimer = setTimeout(() => {
-      onBootComplete();
-    }, duration);
-
-    return () => {
-      messageTimers.forEach(clearTimeout);
-      clearTimeout(fadeTimer);
-      clearTimeout(completeTimer);
-    };
-  }, [onBootComplete, duration]);
+  // Dismiss once the catalog has really resolved (ready or degraded) AND the
+  // minimum has elapsed — fade, then hand back to the App.
+  const ready = minElapsed && status !== 'loading';
+  useEffect(() => {
+    if (!ready) return;
+    setFadeOut(true);
+    const timer = setTimeout(onBootComplete, 260);
+    return () => clearTimeout(timer);
+  }, [ready, onBootComplete]);
 
   return (
     <div
       className={`
-        fixed inset-0 z-[99999] bg-black
+        fixed inset-0 z-[99999]
         flex flex-col items-center justify-center
-        font-mono text-sm
-        transition-opacity duration-200
+        transition-opacity duration-300
         ${fadeOut ? 'opacity-0' : 'opacity-100'}
+        ${isDark ? 'dark' : ''}
       `}
+      style={{ background: isDark ? wallpaper.dark : wallpaper.light }}
     >
-      {/* Logo/Title */}
-      <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <Terminal className="w-10 h-10 text-green-400" />
-          <h1 className="text-3xl font-bold text-green-400 tracking-wider">KBH-Desktop</h1>
+      <LiquidGlass variant="window" radius={26} className="flex flex-col items-center px-10 py-8">
+        <div className="w-16 h-16 rounded-2xl bg-accent/15 ring-1 ring-white/40 dark:ring-white/15 flex items-center justify-center">
+          <Terminal className="w-8 h-8 text-accent" />
         </div>
-        <p className="text-green-600 text-xs">{t('boot.subtitle')}</p>
-      </div>
-
-      {/* Boot messages */}
-      <div className="w-full max-w-lg px-8 space-y-1">
-        {bootMessages.slice(0, visibleMessages).map((msg, index) => {
-          const Icon = msg.icon;
-          const isLast = index === visibleMessages - 1;
-          const isComplete = index < visibleMessages - 1 || msg.icon === CheckCircle2;
-          
-          return (
-            <div
-              key={index}
-              className={`
-                flex items-center gap-3 text-xs
-                ${isComplete ? 'text-green-400' : 'text-green-600'}
-                ${isLast && msg.icon !== CheckCircle2 ? 'animate-pulse' : ''}
-              `}
-            >
-              <Icon className={`w-4 h-4 ${isLast && msg.icon === Loader2 ? 'animate-spin' : ''}`} />
-              <span>{t(msg.key)}</span>
-              {isComplete && msg.icon !== CheckCircle2 && (
-                <span className="text-green-500 ml-auto">[OK]</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Loading bar */}
-      <div className="mt-8 w-full max-w-lg px-8">
-        <div className="h-1 bg-green-900 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-green-400 transition-all duration-200 ease-out"
-            style={{ width: `${(visibleMessages / bootMessages.length) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Blinking cursor effect */}
-      <div className="mt-4 flex items-center gap-1 text-green-400">
-        <span className="text-xs">root@kbh-desktop:~$</span>
-        <span className="w-2 h-4 bg-green-400 animate-pulse" />
-      </div>
+        <h1 className="lg-text mt-4 text-2xl font-bold tracking-wide text-gray-800 dark:text-white">
+          KBH-Desktop
+        </h1>
+        <p className="lg-text mt-1 text-xs text-gray-600 dark:text-white/70">{t('boot.subtitle')}</p>
+        <Loader2
+          className="mt-5 w-5 h-5 text-accent animate-spin"
+          role="status"
+          aria-label={t('boot.init')}
+        />
+      </LiquidGlass>
     </div>
   );
 }
