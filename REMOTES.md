@@ -219,7 +219,7 @@ Three independent Vercel projects:
 | `proto` (host) | repo root | serves `remotes.manifest.json` |
 | `remote-calculator` | `packages/remote-calculator` | CORS headers required |
 | `remote-notes` | `packages/remote-notes` | CORS headers required |
-| `remote-network` | `packages/remote-network` | CORS headers required; `entryUrl` in the manifest is a placeholder until deployed |
+| `remote-network` | `packages/remote-network` | CORS headers required; deployed at `https://remote-network.vercel.app` (ASSET_PREFIX set) |
 
 Per remote project:
 
