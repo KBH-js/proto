@@ -132,6 +132,21 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
     remote ? lazy(() => loadRemoteComponent(`${remote.name}/${remote.module}`)) : null,
   );
 
+  // Persisted remote windows rehydrate during boot, BEFORE the app catalog
+  // resolves — so at mount `remote` is undefined and the wrapper above seeds
+  // to null. Without this, once the catalog registers the remote the window
+  // would stay stuck on the "app not found" fallback forever. Seed a fresh
+  // wrapper the moment `remote` first becomes available. The `!remoteComponent`
+  // guard keeps this a one-shot: it never fires when a wrapper already exists
+  // (normal mount, or after handleRetry), so it can't clobber a live load.
+  useEffect(() => {
+    if (remote && !remoteComponent) {
+      setRemoteComponent(() =>
+        lazy(() => loadRemoteComponent(`${remote.name}/${remote.module}`)),
+      );
+    }
+  }, [remote, remoteComponent]);
+
   const AppComponent = appEntry?.component ?? remoteComponent;
 
   // Recovery flow for a failed remote load: reset the MF runtime's cached
