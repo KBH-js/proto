@@ -34,6 +34,19 @@ export const validCatalog: AppCatalog = {
         devEntryUrl: 'http://localhost:5002/mf-manifest.json',
       },
     },
+    {
+      id: 'network',
+      title: 'Network',
+      icon: 'network',
+      type: 'remote',
+      defaultSize: { w: 860, h: 620 },
+      remote: {
+        name: 'remoteNetwork',
+        module: 'NetworkApp',
+        entryUrl: 'https://remote-network.vercel.app/mf-manifest.json',
+        devEntryUrl: 'http://localhost:5003/mf-manifest.json',
+      },
+    },
   ],
 };
 

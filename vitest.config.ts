@@ -20,6 +20,8 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     setupFiles: ['src/test/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
+    // Host specs (incl. .tsx component smoke tests) + remote-package logic
+    // specs (the root has msw/happy-dom/vitest).
+    include: ['src/**/*.test.{ts,tsx}', 'packages/**/src/**/*.test.ts'],
   },
 });

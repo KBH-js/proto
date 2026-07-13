@@ -66,6 +66,7 @@ pnpm dev
 | Host OS | 5173 | - |
 | Remote Calculator | 5001 | `/mf-manifest.json`, `/remoteEntry.js` |
 | Remote Notes | 5002 | `/mf-manifest.json`, `/remoteEntry.js` |
+| Remote Network | 5003 | `/mf-manifest.json`, `/remoteEntry.js` |
 
 > Remotes can start **after** the host — a remote is only contacted when its window opens. If it's down, that window shows an error UI with a retry button.
 
@@ -190,12 +191,24 @@ Already-loaded remotes keep working even if their server goes down (module code 
 
 ## Host–Remote Communication
 
-There is currently no host↔remote state bridge (an unused `HostContext` was removed as dead code). When one becomes necessary, the documented convention is Custom Events on `window`:
+A remote is an independent build and cannot import the host's i18n/theme, so the
+shell exposes its prefs through a **preferences bridge** (`src/federation/hostBridge.ts`,
+initialized in `src/bootstrap.tsx`). The convention is Custom Events on `window`
+plus a seeded global for the initial synchronous read:
 
 | Prefix | Direction | Example |
 |--------|-----------|---------|
-| `host:*` | Host → Remote | `host:theme-changed`, `host:locale-changed` |
-| `remote:*` | Remote → Host | `remote:request-fullscreen` |
+| `host:*` | Host → Remote | `host:locale-changed`, `host:theme-changed` |
+| `remote:*` | Remote → Host | `remote:request-fullscreen` (reserved) |
+
+- **Locale** — the host seeds `window.__PROTO_LOCALE__` and dispatches
+  `host:locale-changed` on every toggle. Remotes own their domain dictionary but
+  read the active locale from this bridge (see `packages/remote-network/src/i18n.ts`,
+  `useHostLocale`).
+- **Theme** — rides the shell's `.dark` ancestor class for free: a remote that
+  sets `darkMode:'class'` and authors CSS-variable tokens scoped to its own root
+  (`.dark .remote-x { --token: … }`) reacts to light/dark with no event needed.
+  `host:theme-changed` is still emitted for remotes that prefer JS-driven theming.
 
 ## Deployment (Vercel)
 
@@ -206,6 +219,7 @@ Three independent Vercel projects:
 | `proto` (host) | repo root | serves `remotes.manifest.json` |
 | `remote-calculator` | `packages/remote-calculator` | CORS headers required |
 | `remote-notes` | `packages/remote-notes` | CORS headers required |
+| `remote-network` | `packages/remote-network` | CORS headers required; deployed at `https://remote-network.vercel.app` (ASSET_PREFIX set) |
 
 Per remote project:
 

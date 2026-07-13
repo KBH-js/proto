@@ -13,6 +13,8 @@ export const en: Resources = {
     inspector: 'Inspector',
     calculator: 'Calculator',
     notes: 'Notes',
+    network: 'Network',
+    tokens: 'Design Tokens',
   },
   taskbar: {
     startMenu: 'Start Menu',
@@ -98,6 +100,19 @@ export const en: Resources = {
     notLoaded: '—',
     explainer:
       'Each remote is registered at runtime from a URL injected by the manifest. Breaking one reproduces the post-redeploy stale-chunk case; only the failed window is isolated and recovers.',
+  },
+  tokens: {
+    title: 'Design Tokens',
+    subtitle: '3-layer token pipeline · raw colors blocked by lint',
+    guardTitle: 'Token guardrail',
+    guardBody:
+      'Raw colors (hex/rgb/hsl) are blocked by the eslint rule (local/no-raw-colors). Every color comes from one token source (@proto/shared/theme).',
+    layerPrimitive: 'Primitive',
+    layerPrimitiveDesc: 'Raw palette values',
+    layerSemantic: 'Semantic',
+    layerSemanticDesc: 'Role-based aliases',
+    layerComponent: 'Component',
+    layerComponentDesc: 'Tokens consumed by components',
   },
   about: {
     subtitle: 'Module Federation web desktop · a resume you can run',

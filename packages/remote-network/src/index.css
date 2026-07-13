@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens as CSS variables, SCOPED to `.remote-network` (the exposed
+ * app's root wrapper). Scoping keeps these out of the host document's global
+ * styles (Critical Rule #3) while still reacting to the host's `.dark` ancestor
+ * class — `.dark .remote-network` overrides cascade down to this subtree.
+ *
+ * Values are space-separated RGB channels (not hex) so Tailwind's `/opacity`
+ * modifiers work via `rgb(var(--net-x) / <alpha-value>)` (see tailwind.config).
+ * Color values live here (a CSS file, the sanctioned home for raw color), so
+ * .tsx product code stays token-only and passes the no-raw-colors lint rule.
+ */
+.remote-network {
+  --net-surface: 255 255 255;
+  --net-panel: 248 250 252;
+  --net-sunken: 241 245 249;
+  --net-line: 226 232 240;
+  --net-body: 30 41 59;
+  --net-muted: 100 116 139;
+  --net-faint: 148 163 184;
+  --net-accent: 99 102 241;
+  --net-accent-soft: 238 242 255;
+  --net-ok: 22 163 74;
+  --net-warn: 217 119 6;
+  --net-danger: 220 38 38;
+  --net-info: 37 99 235;
+}
+
+.dark .remote-network {
+  --net-surface: 15 23 42;
+  --net-panel: 30 41 59;
+  --net-sunken: 23 32 51;
+  --net-line: 51 65 85;
+  --net-body: 226 232 240;
+  --net-muted: 148 163 184;
+  --net-faint: 100 116 139;
+  --net-accent: 129 140 248;
+  --net-accent-soft: 30 27 75;
+  --net-ok: 74 222 128;
+  --net-warn: 251 191 36;
+  --net-danger: 248 113 113;
+  --net-info: 96 165 250;
+}

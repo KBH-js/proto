@@ -14,6 +14,12 @@
       "port": 5002
     },
     {
+      "name": "remote-network",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["-C", "packages/remote-network", "dev"],
+      "port": 5003
+    },
+    {
       "name": "host",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["dev"],

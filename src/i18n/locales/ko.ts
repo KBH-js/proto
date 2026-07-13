@@ -12,6 +12,8 @@ export const ko = {
     inspector: '인스펙터',
     calculator: '계산기',
     notes: '메모',
+    network: '네트워크',
+    tokens: '디자인 토큰',
   },
   taskbar: {
     startMenu: '시작 메뉴',
@@ -97,6 +99,19 @@ export const ko = {
     notLoaded: '—',
     explainer:
       '각 remote는 런타임에 매니페스트에서 주입된 URL로 등록됩니다. 장애 주입은 재배포 후 stale chunk 상황을 재현하며, 실패한 창만 격리되어 복구됩니다.',
+  },
+  tokens: {
+    title: '디자인 토큰',
+    subtitle: '3-레이어 토큰 파이프라인 · raw 컬러는 lint로 차단',
+    guardTitle: '토큰 가드레일',
+    guardBody:
+      'raw 컬러(hex/rgb/hsl)는 eslint 룰(local/no-raw-colors)로 차단됩니다. 모든 색은 단일 토큰 소스(@proto/shared/theme)에서만 나옵니다.',
+    layerPrimitive: '프리미티브',
+    layerPrimitiveDesc: '원시 팔레트 값',
+    layerSemantic: '시맨틱',
+    layerSemanticDesc: '역할 기반 별칭',
+    layerComponent: '컴포넌트',
+    layerComponentDesc: '컴포넌트가 소비하는 토큰',
   },
   about: {
     subtitle: 'Module Federation 웹 데스크톱 · 실행 가능한 이력서',

@@ -3,9 +3,13 @@
   "version": "0.0.1",
   "description": "Shared theme tokens and utilities for the Proto OS",
   "main": "theme.js",
+  "types": "theme.d.ts",
   "type": "module",
   "exports": {
-    "./theme": "./theme.js"
+    "./theme": {
+      "types": "./theme.d.ts",
+      "default": "./theme.js"
+    }
   },
   "keywords": ["theme", "design-tokens", "tailwind"],
   "license": "MIT"
