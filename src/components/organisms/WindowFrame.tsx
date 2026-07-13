@@ -293,8 +293,9 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
           icon={appEntry?.defaultConfig.icon}
         />
 
-        {/* Content Area */}
-        <div className="flex-1 bg-white overflow-auto">
+        {/* Content Area — host-local apps are theme-aware; remotes paint their
+            own background over this, so the dark fill only shows during load. */}
+        <div className="flex-1 bg-white dark:bg-neutral-900 overflow-auto">
           {AppComponent ? (
             <ErrorBoundary
               appName={displayTitle}

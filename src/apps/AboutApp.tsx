@@ -1,225 +1,340 @@
-import { useState } from 'react';
-import { 
-  Info, 
-  FileText, 
-  Calculator, 
-  Zap, 
-  Github,
+import {
   Terminal,
-  Server,
-  Monitor,
-  Layers,
-  ArrowDown,
+  Boxes,
+  ShieldCheck,
   Package,
-  Globe,
-  ChevronDown,
-  ChevronUp
+  Languages,
+  Palette,
+  FlaskConical,
+  Cpu,
+  Gauge,
+  Bot,
+  Activity,
+  Github,
+  Sun,
+  Moon,
+  ArrowUpRight,
+  Server,
+  PlayCircle,
+  type LucideIcon,
 } from 'lucide-react';
+import { useWindowStore } from '../store/windowStore';
+import { usePrefsStore } from '../store/prefsStore';
+import { useTourStore } from '../store/tourStore';
+import { useTranslation, type TFunction } from '../i18n';
+import { portfolioConfig } from '../config/portfolio.config';
+
+/**
+ * About — the portfolio's thesis, in engineer tone.
+ *
+ * Its centrepiece is a "Claims → Evidence" table: every résumé point is a row
+ * that either opens the running feature that proves it (Inspector, theme /
+ * language toggles) or deep-links the source, and unproven points are tagged
+ * "planned" rather than dressed up as done. Fully theme-aware and i18n-driven
+ * (consumes Tier 1's prefs/i18n contract).
+ */
+
+type Tag = 'live' | 'partial' | 'planned';
+
+type ClaimAction =
+  | { kind: 'inspector' }
+  | { kind: 'source'; href: string }
+  | { kind: 'theme' }
+  | { kind: 'locale' }
+  | { kind: 'none' };
+
+interface ClaimRow {
+  /** i18n key under about.claim.<key> */
+  key: string;
+  icon: LucideIcon;
+  tag: Tag;
+  action: ClaimAction;
+}
+
+const REPO = portfolioConfig.repo;
+
+const CLAIMS: ClaimRow[] = [
+  { key: 'federation', icon: Boxes, tag: 'live', action: { kind: 'inspector' } },
+  { key: 'recovery', icon: ShieldCheck, tag: 'live', action: { kind: 'inspector' } },
+  { key: 'singleton', icon: Package, tag: 'live', action: { kind: 'inspector' } },
+  { key: 'i18n', icon: Languages, tag: 'live', action: { kind: 'locale' } },
+  { key: 'theming', icon: Palette, tag: 'partial', action: { kind: 'theme' } },
+  {
+    key: 'testing',
+    icon: FlaskConical,
+    tag: 'live',
+    action: { kind: 'source', href: `${REPO}/tree/main/src/test` },
+  },
+  {
+    key: 'compiler',
+    icon: Cpu,
+    tag: 'live',
+    action: { kind: 'source', href: `${REPO}/blob/main/src/components/organisms/WindowFrame.tsx` },
+  },
+  { key: 'domain', icon: Gauge, tag: 'planned', action: { kind: 'none' } },
+  { key: 'aidx', icon: Bot, tag: 'partial', action: { kind: 'source', href: `${REPO}/blob/main/CLAUDE.md` } },
+];
+
+const DECISIONS = ['runtime', 'recovery', 'css', 'singleton'] as const;
+
+const SHORTCUTS: { keys: string; key: string }[] = [
+  { keys: 'Alt + A', key: 'about' },
+  { keys: 'Alt + I', key: 'inspector' },
+  { keys: 'Alt + T', key: 'theme' },
+  { keys: 'Alt + L', key: 'locale' },
+  { keys: 'Alt + /', key: 'tour' },
+];
+
+const STACK = [
+  'React 19',
+  'TypeScript',
+  'Module Federation',
+  'Rsbuild (Rspack)',
+  'Zustand',
+  'Tailwind',
+  'Vitest',
+];
+
+const TAG_STYLE: Record<Tag, string> = {
+  live: 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300',
+  partial: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
+  planned: 'bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400',
+};
+
+function TagBadge({ tag, t }: { tag: Tag; t: TFunction }) {
+  const label = tag === 'live' ? t('about.tagLive') : tag === 'partial' ? t('about.tagPartial') : t('about.tagPlanned');
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${TAG_STYLE[tag]}`}
+    >
+      {tag === 'live' && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />}
+      {label}
+    </span>
+  );
+}
+
+function ClaimActionButton({ action, t }: { action: ClaimAction; t: TFunction }) {
+  const openWindow = useWindowStore((s) => s.openWindow);
+  const toggleTheme = usePrefsStore((s) => s.toggleTheme);
+  const toggleLocale = usePrefsStore((s) => s.toggleLocale);
+
+  const base =
+    'inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-colors';
+
+  switch (action.kind) {
+    case 'inspector':
+      return (
+        <button
+          onClick={() => openWindow('inspector', 'Inspector')}
+          className={`${base} text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-300 dark:bg-indigo-500/15 dark:hover:bg-indigo-500/25`}
+        >
+          <Activity className="w-3 h-3" />
+          {t('about.act.inspector')}
+        </button>
+      );
+    case 'theme':
+      return (
+        <button
+          onClick={toggleTheme}
+          className={`${base} text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/20`}
+        >
+          <Sun className="w-3 h-3 dark:hidden" />
+          <Moon className="w-3 h-3 hidden dark:inline" />
+          {t('about.act.theme')}
+        </button>
+      );
+    case 'locale':
+      return (
+        <button
+          onClick={toggleLocale}
+          className={`${base} text-sky-700 bg-sky-50 hover:bg-sky-100 dark:text-sky-300 dark:bg-sky-500/15 dark:hover:bg-sky-500/25`}
+        >
+          <Languages className="w-3 h-3" />
+          {t('about.act.locale')}
+        </button>
+      );
+    case 'source':
+      return (
+        <a
+          href={action.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${base} text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/20`}
+        >
+          <Github className="w-3 h-3" />
+          {t('about.act.source')}
+        </a>
+      );
+    case 'none':
+      return null;
+  }
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+      {children}
+    </h2>
+  );
+}
 
 export function AboutApp() {
-  const [showArchitecture, setShowArchitecture] = useState(false);
+  const { t } = useTranslation();
+  const startTour = useTourStore((s) => s.start);
+
+  const deployLinks: { label: string; href: string; icon: LucideIcon }[] = [
+    { label: t('about.link.host'), href: portfolioConfig.deployments.host, icon: Server },
+    { label: t('about.link.calculator'), href: portfolioConfig.deployments.calculator, icon: Boxes },
+    { label: t('about.link.notes'), href: portfolioConfig.deployments.notes, icon: Boxes },
+    { label: t('about.link.repo'), href: portfolioConfig.repo, icon: Github },
+  ];
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-auto">
+    <div className="flex flex-col h-full bg-white dark:bg-neutral-900 text-gray-800 dark:text-gray-100 overflow-auto">
       {/* Header */}
       <div className="p-5 bg-gradient-to-r from-sky-600 to-blue-700 text-white">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+        <div className="flex items-start gap-3">
+          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
             <Terminal className="w-7 h-7" />
           </div>
-          <div>
-            <h1 className="text-xl font-bold">KBH-Desktop에 오신 것을 환영합니다</h1>
-            <p className="text-sm text-white/80">Micro-Frontend 포트폴리오 데모</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold leading-tight">{portfolioConfig.owner.name}</h1>
+            <p className="text-sm text-white/90">{portfolioConfig.owner.title}</p>
+            <p className="text-xs text-white/70 mt-1">{t('about.subtitle')}</p>
           </div>
+          <button
+            onClick={startTour}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-medium transition-colors flex-shrink-0"
+            title={t('about.replayTour')}
+          >
+            <PlayCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('about.replayTour')}</span>
+          </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 p-5 space-y-5">
-        {/* Introduction */}
+      <div className="flex-1 p-5 space-y-6">
+        {/* Honesty banner */}
+        <div className="flex gap-2.5 p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+          <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-800 dark:text-amber-200 leading-relaxed">{t('about.honesty')}</p>
+        </div>
+
+        {/* Claims → Evidence */}
         <section>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            이 프로젝트는 <strong>Module Federation</strong>을 활용한 마이크로 프론트엔드 아키텍처를 
-            데스크탑 형태로 시연하는 포트폴리오입니다. 각 앱 아이콘을 더블클릭하여 실행해보세요.
-          </p>
-        </section>
-
-        {/* Available Apps */}
-        <section>
-          <h2 className="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Info className="w-4 h-4 text-blue-500" />
-            아이콘 정보
-          </h2>
-
-          <div className="space-y-3">
-            {/* Resume */}
-            <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-5 h-5 text-red-500" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-800">Resume</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    이력서를 셸 내부 PDF 뷰어 창에서 엽니다.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Calculator - Remote MFE */}
-            <div className="p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center flex-shrink-0">
-                  <Calculator className="w-5 h-5 text-cyan-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-800">Calculator</h3>
-                    <span className="px-1.5 py-0.5 bg-cyan-500 text-white text-[10px] font-bold rounded uppercase flex items-center gap-1">
-                      <Zap className="w-3 h-3" />
-                      Remote MFE
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                    <strong className="text-cyan-700">🎯 Module Federation 데모:</strong> 이 계산기는 
-                    별도로 배포된 <strong>독립적인 마이크로 프론트엔드</strong>입니다. (Vercel에서 호스팅)
-                  </p>
-                  <div className="mt-2 p-2 bg-white/70 rounded border border-cyan-100">
-                    <p className="text-xs text-gray-700">
-                      👆 <strong>데스크탑의 Calculator 아이콘을 더블클릭</strong>하여 실행해보세요! 
-                      창이 열리면 타이틀바에 <span className="text-cyan-600 font-semibold">MFE</span> 배지가 
-                      표시되며, 토스트 알림으로 로딩 시간이 표시됩니다.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Architecture Section - Collapsible */}
-        <section>
-          <button
-            onClick={() => setShowArchitecture(!showArchitecture)}
-            className="w-full flex items-center justify-between text-sm font-semibold text-gray-800 uppercase tracking-wider mb-3 hover:text-blue-600 transition-colors"
-          >
-            <span className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-blue-500" />
-              시스템 아키텍처
-            </span>
-            {showArchitecture ? (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
-
-          {showArchitecture && (
-            <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
-              {/* Architecture Diagram */}
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <p className="text-xs text-gray-500 mb-3 text-center">Module Federation 구조도</p>
-                
-                <div className="flex flex-col items-center gap-3">
-                  {/* User Browser */}
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
-                    <Globe className="w-4 h-4 text-slate-600" />
-                    <span className="text-xs font-medium text-slate-700">User Browser</span>
-                  </div>
-
-                  <ArrowDown className="w-4 h-4 text-gray-400" />
-
-                  {/* Host App */}
-                  <div className="w-full bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg p-3 border border-blue-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Server className="w-4 h-4 text-blue-600" />
-                      <span className="text-xs font-semibold text-blue-700">Host App (Web-OS)</span>
-                      <span className="text-[10px] bg-blue-200 text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
-                        Vercel
-                      </span>
+          <SectionTitle>{t('about.claimsTitle')}</SectionTitle>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 -mt-1">{t('about.claimsCaption')}</p>
+          <ul className="space-y-2">
+            {CLAIMS.map((row) => {
+              const Icon = row.icon;
+              return (
+                <li
+                  key={row.key}
+                  className="p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-white/10 border border-gray-100 dark:border-white/10 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-4 h-4 text-gray-500 dark:text-gray-300" />
                     </div>
-
-                    <div className="grid grid-cols-3 gap-1.5 text-[10px]">
-                      <div className="bg-white/70 rounded p-1.5 text-center border border-blue-100">
-                        <Package className="w-3 h-3 mx-auto mb-0.5 text-blue-500" />
-                        <span className="text-gray-600">Zustand</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-medium text-sm text-gray-800 dark:text-gray-100">
+                          {t(`about.claim.${row.key}.title`)}
+                        </h3>
+                        <TagBadge tag={row.tag} t={t} />
                       </div>
-                      <div className="bg-white/70 rounded p-1.5 text-center border border-blue-100">
-                        <Layers className="w-3 h-3 mx-auto mb-0.5 text-blue-500" />
-                        <span className="text-gray-600">Registry</span>
-                      </div>
-                      <div className="bg-white/70 rounded p-1.5 text-center border border-blue-100">
-                        <Monitor className="w-3 h-3 mx-auto mb-0.5 text-blue-500" />
-                        <span className="text-gray-600">Desktop</span>
-                      </div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                        {t(`about.claim.${row.key}.desc`)}
+                      </p>
+                      {row.action.kind !== 'none' && (
+                        <div className="mt-2">
+                          <ClaimActionButton action={row.action} t={t} />
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  {/* Federation Arrow */}
-                  <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
-                    <Zap className="w-3 h-3 text-yellow-500" />
-                    <span>Module Federation (Runtime)</span>
-                  </div>
-
-                  {/* Remote App */}
-                  <div className="w-full bg-gradient-to-br from-cyan-100 to-cyan-50 rounded-lg p-3 border border-cyan-200">
-                    <div className="flex items-center gap-2">
-                      <Server className="w-4 h-4 text-cyan-600" />
-                      <span className="text-xs font-semibold text-cyan-700">Remote App (Calculator)</span>
-                      <span className="text-[10px] bg-cyan-200 text-cyan-700 px-1.5 py-0.5 rounded-full ml-auto">
-                        Vercel
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Why Module Federation */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-2 bg-green-50 rounded-lg border border-green-100">
-                  <p className="text-[10px] font-medium text-green-800">의존성 공유</p>
-                  <p className="text-[10px] text-green-600">번들 사이즈 최적화</p>
-                </div>
-                <div className="p-2 bg-blue-50 rounded-lg border border-blue-100">
-                  <p className="text-[10px] font-medium text-blue-800">독립 배포</p>
-                  <p className="text-[10px] text-blue-600">런타임에 통합</p>
-                </div>
-              </div>
-            </div>
-          )}
+                </li>
+              );
+            })}
+          </ul>
         </section>
 
-        {/* Tech Highlights */}
+        {/* Technical decisions */}
         <section>
-          <h2 className="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-3">
-            기술 스택
-          </h2>
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              { name: 'React 19', color: 'bg-cyan-100 text-cyan-700' },
-              { name: 'TypeScript', color: 'bg-blue-100 text-blue-700' },
-              { name: 'Module Federation', color: 'bg-sky-100 text-sky-700' },
-              { name: 'Zustand', color: 'bg-orange-100 text-orange-700' },
-              { name: 'Tailwind', color: 'bg-teal-100 text-teal-700' },
-            ].map((tech) => (
-              <span
-                key={tech.name}
-                className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${tech.color}`}
+          <SectionTitle>{t('about.decisionsTitle')}</SectionTitle>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {DECISIONS.map((key) => (
+              <div
+                key={key}
+                className="p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10"
               >
-                {tech.name}
-              </span>
+                <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+                  {t(`about.decision.${key}.title`)}
+                </h3>
+                <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                  {t(`about.decision.${key}.desc`)}
+                </p>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* Footer */}
-        <section className="pt-3 border-t border-gray-100">
-          <div className="flex items-center text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <Github className="w-3 h-3" />
-              시작 메뉴에서 GitHub 링크 확인
-            </span>
+        {/* Deployments · source */}
+        <section>
+          <SectionTitle>{t('about.linksTitle')}</SectionTitle>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 -mt-1">{t('about.linksCaption')}</p>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {deployLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                >
+                  <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-800 dark:text-gray-100">{link.label}</p>
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono truncate">
+                      {link.href.replace(/^https?:\/\//, '')}
+                    </p>
+                  </div>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
+                </a>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Keyboard shortcuts */}
+        <section>
+          <SectionTitle>{t('about.shortcutsTitle')}</SectionTitle>
+          <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5">
+            {SHORTCUTS.map((s) => (
+              <div key={s.key} className="flex items-center justify-between gap-2">
+                <span className="text-xs text-gray-600 dark:text-gray-300">{t(`about.shortcut.${s.key}`)}</span>
+                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-[10px] font-mono text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                  {s.keys}
+                </kbd>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Tech stack */}
+        <section>
+          <SectionTitle>{t('about.stackTitle')}</SectionTitle>
+          <div className="flex flex-wrap gap-1.5">
+            {STACK.map((name) => (
+              <span
+                key={name}
+                className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300"
+              >
+                {name}
+              </span>
+            ))}
           </div>
         </section>
       </div>

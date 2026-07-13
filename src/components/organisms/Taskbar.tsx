@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, version as reactVersion } from 'react';
 import { useWindowStore } from '../../store/windowStore';
 import { useToastStore } from '../../store/toastStore';
 import { useAppRegistry } from '../../registry/appRegistry';
@@ -21,6 +21,7 @@ import {
   Sun,
   Moon,
   Languages,
+  Zap,
 } from 'lucide-react';
 
 interface StartMenuLink {
@@ -42,6 +43,7 @@ export function Taskbar() {
   const minimizeWindow = useWindowStore((state) => state.minimizeWindow);
   const restoreWindow = useWindowStore((state) => state.restoreWindow);
   const focusWindow = useWindowStore((state) => state.focusWindow);
+  const openWindow = useWindowStore((state) => state.openWindow);
 
   const theme = usePrefsStore((state) => state.theme);
   const locale = usePrefsStore((state) => state.locale);
@@ -51,6 +53,10 @@ export function Taskbar() {
   const entries = useAppRegistry((state) => state.entries);
   const availableApps = useMemo(
     () => Object.values(entries).map((entry) => entry.defaultConfig),
+    [entries],
+  );
+  const remoteCount = useMemo(
+    () => Object.values(entries).filter((entry) => entry.isRemote).length,
     [entries],
   );
   const launchApp = useAppLauncher();
@@ -281,8 +287,20 @@ export function Taskbar() {
         )}
       </div>
 
-      {/* System tray — theme + language toggles */}
-      <div className="relative flex items-center gap-1">
+      {/* System tray — federation status + theme + language toggles */}
+      <div className="relative flex items-center gap-1" data-tour="tray">
+        {/* Module Federation status strip — click to open the Inspector */}
+        <button
+          onClick={() => openWindow('inspector', 'Inspector')}
+          className="hidden md:flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          title={t('taskbar.openInspector')}
+        >
+          <Zap className="w-3.5 h-3.5 text-accent" />
+          <span className="text-[11px] font-medium whitespace-nowrap">
+            {t('taskbar.federationStrip', { count: remoteCount, version: reactVersion })}
+          </span>
+        </button>
+        <div className="hidden md:block w-px h-6 bg-black/10 dark:bg-white/10 mx-0.5" />
         <button
           onClick={toggleLocale}
           className="flex items-center gap-1 h-8 px-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
