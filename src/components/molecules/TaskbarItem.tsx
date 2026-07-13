@@ -1,6 +1,7 @@
 import { WindowState } from '../../types/window.types';
 import { getApp } from '../../registry/appRegistry';
 import { getAppIcon } from '../shared/appIcons';
+import { useTranslation, translateAppTitle } from '../../i18n';
 import { Package } from 'lucide-react';
 
 interface TaskbarItemProps {
@@ -10,8 +11,10 @@ interface TaskbarItemProps {
 }
 
 export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
+  const { t } = useTranslation();
   const app = getApp(window.componentType);
   const IconComponent = getAppIcon(app?.defaultConfig.icon ?? '') ?? Package;
+  const title = translateAppTitle(t, window.componentType, window.title);
 
   return (
     <button
@@ -20,16 +23,16 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
         flex items-center gap-2 px-3 py-1.5 rounded-lg
         transition-all duration-150
         ${isActive
-          ? 'bg-white/60 shadow-sm ring-1 ring-white/60'
-          : 'hover:bg-black/5'
+          ? 'bg-white/60 dark:bg-white/10 shadow-sm ring-1 ring-white/60 dark:ring-white/15'
+          : 'hover:bg-black/5 dark:hover:bg-white/10'
         }
         ${window.isMinimized ? 'opacity-60' : ''}
       `}
-      title={window.title}
+      title={title}
     >
-      <IconComponent className="w-5 h-5 text-gray-700" />
-      <span className="text-sm text-gray-800 truncate max-w-[120px]">
-        {window.title}
+      <IconComponent className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+      <span className="text-sm text-gray-800 dark:text-gray-100 truncate max-w-[120px]">
+        {title}
       </span>
 
       {isActive && (

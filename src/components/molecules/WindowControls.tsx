@@ -1,3 +1,5 @@
+import { useTranslation } from '../../i18n';
+
 interface WindowControlsProps {
   onClose: () => void;
   onMinimize: () => void;
@@ -12,6 +14,7 @@ export function WindowControls({
   onMaximize,
   isActive = true,
 }: WindowControlsProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2 group">
       <button
@@ -22,7 +25,7 @@ export function WindowControls({
           ${isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-400'}
           group-hover:after:content-['×'] after:text-[10px] after:font-bold after:text-red-900 after:opacity-0 group-hover:after:opacity-100
         `}
-        aria-label="Close window"
+        aria-label={t('window.close')}
       />
 
       <button
@@ -33,7 +36,7 @@ export function WindowControls({
           ${isActive ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-400'}
           group-hover:after:content-['−'] after:text-[10px] after:font-bold after:text-yellow-900 after:opacity-0 group-hover:after:opacity-100
         `}
-        aria-label="Minimize window"
+        aria-label={t('window.minimize')}
       />
 
       <button
@@ -44,7 +47,7 @@ export function WindowControls({
           ${isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400'}
           group-hover:after:content-['+'] after:text-[10px] after:font-bold after:text-green-900 after:opacity-0 group-hover:after:opacity-100
         `}
-        aria-label="Maximize window"
+        aria-label={t('window.maximize')}
       />
     </div>
   );

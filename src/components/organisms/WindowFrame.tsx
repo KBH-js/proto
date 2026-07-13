@@ -10,6 +10,7 @@ import { TitleBar, DRAG_HANDLE_CLASS } from './TitleBar';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { LoadingFallback } from '../shared/LoadingFallback';
 import { useToastStore, federationLogger } from '../../store/toastStore';
+import { useTranslation, translateAppTitle } from '../../i18n';
 
 interface WindowFrameProps {
   /** The window state object */
@@ -86,6 +87,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
 
   const setPreviewZone = useSnapPreviewStore((state) => state.setZone);
   const addToast = useToastStore((state) => state.addToast);
+  const { t } = useTranslation();
 
   // Drag-time snap tracking. Refs, not state: onDrag fires per mousemove
   // and must not re-render; the preview store re-renders only SnapPreview.
@@ -116,6 +118,9 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   const remote = appEntry?.remote;
   const isRemote = appEntry?.isRemote ?? false;
   const remoteModule = remote ? `${remote.name}/${remote.module}` : undefined;
+  // Localized window title (falls back to the stored/manifest title for
+  // remotes without a translation entry) — updates live on locale switch.
+  const displayTitle = translateAppTitle(t, win.componentType, win.title);
 
   // Remote apps get a per-window lazy wrapper that loads through the MF
   // runtime — failures reject into this window's ErrorBoundary only.
@@ -158,7 +163,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       // Toast notification
       addToast({
         type: 'system',
-        message: `Remote Module '${remoteModule}' loaded in ${loadTime}ms`,
+        message: t('window.remoteLoaded', { module: remoteModule, ms: loadTime }),
         duration: 4000,
       });
     }
@@ -278,7 +283,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       >
         {/* Title Bar */}
         <TitleBar
-          title={win.title}
+          title={displayTitle}
           isActive={isActive}
           isMaximized={win.isMaximized}
           onClose={() => closeWindow(win.id)}
@@ -292,11 +297,11 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
         <div className="flex-1 bg-white overflow-auto">
           {AppComponent ? (
             <ErrorBoundary
-              appName={win.title}
+              appName={displayTitle}
               onClose={() => closeWindow(win.id)}
               onRetry={isRemote ? handleRetry : undefined}
             >
-              <Suspense fallback={<LoadingFallback message={`Loading ${win.title}...`} />}>
+              <Suspense fallback={<LoadingFallback message={t('window.loading', { title: displayTitle })} />}>
                 <RemoteLoadTracker onLoad={handleRemoteLoaded} isRemote={isRemote}>
                   <AppComponent />
                 </RemoteLoadTracker>
@@ -304,7 +309,7 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
             </ErrorBoundary>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
-              App not found: {win.componentType}
+              {t('window.notFound', { type: win.componentType })}
             </div>
           )}
         </div>

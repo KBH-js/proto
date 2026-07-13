@@ -8,7 +8,9 @@
     "dev:remotes": "pnpm --parallel --filter \"@proto/remote-*\" dev",
     "build": "tsc -b && rsbuild build",
     "lint": "eslint .",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@module-federation/enhanced": "^2.7.0",
@@ -34,9 +36,12 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+    "happy-dom": "^15.11.7",
+    "msw": "^2.7.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.6.2",
-    "typescript-eslint": "^8.18.2"
+    "typescript-eslint": "^8.18.2",
+    "vitest": "^2.1.8"
   }
 }

@@ -3,9 +3,11 @@ import { create } from 'zustand';
 import { AppConfig, Size } from '../types/window.types';
 import { AboutApp } from '../apps/AboutApp';
 import { ResumeApp } from '../apps/ResumeApp';
+import { FederationInspectorApp } from '../apps/FederationInspectorApp';
 import { registerAppRemotes, RemoteRegistration } from '../federation/runtime';
 import { fetchAppCatalog, resolveEntryUrl, CatalogApp } from '../federation/catalog';
 import { federationLogger, useToastStore } from '../store/toastStore';
+import { translateNow } from '../i18n';
 
 /**
  * Reference to a federated remote module
@@ -67,6 +69,19 @@ const staticEntries: Record<string, AppRegistryEntry> = {
       title: 'Resume',
       icon: 'file-text', // lucide icon name
       defaultSize: { w: 720, h: 820 },
+    },
+  },
+
+  /**
+   * Federation Inspector - live MF telemetry + one-click failure/recovery demo
+   */
+  inspector: {
+    component: FederationInspectorApp,
+    defaultConfig: {
+      componentType: 'inspector',
+      title: 'Inspector',
+      icon: 'monitor', // lucide icon name (already in appIconMap)
+      defaultSize: { w: 560, h: 560 },
     },
   },
 };
@@ -151,7 +166,7 @@ export function initializeAppRegistry(): Promise<void> {
       federationLogger.moduleFailed('app catalog', message);
       useToastStore.getState().addToast({
         type: 'error',
-        message: 'Failed to load remote app catalog — local apps only',
+        message: translateNow('error.catalogFailed'),
         duration: 6000,
       });
     }
