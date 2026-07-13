@@ -6,9 +6,11 @@ interface DesktopIconProps {
   icon: string;
   label: string;
   onLaunch: () => void;
+  /** Registry component type — exposed as data-app-icon so the guide tour can anchor to it */
+  componentType?: string;
 }
 
-export function DesktopIcon({ icon, label, onLaunch }: DesktopIconProps) {
+export function DesktopIcon({ icon, label, onLaunch, componentType }: DesktopIconProps) {
   const IconComponent = getAppIcon(icon);
 
   // Touch devices have no double-click — launch on a single tap there
@@ -19,6 +21,7 @@ export function DesktopIcon({ icon, label, onLaunch }: DesktopIconProps) {
   return (
     <button
       {...launchProps}
+      data-app-icon={componentType}
       className="
         flex flex-col items-center gap-1 p-2 rounded-lg
         w-20 cursor-pointer

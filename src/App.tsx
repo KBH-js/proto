@@ -2,14 +2,19 @@ import { useEffect, useState } from 'react';
 import { WindowManagerLayout } from './components/templates/WindowManagerLayout';
 import { ToastContainer } from './components/shared/ToastContainer';
 import { BootScreen } from './components/shared/BootScreen';
+import { FirstRunTour } from './components/shared/FirstRunTour';
 import { initializeAppRegistry, useAppRegistry } from './registry/appRegistry';
 import { useWindowStore } from './store/windowStore';
+import { useShortcuts } from './hooks/useShortcuts';
 
 const RESIZE_DEBOUNCE_MS = 150;
 
 function App() {
   const [bootAnimationDone, setBootAnimationDone] = useState(false);
   const registryStatus = useAppRegistry((state) => state.status);
+
+  // Global keyboard shortcuts (Alt+A/I/T/L, Alt+/)
+  useShortcuts();
 
   // Fetch the remote app catalog and register remotes with the MF runtime.
   // Idempotent — guarded against StrictMode double-invocation internally.
@@ -50,6 +55,7 @@ function App() {
 
       <WindowManagerLayout />
       <ToastContainer />
+      {!isBooting && <FirstRunTour />}
     </>
   );
 }
