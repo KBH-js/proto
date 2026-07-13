@@ -9,8 +9,13 @@
     "./theme": {
       "types": "./theme.d.ts",
       "default": "./theme.js"
-    }
+    },
+    "./glass": {
+      "types": "./LiquidGlass.tsx",
+      "default": "./LiquidGlass.tsx"
+    },
+    "./glass.css": "./glass.css"
   },
-  "keywords": ["theme", "design-tokens", "tailwind"],
+  "keywords": ["theme", "design-tokens", "tailwind", "liquid-glass"],
   "license": "MIT"
 }

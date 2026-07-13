@@ -30,6 +30,10 @@ export default defineConfig({
       shared: {
         react: { singleton: true, requiredVersion: '^19.0.0' },
         'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
+        // Liquid Glass surface — shared as a singleton so the host provides one
+        // instance (one <defs> filter, one token set) to every remote that
+        // imports it, mirroring the React singleton contract.
+        '@proto/shared/glass': { singleton: true, requiredVersion: false },
       },
       dts: false,
     }),
@@ -39,6 +43,9 @@ export default defineConfig({
   },
   source: {
     entry: { index: './src/main.tsx' },
+    // The `@proto/shared` workspace package ships raw .tsx (no build step);
+    // include it so Rspack transpiles the LiquidGlass source like app code.
+    include: [/[\\/]packages[\\/]shared[\\/]/],
   },
   server: {
     // PORT override lets tooling run the host on a free port; the host

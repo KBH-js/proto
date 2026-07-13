@@ -160,20 +160,29 @@ export const zIndex = {
 // Desktop wallpaper gradients — the single sanctioned home for these raw color
 // stops. Kept here (a token source, not linted) so product code stays free of
 // raw hex/rgba and consumes them as `wallpaper.dark` / `wallpaper.light`.
+// Desktop wallpapers are intentionally colourful multi-hue meshes: Liquid Glass
+// looks flat over flat backgrounds, so the dock/windows need vivid colour behind
+// them to refract and tint. Two variants tuned per shell theme.
 export const wallpaper = {
-  // Dark shell — layered deep-blue/teal gradients (macOS-inspired)
+  // Dark shell — a saturated aurora mesh (violet → blue → teal → magenta) over
+  // deep navy, so frosted surfaces pick up colour without washing out.
   dark: `
-  radial-gradient(120% 90% at 78% 12%, rgba(56, 189, 248, 0.38) 0%, transparent 55%),
-  radial-gradient(100% 80% at 12% 85%, rgba(45, 212, 191, 0.32) 0%, transparent 55%),
-  radial-gradient(90% 90% at 45% 50%, rgba(59, 130, 246, 0.28) 0%, transparent 65%),
-  linear-gradient(160deg, #0a1c33 0%, #0e3055 45%, #14486e 72%, #0a2440 100%)
+  radial-gradient(80% 70% at 12% 8%, rgba(139, 92, 246, 0.55) 0%, transparent 60%),
+  radial-gradient(75% 70% at 88% 14%, rgba(56, 189, 248, 0.50) 0%, transparent 58%),
+  radial-gradient(90% 80% at 78% 92%, rgba(45, 212, 191, 0.42) 0%, transparent 60%),
+  radial-gradient(80% 75% at 20% 88%, rgba(236, 72, 153, 0.38) 0%, transparent 60%),
+  radial-gradient(70% 70% at 50% 50%, rgba(59, 130, 246, 0.30) 0%, transparent 70%),
+  linear-gradient(150deg, #0b1030 0%, #10204d 42%, #0e2f5c 70%, #131233 100%)
 `,
-  // Light shell — brighter blues; kept mid-toned so white icon labels stay legible
+  // Light shell — a bright pastel mesh (sky → mint → peach → lilac); mid-toned
+  // enough that white icon labels stay legible and dark glass text keeps contrast.
   light: `
-  radial-gradient(120% 90% at 78% 12%, rgba(125, 211, 252, 0.45) 0%, transparent 55%),
-  radial-gradient(100% 80% at 12% 85%, rgba(94, 234, 212, 0.40) 0%, transparent 55%),
-  radial-gradient(90% 90% at 45% 50%, rgba(96, 165, 250, 0.32) 0%, transparent 65%),
-  linear-gradient(160deg, #93c5fd 0%, #60a5fa 45%, #3b82f6 74%, #2563eb 100%)
+  radial-gradient(80% 70% at 10% 8%, rgba(129, 140, 248, 0.55) 0%, transparent 60%),
+  radial-gradient(75% 70% at 90% 12%, rgba(125, 211, 252, 0.60) 0%, transparent 58%),
+  radial-gradient(90% 80% at 82% 90%, rgba(94, 234, 212, 0.52) 0%, transparent 60%),
+  radial-gradient(80% 75% at 16% 90%, rgba(251, 207, 232, 0.55) 0%, transparent 60%),
+  radial-gradient(70% 70% at 50% 45%, rgba(147, 197, 253, 0.40) 0%, transparent 70%),
+  linear-gradient(150deg, #cfe3ff 0%, #a9c8ff 40%, #93c5fd 68%, #bcd4ff 100%)
 `,
 };
 
