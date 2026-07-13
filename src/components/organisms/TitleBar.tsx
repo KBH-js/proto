@@ -47,10 +47,9 @@ export function TitleBar({
       className={`
         ${DRAG_HANDLE_CLASS}
         flex items-center h-9 px-3
-        rounded-t-2xl
         select-none
-        border-b border-white/30 dark:border-white/10
-        ${isActive ? 'glass-chrome' : 'glass-chrome-muted'}
+        border-b border-white/25 dark:border-white/10
+        ${isActive ? 'bg-white/15 dark:bg-white/[0.06]' : 'bg-white/5 dark:bg-transparent'}
         ${!isMaximized ? 'cursor-move' : 'cursor-default'}
       `}
       onDoubleClick={handleDoubleClick}
@@ -90,8 +89,8 @@ export function TitleBar({
         )}
         <span
           className={`
-            text-sm font-medium truncate
-            ${isActive ? 'text-gray-800 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}
+            lg-text text-sm font-medium truncate
+            ${isActive ? 'text-gray-800 dark:text-gray-50' : 'text-gray-500 dark:text-gray-300'}
           `}
         >
           {title}

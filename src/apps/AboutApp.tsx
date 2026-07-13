@@ -18,6 +18,7 @@ import {
   PlayCircle,
   type LucideIcon,
 } from 'lucide-react';
+import { LiquidGlass } from '@proto/shared/glass';
 import { useWindowStore } from '../store/windowStore';
 import { usePrefsStore } from '../store/prefsStore';
 import { useTourStore } from '../store/tourStore';
@@ -95,21 +96,25 @@ const STACK = [
   'Vitest',
 ];
 
-const TAG_STYLE: Record<Tag, string> = {
-  live: 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300',
-  partial: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
-  planned: 'bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400',
+// Only text/dot colour survives — the pill body is now a Liquid Glass surface.
+const TAG_TEXT: Record<Tag, string> = {
+  live: 'text-green-700 dark:text-green-300',
+  partial: 'text-amber-700 dark:text-amber-300',
+  planned: 'text-gray-500 dark:text-gray-300',
 };
 
 function TagBadge({ tag, t }: { tag: Tag; t: TFunction }) {
   const label = tag === 'live' ? t('about.tagLive') : tag === 'partial' ? t('about.tagPartial') : t('about.tagPlanned');
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${TAG_STYLE[tag]}`}
+    <LiquidGlass
+      variant="button"
+      inline
+      as="span"
+      className={`lg-text items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${TAG_TEXT[tag]}`}
     >
       {tag === 'live' && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />}
       {label}
-    </span>
+    </LiquidGlass>
   );
 }
 
@@ -118,52 +123,62 @@ function ClaimActionButton({ action, t }: { action: ClaimAction; t: TFunction })
   const toggleTheme = usePrefsStore((s) => s.toggleTheme);
   const toggleLocale = usePrefsStore((s) => s.toggleLocale);
 
+  // Glass pills: semantic colour survives on the text/icon; the pill body is a
+  // Liquid Glass surface (hover brightens via the built-in sheen).
   const base =
-    'inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-colors';
+    'lg-text inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium hover:brightness-110 transition-[filter]';
 
   switch (action.kind) {
     case 'inspector':
       return (
-        <button
+        <LiquidGlass
+          variant="button"
+          as="button"
           onClick={() => openWindow('inspector', 'Inspector')}
-          className={`${base} text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-300 dark:bg-indigo-500/15 dark:hover:bg-indigo-500/25`}
+          className={`${base} text-indigo-700 dark:text-indigo-300`}
         >
           <Activity className="w-3 h-3" />
           {t('about.act.inspector')}
-        </button>
+        </LiquidGlass>
       );
     case 'theme':
       return (
-        <button
+        <LiquidGlass
+          variant="button"
+          as="button"
           onClick={toggleTheme}
-          className={`${base} text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/20`}
+          className={`${base} text-gray-700 dark:text-gray-100`}
         >
           <Sun className="w-3 h-3 dark:hidden" />
           <Moon className="w-3 h-3 hidden dark:inline" />
           {t('about.act.theme')}
-        </button>
+        </LiquidGlass>
       );
     case 'locale':
       return (
-        <button
+        <LiquidGlass
+          variant="button"
+          as="button"
           onClick={toggleLocale}
-          className={`${base} text-sky-700 bg-sky-50 hover:bg-sky-100 dark:text-sky-300 dark:bg-sky-500/15 dark:hover:bg-sky-500/25`}
+          className={`${base} text-sky-700 dark:text-sky-300`}
         >
           <Languages className="w-3 h-3" />
           {t('about.act.locale')}
-        </button>
+        </LiquidGlass>
       );
     case 'source':
       return (
-        <a
+        <LiquidGlass
+          variant="button"
+          as="a"
           href={action.href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${base} text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/20`}
+          className={`${base} text-gray-700 dark:text-gray-100`}
         >
           <Github className="w-3 h-3" />
           {t('about.act.source')}
-        </a>
+        </LiquidGlass>
       );
     case 'none':
       return null;
@@ -190,7 +205,7 @@ export function AboutApp() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-neutral-900 text-gray-800 dark:text-gray-100 overflow-auto">
+    <div className="flex flex-col h-full bg-white/60 dark:bg-neutral-900/50 text-gray-800 dark:text-gray-100 overflow-auto">
       {/* Header */}
       <div className="p-5 bg-gradient-to-r from-sky-600 to-blue-700 text-white">
         <div className="flex items-start gap-3">
@@ -202,14 +217,17 @@ export function AboutApp() {
             <p className="text-sm text-white/90">{portfolioConfig.owner.title}</p>
             <p className="text-xs text-white/70 mt-1">{t('about.subtitle')}</p>
           </div>
-          <button
+          <LiquidGlass
+            variant="button"
+            as="button"
             onClick={startTour}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-medium transition-colors flex-shrink-0"
+            radius={10}
+            className="lg-text flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-white hover:brightness-110 transition-[filter] flex-shrink-0"
             title={t('about.replayTour')}
           >
             <PlayCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t('about.replayTour')}</span>
-          </button>
+          </LiquidGlass>
         </div>
       </div>
 
@@ -228,12 +246,15 @@ export function AboutApp() {
             {CLAIMS.map((row) => {
               const Icon = row.icon;
               return (
-                <li
+                <LiquidGlass
+                  variant="card"
+                  as="li"
                   key={row.key}
-                  className="p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10"
+                  radius={12}
+                  className="p-3"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-white/10 border border-gray-100 dark:border-white/10 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-white/70 dark:bg-white/10 border border-white/40 dark:border-white/10 flex items-center justify-center flex-shrink-0">
                       <Icon className="w-4 h-4 text-gray-500 dark:text-gray-300" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -253,7 +274,7 @@ export function AboutApp() {
                       )}
                     </div>
                   </div>
-                </li>
+                </LiquidGlass>
               );
             })}
           </ul>
@@ -264,17 +285,14 @@ export function AboutApp() {
           <SectionTitle>{t('about.decisionsTitle')}</SectionTitle>
           <div className="grid sm:grid-cols-2 gap-2">
             {DECISIONS.map((key) => (
-              <div
-                key={key}
-                className="p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10"
-              >
+              <LiquidGlass variant="card" key={key} radius={12} className="p-3">
                 <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100">
                   {t(`about.decision.${key}.title`)}
                 </h3>
                 <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                   {t(`about.decision.${key}.desc`)}
                 </p>
-              </div>
+              </LiquidGlass>
             ))}
           </div>
         </section>
@@ -287,12 +305,15 @@ export function AboutApp() {
             {deployLinks.map((link) => {
               const Icon = link.icon;
               return (
-                <a
+                <LiquidGlass
+                  variant="card"
+                  as="a"
                   key={link.label}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                  radius={12}
+                  className="flex items-center gap-2 px-3 py-2 hover:brightness-110 transition-[filter] group"
                 >
                   <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
@@ -302,7 +323,7 @@ export function AboutApp() {
                     </p>
                   </div>
                   <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
-                </a>
+                </LiquidGlass>
               );
             })}
           </div>

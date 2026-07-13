@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 // Wallpaper gradients live in the shared token source (not inline raw color),
 // enforced by the `local/no-raw-colors` lint rule.
 import { wallpaper } from '@proto/shared/theme';
+import { LiquidGlass } from '@proto/shared/glass';
 import { useAppRegistry } from '../../registry/appRegistry';
 import { usePrefsStore } from '../../store/prefsStore';
 import { useTranslation, translateAppTitle } from '../../i18n';
@@ -47,17 +48,20 @@ export function Desktop() {
         style={{ background: theme === 'dark' ? wallpaper.dark : wallpaper.light }}
       />
 
-      {/* Desktop icons - positioned on the left side */}
-      <div className="relative p-4 flex flex-col gap-2 items-start">
-        {availableApps.map((app) => (
-          <DesktopIcon
-            key={app.componentType}
-            icon={app.icon}
-            label={translateAppTitle(t, app.componentType, app.title)}
-            componentType={app.componentType}
-            onLaunch={() => launchApp(app)}
-          />
-        ))}
+      {/* Left sidebar Dock — a vertical Liquid Glass rail of app launchers,
+          vertically centred against the left edge. */}
+      <div className="relative h-full flex items-center pl-3">
+        <LiquidGlass variant="dock" className="flex flex-col gap-1 p-2 max-h-full overflow-y-auto">
+          {availableApps.map((app) => (
+            <DesktopIcon
+              key={app.componentType}
+              icon={app.icon}
+              label={translateAppTitle(t, app.componentType, app.title)}
+              componentType={app.componentType}
+              onLaunch={() => launchApp(app)}
+            />
+          ))}
+        </LiquidGlass>
       </div>
 
       {menu && <DesktopContextMenu x={menu.x} y={menu.y} onClose={() => setMenu(null)} />}
