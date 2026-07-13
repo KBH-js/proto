@@ -1,5 +1,6 @@
 import { registerRemotes, loadRemote } from '@module-federation/enhanced/runtime';
 import type { ComponentType } from 'react';
+import { useFederationStore } from '../store/federationStore';
 
 /**
  * Module Federation Runtime Helpers
@@ -25,6 +26,8 @@ export interface RemoteRegistration {
  */
 export function registerAppRemotes(remotes: RemoteRegistration[]): void {
   registerRemotes(remotes);
+  const { markRegistered } = useFederationStore.getState();
+  for (const remote of remotes) markRegistered(remote.name, remote.entry);
 }
 
 /**
@@ -38,6 +41,7 @@ export function registerAppRemotes(remotes: RemoteRegistration[]): void {
  */
 export function forceRefreshRemote(remote: RemoteRegistration): void {
   registerRemotes([remote], { force: true });
+  useFederationStore.getState().markRegistered(remote.name, remote.entry);
 }
 
 /**
@@ -50,9 +54,22 @@ export function forceRefreshRemote(remote: RemoteRegistration): void {
 export async function loadRemoteComponent<P = object>(
   id: string,
 ): Promise<{ default: ComponentType<P> }> {
-  const mod = await loadRemote<{ default: ComponentType<P> }>(id);
-  if (!mod || typeof mod.default !== 'function') {
-    throw new Error(`Remote module '${id}' did not resolve to a React component`);
+  // Container name is the first segment of 'name/Module'. This is the single
+  // choke-point every remote load passes through, so it's where we measure
+  // the true fetch+eval duration and record success/failure for the Inspector.
+  const name = id.split('/')[0];
+  const { markLoading, markLoaded, markError } = useFederationStore.getState();
+  markLoading(name);
+  const start = performance.now();
+  try {
+    const mod = await loadRemote<{ default: ComponentType<P> }>(id);
+    if (!mod || typeof mod.default !== 'function') {
+      throw new Error(`Remote module '${id}' did not resolve to a React component`);
+    }
+    markLoaded(name, Math.round(performance.now() - start));
+    return { default: mod.default };
+  } catch (error) {
+    markError(name, error instanceof Error ? error.message : String(error));
+    throw error;
   }
-  return { default: mod.default };
 }

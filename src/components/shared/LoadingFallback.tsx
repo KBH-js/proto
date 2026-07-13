@@ -1,4 +1,5 @@
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 interface LoadingFallbackProps {
   message?: string;
@@ -7,9 +8,11 @@ interface LoadingFallbackProps {
 
 /** Suspense fallback shown while a remote component loads */
 export function LoadingFallback({
-  message = 'Loading...',
+  message,
   size = 'md'
 }: LoadingFallbackProps) {
+  const { t } = useTranslation();
+  const label = message ?? t('loading.generic');
   const sizeClasses = {
     sm: 'w-6 h-6',
     md: 'w-10 h-10',
@@ -25,12 +28,12 @@ export function LoadingFallback({
           animate-spin
         `}
         role="status"
-        aria-label="Loading"
+        aria-label={t('loading.generic')}
       />
 
-      {message && (
+      {label && (
         <p className="mt-4 text-gray-500 text-sm animate-pulse">
-          {message}
+          {label}
         </p>
       )}
     </div>

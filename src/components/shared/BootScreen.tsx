@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Terminal, Wifi, CheckCircle2, Loader2 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 interface BootScreenProps {
   onBootComplete: () => void;
@@ -7,16 +8,17 @@ interface BootScreenProps {
 }
 
 const bootMessages = [
-  { text: 'Initializing KBH-Desktop v1.0.0...', icon: Terminal, delay: 0 },
-  { text: 'Loading Remote Modules via Module Federation...', icon: Wifi, delay: 250 },
-  { text: 'Starting window manager...', icon: Loader2, delay: 500 },
-  { text: 'System ready.', icon: CheckCircle2, delay: 750 },
+  { key: 'boot.init', icon: Terminal, delay: 0 },
+  { key: 'boot.loadingRemotes', icon: Wifi, delay: 250 },
+  { key: 'boot.startingWm', icon: Loader2, delay: 500 },
+  { key: 'boot.ready', icon: CheckCircle2, delay: 750 },
 ];
 
 /** Terminal-style boot animation shown before the desktop appears */
 export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps) {
   const [visibleMessages, setVisibleMessages] = useState<number>(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const messageTimers = bootMessages.map((msg, index) => {
@@ -56,7 +58,7 @@ export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps)
           <Terminal className="w-10 h-10 text-green-400" />
           <h1 className="text-3xl font-bold text-green-400 tracking-wider">KBH-Desktop</h1>
         </div>
-        <p className="text-green-600 text-xs">Micro-Frontend Architecture Demo</p>
+        <p className="text-green-600 text-xs">{t('boot.subtitle')}</p>
       </div>
 
       {/* Boot messages */}
@@ -76,7 +78,7 @@ export function BootScreen({ onBootComplete, duration = 1000 }: BootScreenProps)
               `}
             >
               <Icon className={`w-4 h-4 ${isLast && msg.icon === Loader2 ? 'animate-spin' : ''}`} />
-              <span>{msg.text}</span>
+              <span>{t(msg.key)}</span>
               {isComplete && msg.icon !== CheckCircle2 && (
                 <span className="text-green-500 ml-auto">[OK]</span>
               )}

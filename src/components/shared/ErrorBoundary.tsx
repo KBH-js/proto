@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { AlertTriangle, RotateCcw, X } from 'lucide-react';
 import { federationLogger } from '../../store/toastStore';
+import { translateNow } from '../../i18n';
 
 /**
  * Error Boundary for Remote Micro-Frontends
@@ -106,19 +107,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           
           {/* Primary Message */}
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            {appName} is currently unavailable
+            {translateNow('error.unavailable', { appName })}
           </h2>
-          
+
           {/* Secondary Message */}
           <p className="text-gray-500 text-sm mb-4 max-w-xs">
-            The remote application could not be loaded. Make sure the remote service is running, then try again — only this window is affected.
+            {translateNow('error.body')}
           </p>
-          
+
           {/* Error Details (collapsed by default in production) */}
           {error && (
             <details className="mb-4 text-xs text-gray-400 max-w-xs">
               <summary className="cursor-pointer hover:text-gray-600">
-                Technical details
+                {translateNow('error.details')}
               </summary>
               <pre className="mt-2 p-2 bg-gray-200 rounded text-left overflow-auto max-h-24 text-gray-700">
                 {error.message}
@@ -134,7 +135,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>Try Again</span>
+                <span>{translateNow('error.tryAgain')}</span>
               </button>
             )}
             {onClose && (
@@ -143,7 +144,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
               >
                 <X className="w-4 h-4" />
-                <span>Close Window</span>
+                <span>{translateNow('error.closeWindow')}</span>
               </button>
             )}
           </div>

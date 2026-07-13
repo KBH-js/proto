@@ -1,0 +1,100 @@
+import type { ko } from './ko';
+
+/**
+ * English resource bundle. Its shape is type-checked against `ko` (the source
+ * locale) via `Resources`, so a missing/renamed key is a compile error.
+ */
+export type Resources = typeof ko;
+
+export const en: Resources = {
+  app: {
+    about: 'About',
+    resume: 'Resume',
+    inspector: 'Inspector',
+    calculator: 'Calculator',
+    notes: 'Notes',
+  },
+  taskbar: {
+    startMenu: 'Start Menu',
+    apps: 'Apps',
+    connect: 'Connect',
+    noWindows: 'No open windows',
+    githubDesc: 'View source code',
+    linkedinDesc: 'Professional profile',
+    email: 'Email',
+    emailDesc: 'Get in touch',
+    copyEmail: 'Copy email address',
+    emailCopied: 'Email address copied to clipboard.',
+    copyFailed: 'Failed to copy.',
+    toDark: 'Switch to dark mode',
+    toLight: 'Switch to light mode',
+    toEnglish: 'Switch to English',
+    toKorean: 'Switch to Korean',
+  },
+  window: {
+    close: 'Close window',
+    minimize: 'Minimize window',
+    maximize: 'Maximize window',
+    loading: 'Loading {{title}}...',
+    notFound: 'App not found: {{type}}',
+    remoteLoaded: "Remote module '{{module}}' loaded in {{ms}}ms",
+    mfeDevTooltip: 'Module Federation — Development (localhost)',
+    mfeProdTooltip: 'Module Federation — Loaded from Vercel',
+  },
+  boot: {
+    init: 'Initializing KBH-Desktop v1.0.0...',
+    loadingRemotes: 'Loading Remote Modules via Module Federation...',
+    startingWm: 'Starting window manager...',
+    ready: 'System ready.',
+    subtitle: 'Micro-Frontend Architecture Demo',
+  },
+  error: {
+    unavailable: '{{appName}} is currently unavailable',
+    body: 'The remote application could not be loaded. Make sure the remote service is running, then try again — only this window is affected.',
+    details: 'Technical details',
+    tryAgain: 'Try Again',
+    closeWindow: 'Close Window',
+    catalogFailed: 'Failed to load remote app catalog — local apps only',
+  },
+  loading: {
+    generic: 'Loading...',
+  },
+  resume: {
+    filename: 'Resume.pdf',
+    openNewTab: 'Open in new tab',
+    download: 'Download',
+  },
+  inspector: {
+    title: 'Federation Inspector',
+    subtitle: 'Runtime Module Federation state · failure-recovery demo',
+    reactSingleton: 'React singleton',
+    singletonCaption: 'Negotiated once, shared by every remote',
+    registryStatus: 'Registry status',
+    statusLoading: 'loading',
+    statusReady: 'ready',
+    statusDegraded: 'degraded',
+    noRemotes: 'No remotes registered',
+    colApp: 'Remote app',
+    colEntry: 'Entry URL',
+    colStatus: 'Status',
+    colLoadTime: 'Load time',
+    colLoads: 'Loads',
+    dev: 'DEV',
+    prod: 'PROD',
+    stRegistered: 'registered',
+    stLoading: 'loading',
+    stLoaded: 'loaded',
+    stError: 'error',
+    stChaos: 'chaos',
+    break: 'Break',
+    breakTitle: 'Re-register this remote with a bad URL and reopen its window to demo the failure → recovery flow',
+    healAll: 'Heal all',
+    healAllTitle: 'Re-register every remote with its healthy entry',
+    openApp: 'Open app',
+    chaosToast: "Poisoned the '{{name}}' container — recover it with Try Again in the open window",
+    healToast: 'Restored every remote to its healthy entry',
+    notLoaded: '—',
+    explainer:
+      'Each remote is registered at runtime from a URL injected by the manifest. Breaking one reproduces the post-redeploy stale-chunk case; only the failed window is isolated and recovers.',
+  },
+};
