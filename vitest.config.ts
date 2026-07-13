@@ -13,6 +13,7 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     setupFiles: ['src/test/setup.ts'],
-    include: ['src/**/*.test.ts'],
+    // Host specs + remote-package logic specs (the root has msw/happy-dom/vitest).
+    include: ['src/**/*.test.ts', 'packages/**/src/**/*.test.ts'],
   },
 });

@@ -7,6 +7,8 @@ import {
   Package,
   Info,
   StickyNote,
+  Network,
+  Palette,
   LucideIcon,
 } from 'lucide-react';
 
@@ -24,6 +26,8 @@ const appIconMap: Record<string, LucideIcon> = {
   'package': Package,
   'info': Info,
   'sticky-note': StickyNote,
+  'network': Network,
+  'palette': Palette,
 };
 
 export function getAppIcon(name: string): LucideIcon | undefined {
@@ -40,6 +44,8 @@ export function getAppIconColor(name: string): string {
     case 'monitor': return 'text-blue-400';
     case 'settings': return 'text-gray-300';
     case 'sticky-note': return 'text-yellow-400';
+    case 'network': return 'text-emerald-400';
+    case 'palette': return 'text-pink-400';
     default: return 'text-white';
   }
 }

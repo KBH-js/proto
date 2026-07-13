@@ -157,6 +157,26 @@ export const zIndex = {
   taskbar: 9999,
 };
 
+// Desktop wallpaper gradients — the single sanctioned home for these raw color
+// stops. Kept here (a token source, not linted) so product code stays free of
+// raw hex/rgba and consumes them as `wallpaper.dark` / `wallpaper.light`.
+export const wallpaper = {
+  // Dark shell — layered deep-blue/teal gradients (macOS-inspired)
+  dark: `
+  radial-gradient(120% 90% at 78% 12%, rgba(56, 189, 248, 0.38) 0%, transparent 55%),
+  radial-gradient(100% 80% at 12% 85%, rgba(45, 212, 191, 0.32) 0%, transparent 55%),
+  radial-gradient(90% 90% at 45% 50%, rgba(59, 130, 246, 0.28) 0%, transparent 65%),
+  linear-gradient(160deg, #0a1c33 0%, #0e3055 45%, #14486e 72%, #0a2440 100%)
+`,
+  // Light shell — brighter blues; kept mid-toned so white icon labels stay legible
+  light: `
+  radial-gradient(120% 90% at 78% 12%, rgba(125, 211, 252, 0.45) 0%, transparent 55%),
+  radial-gradient(100% 80% at 12% 85%, rgba(94, 234, 212, 0.40) 0%, transparent 55%),
+  radial-gradient(90% 90% at 45% 50%, rgba(96, 165, 250, 0.32) 0%, transparent 65%),
+  linear-gradient(160deg, #93c5fd 0%, #60a5fa 45%, #3b82f6 74%, #2563eb 100%)
+`,
+};
+
 export const transition = {
   fast: '150ms ease-in-out',
   normal: '200ms ease-in-out',
@@ -172,4 +192,5 @@ export default {
   boxShadow,
   zIndex,
   transition,
+  wallpaper,
 };

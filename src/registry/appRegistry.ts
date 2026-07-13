@@ -4,6 +4,7 @@ import { AppConfig, Size } from '../types/window.types';
 import { AboutApp } from '../apps/AboutApp';
 import { ResumeApp } from '../apps/ResumeApp';
 import { FederationInspectorApp } from '../apps/FederationInspectorApp';
+import { DesignTokensApp } from '../apps/DesignTokensApp';
 import { registerAppRemotes, RemoteRegistration } from '../federation/runtime';
 import { fetchAppCatalog, resolveEntryUrl, CatalogApp } from '../federation/catalog';
 import { federationLogger, useToastStore } from '../store/toastStore';
@@ -82,6 +83,19 @@ const staticEntries: Record<string, AppRegistryEntry> = {
       title: 'Inspector',
       icon: 'monitor', // lucide icon name (already in appIconMap)
       defaultSize: { w: 560, h: 560 },
+    },
+  },
+
+  /**
+   * Design Tokens - 3-layer token gallery + raw-color lint guardrail demo
+   */
+  tokens: {
+    component: DesignTokensApp,
+    defaultConfig: {
+      componentType: 'tokens',
+      title: 'Design Tokens',
+      icon: 'palette', // lucide icon name (added to appIconMap)
+      defaultSize: { w: 760, h: 660 },
     },
   },
 };
