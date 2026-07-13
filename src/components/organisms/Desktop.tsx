@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 // Wallpaper gradients live in the shared token source (not inline raw color),
 // enforced by the `local/no-raw-colors` lint rule.
 import { wallpaper } from '@proto/shared/theme';
@@ -7,6 +7,7 @@ import { usePrefsStore } from '../../store/prefsStore';
 import { useTranslation, translateAppTitle } from '../../i18n';
 import { TASKBAR_HEIGHT } from '../../types/window.types';
 import { DesktopIcon } from '../molecules/DesktopIcon';
+import { DesktopContextMenu } from './DesktopContextMenu';
 import { useAppLauncher } from '../../hooks/useAppLauncher';
 
 /**
@@ -25,12 +26,19 @@ export function Desktop() {
     [entries],
   );
 
+  // Right-click menu anchored at the click point (null = closed)
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+
   return (
     <div
       className="absolute inset-0 select-none"
       style={{
         paddingBottom: TASKBAR_HEIGHT,
         zIndex: 0,
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        setMenu({ x: e.clientX, y: e.clientY });
       }}
     >
       {/* Wallpaper — swaps with the shell theme */}
@@ -46,10 +54,13 @@ export function Desktop() {
             key={app.componentType}
             icon={app.icon}
             label={translateAppTitle(t, app.componentType, app.title)}
+            componentType={app.componentType}
             onLaunch={() => launchApp(app)}
           />
         ))}
       </div>
+
+      {menu && <DesktopContextMenu x={menu.x} y={menu.y} onClose={() => setMenu(null)} />}
     </div>
   );
 }

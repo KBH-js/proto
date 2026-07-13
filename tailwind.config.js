@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   // Shell theme is toggled by a `dark` class on the shell root
-  // (WindowManagerLayout). App/remote surfaces author no `dark:` variants,
-  // which keeps the light/dark split scoped to the shell chrome.
+  // (WindowManagerLayout). Host-local apps (About, Resume) are theme-aware
+  // and author `dark:` variants that cascade from that root; federated
+  // remotes still own their own theme (out of the host's `dark:` scope).
   darkMode: 'class',
   content: [
     "./index.html",

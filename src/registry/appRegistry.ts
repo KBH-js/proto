@@ -55,7 +55,7 @@ const staticEntries: Record<string, AppRegistryEntry> = {
       componentType: 'about',
       title: 'About',
       icon: 'info', // lucide icon name
-      defaultSize: { w: 450, h: 580 },
+      defaultSize: { w: 560, h: 660 },
     },
   },
 
