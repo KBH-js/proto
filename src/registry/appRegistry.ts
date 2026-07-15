@@ -1,6 +1,6 @@
 import { ComponentType, LazyExoticComponent } from 'react';
 import { create } from 'zustand';
-import { AppConfig, Size } from '../types/window.types';
+import { AppConfig } from '../types/window.types';
 import { AboutApp } from '../apps/AboutApp';
 import { ResumeApp } from '../apps/ResumeApp';
 import { FederationInspectorApp } from '../apps/FederationInspectorApp';
@@ -206,15 +206,4 @@ export function getApp(componentType: string): AppRegistryEntry | undefined {
  */
 export function getAvailableApps(): AppConfig[] {
   return Object.values(useAppRegistry.getState().entries).map((entry) => entry.defaultConfig);
-}
-
-/**
- * Get the default size for an app, falling back to system default
- *
- * @param componentType - The type identifier for the app
- * @param fallback - Fallback size if app has no default
- */
-export function getAppDefaultSize(componentType: string, fallback: Size): Size {
-  const app = getApp(componentType);
-  return app?.defaultConfig.defaultSize ?? fallback;
 }
