@@ -13,6 +13,7 @@ export const ko = {
     calculator: '계산기',
     notes: '메모',
     network: '네트워크',
+    compute: '컴퓨트',
     tokens: '디자인 토큰',
   },
   taskbar: {
