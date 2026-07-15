@@ -282,20 +282,48 @@ html, body, #root {
   animation: window-open 180ms ease-out;
 }
 
-/* Window minimize: shrink and fade toward the taskbar */
-@keyframes window-minimize {
+/*
+ * Genie minimize/restore: the window shrinks toward (or grows back from) its
+ * own taskbar item. WindowFrame measures both rects at transition time and
+ * feeds the offset/scale in as CSS variables; durations must match
+ * GENIE_ANIMATION_MS in WindowFrame.tsx.
+ */
+@keyframes window-genie-min {
   from {
-    transform: scale(1) translateY(0);
+    transform: translate(0, 0) scale(1);
     opacity: 1;
   }
   to {
-    transform: scale(0.9) translateY(24px);
+    transform: translate(var(--genie-tx, 0px), var(--genie-ty, 24px)) scale(var(--genie-scale, 0.1));
     opacity: 0;
   }
 }
 
-.animate-window-minimize {
-  animation: window-minimize 150ms ease-in forwards;
+.animate-window-genie-min {
+  animation: window-genie-min 220ms ease-in forwards;
+}
+
+@keyframes window-genie-restore {
+  from {
+    transform: translate(var(--genie-tx, 0px), var(--genie-ty, 24px)) scale(var(--genie-scale, 0.1));
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-window-genie-restore {
+  animation: window-genie-restore 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-window-open,
+  .animate-window-genie-min,
+  .animate-window-genie-restore {
+    animation-duration: 1ms;
+  }
 }
 
 /* Taskbar item strip: scrolls horizontally when windows overflow the dock,
