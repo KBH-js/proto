@@ -133,18 +133,27 @@ function toRegistryEntry(app: CatalogApp): AppRegistryEntry {
   };
 }
 
-// Module-level promise guards StrictMode double-invocation of effects
+// Guards only the in-flight fetch (StrictMode mounts effects twice). It is
+// cleared once settled: "already initialized" is judged from store state
+// below, not from this module — during HMR the store module can be
+// re-instantiated (re-seeding local apps + status 'loading') while this
+// closure survives, and a module flag would then block the re-merge forever.
 let initPromise: Promise<void> | null = null;
 
 /**
  * Fetch the app catalog (public/remotes.manifest.json), register all
- * remotes with the MF runtime, and merge them into the registry. Idempotent.
+ * remotes with the MF runtime, and merge them into the registry.
+ *
+ * Idempotent based on store state: a no-op once the registry left 'loading'
+ * (ready or degraded), but runs again if the store was re-seeded — which is
+ * exactly the dev-HMR case where the remote entries were dropped.
  *
  * On failure the registry enters 'degraded' state: local apps stay usable,
  * remote apps simply don't appear on the desktop.
  */
 export function initializeAppRegistry(): Promise<void> {
   if (initPromise) return initPromise;
+  if (useAppRegistry.getState().status !== 'loading') return Promise.resolve();
 
   initPromise = (async () => {
     try {
@@ -183,10 +192,25 @@ export function initializeAppRegistry(): Promise<void> {
         message: translateNow('error.catalogFailed'),
         duration: 6000,
       });
+    } finally {
+      // Settled — the store's status ('ready' | 'degraded') now carries the
+      // idempotence; keeping the promise would pin the pre-HMR result.
+      initPromise = null;
     }
   })();
 
   return initPromise;
+}
+
+// Dev-only self-heal: when an HMR update re-instantiates this module, the
+// fresh store re-seeds to local apps + status 'loading', and nothing re-runs
+// App's mount effect (Fast Refresh re-renders without re-firing [] effects) —
+// so the remote entries would stay dropped until a manual reload. Kicking the
+// state-guarded initialization from the new module instance re-merges them.
+// `import.meta.webpackHot` is undefined in prod builds (dead-code eliminated)
+// and under Vitest, so boot semantics outside the dev server are unchanged.
+if (import.meta.webpackHot) {
+  initializeAppRegistry();
 }
 
 /**
