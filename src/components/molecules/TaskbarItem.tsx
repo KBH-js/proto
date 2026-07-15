@@ -34,7 +34,7 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
       `}
     >
       <IconComponent className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-      <span className="hidden sm:inline text-sm text-gray-800 dark:text-gray-100 truncate max-w-[120px]">
+      <span className="hidden sm:inline text-sm text-gray-800 dark:text-gray-100 truncate max-w-32">
         {title}
       </span>
 

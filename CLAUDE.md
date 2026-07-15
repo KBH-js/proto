@@ -39,7 +39,7 @@ Remote (각 `packages/remote-*`): `pnpm dev` — Rsbuild MF 플러그인은 dev 
 - `packages/remote-compute` — OpenStack Nova 컴퓨트 대시보드 remote(포트 5004). remote-network와 동일 아키텍처(`/api/nova/*` MSW REST + 인메모리 폴백, TanStack Query, `.remote-compute` 스코프 토큰 — accent만 violet). 시드 데이터의 fixed IP는 remote-network의 플로팅 IP 매핑과 교차 일치.
 - `src/federation/hostBridge.ts` — prefs→remote 브리지. locale/theme 변화를 `window.__PROTO_LOCALE__`/`__PROTO_THEME__` 시드 + `host:locale-changed`/`host:theme-changed` CustomEvent로 발행(`bootstrap.tsx`에서 1회 init). 독립 빌드 remote가 호스트 i18n/테마를 import하지 않고 소비하는 경로.
 - `src/apps/DesignTokensApp.tsx` + `designTokens.ts` — 3-layer(primitive→semantic→component) 토큰 갤러리 로컬 앱. `@proto/shared/theme` 단일 소스에서 파생.
-- **토큰 가드레일**: `eslint-rules/no-raw-colors.js`(`local/no-raw-colors`)가 `.ts/.tsx`의 raw hex/rgb/hsl을 error로 차단. 색은 토큰 소스(`theme.js`, CSS 변수)·Tailwind 토큰 클래스에서만. 예외: `src/store/toastStore.ts`(콘솔 `%c` 아트, config 오버라이드).
+- **토큰 가드레일**: `eslint-rules/no-raw-colors.js`(`local/no-raw-colors`)가 `.ts/.tsx`의 raw hex/rgb/hsl을 error로 차단. 색은 토큰 소스(`theme.js`, CSS 변수)·Tailwind 토큰 클래스에서만. 예외: `src/store/toastStore.ts`(콘솔 `%c` 아트, config 오버라이드). `eslint-rules/no-raw-px.js`(`local/no-raw-px`)는 Tailwind arbitrary px(`text-[10px]`, `w-[52px]`)를 차단 — 사이즈는 공유 스케일 토큰(`text-2xs`/`text-3xs` 포함, `theme.js` fontSize가 호스트 tailwind.config에 연결됨) 또는 rem arbitrary 값으로만. 런타임 픽셀 연산(창 지오메트리)은 대상 아님.
 
 ## 새 Remote 추가 절차
 

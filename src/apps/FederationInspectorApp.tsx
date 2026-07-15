@@ -116,7 +116,7 @@ export function FederationInspectorApp() {
               </span>
             </div>
             <p className="mt-1 text-lg font-bold text-gray-800 dark:text-gray-100">React {reactVersion}</p>
-            <p className="text-[11px] text-gray-500 dark:text-gray-400">{t('inspector.singletonCaption')}</p>
+            <p className="text-2xs text-gray-500 dark:text-gray-400">{t('inspector.singletonCaption')}</p>
           </div>
           <div className="p-3 rounded-xl border border-gray-100 bg-gray-50 dark:border-white/10 dark:bg-white/5">
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
@@ -169,13 +169,13 @@ export function FederationInspectorApp() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm text-gray-800 dark:text-gray-100">{title}</span>
-                          <span className="text-[10px] font-mono text-gray-400 dark:text-gray-500">
+                          <span className="text-3xs font-mono text-gray-400 dark:text-gray-500">
                             {remote.name}/{remote.module}
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span
-                            className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase ${
+                            className={`px-1 py-0.5 rounded text-3xs font-bold uppercase ${
                               isChaos
                                 ? 'bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-300'
                                 : isDev
@@ -185,22 +185,22 @@ export function FederationInspectorApp() {
                           >
                             {isChaos ? 'CHAOS' : isDev ? t('inspector.dev') : t('inspector.prod')}
                           </span>
-                          <span className="text-[11px] text-gray-500 dark:text-gray-400 font-mono truncate max-w-[220px]" title={entry}>
+                          <span className="text-2xs text-gray-500 dark:text-gray-400 font-mono truncate max-w-56" title={entry}>
                             {entry}
                           </span>
                         </div>
                         {tele?.error && (
-                          <p className="mt-1 text-[11px] text-red-500 dark:text-red-400 truncate max-w-[300px]" title={tele.error}>
+                          <p className="mt-1 text-2xs text-red-500 dark:text-red-400 truncate max-w-72" title={tele.error}>
                             {tele.error}
                           </p>
                         )}
                       </div>
 
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                        <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${STATUS_STYLE[status]}`}>
+                        <span className={`px-1.5 py-0.5 rounded-full text-3xs font-semibold ${STATUS_STYLE[status]}`}>
                           {t(STATUS_LABEL[status])}
                         </span>
-                        <span className="text-[11px] text-gray-500 dark:text-gray-400 tabular-nums">
+                        <span className="text-2xs text-gray-500 dark:text-gray-400 tabular-nums">
                           {tele?.lastLoadMs != null ? `${tele.lastLoadMs}ms` : t('inspector.notLoaded')}
                           <span className="text-gray-300 dark:text-gray-600"> · </span>
                           {t('inspector.colLoads')} {tele?.loadCount ?? 0}
@@ -211,7 +211,7 @@ export function FederationInspectorApp() {
                     <div className="flex items-center gap-1.5 mt-2">
                       <button
                         onClick={() => handleOpen(e.defaultConfig.componentType, e.defaultConfig.title)}
-                        className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-300 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 rounded-md text-2xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-300 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 transition-colors"
                       >
                         <Play className="w-3 h-3" />
                         {t('inspector.openApp')}
@@ -219,7 +219,7 @@ export function FederationInspectorApp() {
                       <Tooltip label={t('inspector.breakTitle')}>
                         <button
                           onClick={() => handleBreak(e.defaultConfig.componentType, e.defaultConfig.title, remote.name)}
-                          className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-red-700 bg-red-50 hover:bg-red-100 dark:text-red-300 dark:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors"
+                          className="flex items-center gap-1 px-2 py-1 rounded-md text-2xs font-medium text-red-700 bg-red-50 hover:bg-red-100 dark:text-red-300 dark:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors"
                         >
                           <ShieldAlert className="w-3 h-3" />
                           {t('inspector.break')}
@@ -236,7 +236,7 @@ export function FederationInspectorApp() {
         {/* Explainer */}
         <div className="flex gap-2 p-3 rounded-xl bg-amber-50 border border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/20">
           <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-          <p className="text-[11px] text-amber-800 dark:text-amber-200 leading-relaxed">{t('inspector.explainer')}</p>
+          <p className="text-2xs text-amber-800 dark:text-amber-200 leading-relaxed">{t('inspector.explainer')}</p>
         </div>
       </div>
     </div>

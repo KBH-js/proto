@@ -109,7 +109,9 @@ export const en: Resources = {
     subtitle: '3-layer token pipeline · raw colors blocked by lint',
     guardTitle: 'Token guardrail',
     guardBody:
-      'Raw colors (hex/rgb/hsl) are blocked by the eslint rule (local/no-raw-colors). Every color comes from one token source (@proto/shared/theme).',
+      'Raw colors (hex/rgb/hsl) and arbitrary px sizes are blocked by eslint rules (local/no-raw-colors, local/no-raw-px). Every color and size comes from one token source (@proto/shared/theme), with sizes in rem.',
+    typeScale: 'Type scale',
+    typeScaleDesc: 'rem-based font-size tokens',
     layerPrimitive: 'Primitive',
     layerPrimitiveDesc: 'Raw palette values',
     layerSemantic: 'Semantic',
