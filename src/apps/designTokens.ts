@@ -1,4 +1,4 @@
-import { colors } from '@proto/shared/theme';
+import { colors, fontSize } from '@proto/shared/theme';
 
 /**
  * 3-layer token model builder (pure, so it can be unit-tested).
@@ -117,4 +117,30 @@ export function buildTokenLayers(source: ColorTokens = colors): TokenLayers {
     semantic: semanticGroups(source),
     component: componentGroups(source),
   };
+}
+
+export interface TypeToken {
+  /** Scale step name (Tailwind class suffix): 3xs … 4xl */
+  name: string;
+  /** rem value straight from the token source */
+  rem: string;
+  /** px equivalent at the 16px root, for the gallery caption */
+  px: number;
+  lineHeight: string;
+}
+
+type FontSizeTokens = typeof fontSize;
+
+/**
+ * Flatten the rem type scale for the gallery. The px column is derived
+ * (rem × 16), never authored — rem is the source of truth so the scale
+ * respects user font-size settings.
+ */
+export function buildTypeScale(source: FontSizeTokens = fontSize): TypeToken[] {
+  return Object.entries(source).map(([name, [rem, meta]]) => ({
+    name,
+    rem,
+    px: parseFloat(rem) * 16,
+    lineHeight: meta.lineHeight,
+  }));
 }

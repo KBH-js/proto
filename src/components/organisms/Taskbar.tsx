@@ -113,7 +113,7 @@ export function Taskbar() {
             className="hidden md:flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
             <Zap className="w-3.5 h-3.5 text-accent" />
-            <span className="text-[11px] font-medium whitespace-nowrap">
+            <span className="text-2xs font-medium whitespace-nowrap">
               {t('taskbar.federationStrip', { count: remoteCount, version: reactVersion })}
             </span>
           </button>

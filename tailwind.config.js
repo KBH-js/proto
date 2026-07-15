@@ -1,4 +1,5 @@
 import containerQueries from '@tailwindcss/container-queries';
+import { fontSize } from '@proto/shared/theme';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -13,6 +14,10 @@ export default {
   ],
   theme: {
     extend: {
+      // Type scale from the single token source (@proto/shared/theme) — rem
+      // only, adds sub-xs steps (text-2xs/text-3xs) for dense shell chrome.
+      // Arbitrary `text-[Npx]` values are blocked by `local/no-raw-px`.
+      fontSize,
       colors: {
         // macOS system blue — primary accent across the shell
         accent: '#0A84FF',

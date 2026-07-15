@@ -5,7 +5,7 @@ import NotesApp from './NotesApp';
 export default function App() {
   return (
     <div className="min-h-screen bg-background-primary flex items-center justify-center p-4">
-      <div className="w-full max-w-md h-[480px] rounded-xl overflow-hidden shadow-window border border-chrome-border">
+      <div className="w-full max-w-md h-[30rem] rounded-xl overflow-hidden shadow-window border border-chrome-border">
         <NotesApp />
       </div>
     </div>

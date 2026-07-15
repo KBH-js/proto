@@ -86,7 +86,7 @@ function TagBadge({ tag, t }: { tag: Tag; t: TFunction }) {
       variant="button"
       inline
       as="span"
-      className={`lg-text items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${TAG_TEXT[tag]}`}
+      className={`lg-text items-center gap-1 px-1.5 py-0.5 text-3xs font-bold uppercase tracking-wider ${TAG_TEXT[tag]}`}
     >
       {tag === 'live' && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />}
       {label}
@@ -102,7 +102,7 @@ function ClaimActionButton({ action, t }: { action: ClaimAction; t: TFunction })
   // Glass pills: semantic colour survives on the text/icon; the pill body is a
   // Liquid Glass surface (hover brightens via the built-in sheen).
   const base =
-    'lg-text inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium hover:brightness-110 transition-[filter]';
+    'lg-text inline-flex items-center gap-1 px-2 py-1 text-2xs font-medium hover:brightness-110 transition-[filter]';
 
   switch (action.kind) {
     case 'inspector':
@@ -249,7 +249,7 @@ export function AboutApp() {
                 <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100">
                   {t(`about.decision.${key}.title`)}
                 </h3>
-                <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                <p className="text-2xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                   {t(`about.decision.${key}.desc`)}
                 </p>
               </LiquidGlass>
@@ -278,7 +278,7 @@ export function AboutApp() {
                   <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-800 dark:text-gray-100">{link.label}</p>
-                    <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono truncate">
+                    <p className="text-3xs text-gray-500 dark:text-gray-400 font-mono truncate">
                       {link.href.replace(/^https?:\/\//, '')}
                     </p>
                   </div>
@@ -296,7 +296,7 @@ export function AboutApp() {
             {SHORTCUTS.map((s) => (
               <div key={s.key} className="flex items-center justify-between gap-2">
                 <span className="text-xs text-gray-600 dark:text-gray-300">{t(`about.shortcut.${s.key}`)}</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-[10px] font-mono text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-3xs font-mono text-gray-600 dark:text-gray-300 whitespace-nowrap">
                   {s.keys}
                 </kbd>
               </div>
@@ -311,7 +311,7 @@ export function AboutApp() {
             {STACK.map((name) => (
               <span
                 key={name}
-                className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300"
+                className="px-2 py-0.5 rounded-full text-3xs font-medium bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300"
               >
                 {name}
               </span>

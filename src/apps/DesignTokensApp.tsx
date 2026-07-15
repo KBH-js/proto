@@ -1,6 +1,6 @@
-import { Palette, Layers, Boxes, ShieldCheck } from 'lucide-react';
+import { Palette, Layers, Boxes, ShieldCheck, Type } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { buildTokenLayers, type TokenGroup } from './designTokens';
+import { buildTokenLayers, buildTypeScale, type TokenGroup } from './designTokens';
 
 /**
  * Design Tokens — a local app that renders the 3-layer token pipeline
@@ -14,6 +14,7 @@ import { buildTokenLayers, type TokenGroup } from './designTokens';
 
 // Static token source → build once.
 const layers = buildTokenLayers();
+const typeScale = buildTypeScale();
 
 /** Swatch chip fed by a runtime token value (a variable, not a raw literal). */
 function Swatch({ name, value, ref }: { name: string; value: string; ref?: string }) {
@@ -27,7 +28,7 @@ function Swatch({ name, value, ref }: { name: string; value: string; ref?: strin
         <p className="truncate font-mono text-xs font-medium text-neutral-800 dark:text-neutral-100">
           {name}
         </p>
-        <p className="truncate font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
+        <p className="truncate font-mono text-2xs text-neutral-500 dark:text-neutral-400">
           {value}
           {ref && <span className="text-neutral-400 dark:text-neutral-500"> → {ref}</span>}
         </p>
@@ -57,7 +58,7 @@ function Layer({
       <div className="space-y-2">
         {groups.map((g) => (
           <div key={g.group}>
-            <p className="mb-1 font-mono text-[11px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+            <p className="mb-1 font-mono text-2xs uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
               {g.group}
             </p>
             <div className="grid grid-cols-1 gap-1.5 @lg:grid-cols-2">
@@ -65,6 +66,37 @@ function Layer({
                 <Swatch key={tok.name} name={tok.name} value={tok.value} ref={tok.ref} />
               ))}
             </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Rem type scale rows — live sample rendered at each token's actual size. */
+function TypeScaleSection({ title, description }: { title: string; description: string }) {
+  return (
+    <section className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Type className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+        <h2 className="text-sm font-bold text-neutral-800 dark:text-neutral-100">{title}</h2>
+        <span className="text-xs text-neutral-400 dark:text-neutral-500">{description}</span>
+      </div>
+      <div className="divide-y divide-neutral-100 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-700">
+        {typeScale.map((tok) => (
+          <div key={tok.name} className="flex items-baseline gap-3 px-3 py-2">
+            <span className="w-10 flex-shrink-0 font-mono text-2xs font-medium text-neutral-800 dark:text-neutral-100">
+              {tok.name}
+            </span>
+            <span className="w-28 flex-shrink-0 font-mono text-2xs text-neutral-500 dark:text-neutral-400">
+              {tok.rem} · {tok.px}px
+            </span>
+            <span
+              className="truncate text-neutral-700 dark:text-neutral-200"
+              style={{ fontSize: tok.rem, lineHeight: tok.lineHeight }}
+            >
+              Ag 다람쥐 헌 쳇바퀴에 타고파
+            </span>
           </div>
         ))}
       </div>
@@ -98,11 +130,13 @@ export function DesignTokensApp() {
             <p className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
               {t('tokens.guardTitle')}
             </p>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-emerald-700 dark:text-emerald-400/90">
+            <p className="mt-0.5 text-2xs leading-relaxed text-emerald-700 dark:text-emerald-400/90">
               {t('tokens.guardBody')}
             </p>
           </div>
         </div>
+
+        <TypeScaleSection title={t('tokens.typeScale')} description={t('tokens.typeScaleDesc')} />
 
         <Layer
           icon={Boxes}

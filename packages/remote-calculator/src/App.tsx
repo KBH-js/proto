@@ -5,7 +5,7 @@ import CalculatorApp from './CalculatorApp';
 export default function App() {
   return (
     <div className="min-h-screen bg-background-primary flex items-center justify-center p-4">
-      <div className="w-full max-w-xs h-[500px] rounded-xl overflow-hidden shadow-window border border-chrome-border">
+      <div className="w-full max-w-xs h-[31.25rem] rounded-xl overflow-hidden shadow-window border border-chrome-border">
         <CalculatorApp />
       </div>
     </div>

@@ -69,7 +69,7 @@ export function TitleBar({
           <Tooltip label={remoteTooltip} side="bottom">
             <span
               className={`
-                inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                inline-flex items-center gap-1 px-2 py-0.5 rounded text-3xs font-bold uppercase tracking-wider
                 ${isActive
                   ? 'bg-cyan-500 text-white shadow-sm shadow-cyan-500/50'
                   : 'bg-cyan-600/50 text-cyan-100'
@@ -101,7 +101,7 @@ export function TitleBar({
       </div>
 
       {/* Spacer for balance (same width as controls + badge space) */}
-      <div className={`flex-shrink-0 ${isRemote ? 'w-[100px]' : 'w-[52px]'}`} />
+      <div className={`flex-shrink-0 ${isRemote ? 'w-[6.25rem]' : 'w-[3.25rem]'}`} />
     </div>
   );
 }

@@ -108,7 +108,9 @@ export const ko = {
     subtitle: '3-레이어 토큰 파이프라인 · raw 컬러는 lint로 차단',
     guardTitle: '토큰 가드레일',
     guardBody:
-      'raw 컬러(hex/rgb/hsl)는 eslint 룰(local/no-raw-colors)로 차단됩니다. 모든 색은 단일 토큰 소스(@proto/shared/theme)에서만 나옵니다.',
+      'raw 컬러(hex/rgb/hsl)와 arbitrary px 사이즈는 eslint 룰(local/no-raw-colors, local/no-raw-px)로 차단됩니다. 모든 색과 사이즈는 단일 토큰 소스(@proto/shared/theme)에서 rem 기준으로 나옵니다.',
+    typeScale: '타입 스케일',
+    typeScaleDesc: 'rem 기반 폰트 사이즈 토큰',
     layerPrimitive: '프리미티브',
     layerPrimitiveDesc: '원시 팔레트 값',
     layerSemantic: '시맨틱',
