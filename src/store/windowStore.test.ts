@@ -1,13 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { Size } from '../types/window.types';
 import { BASE_Z_INDEX, TASKBAR_HEIGHT } from '../types/window.types';
 
-// Isolate the store from the app-component / MF-runtime graph: the only thing
-// windowStore needs from the registry is a default size, and it must not open
-// maximized during these desktop-sized tests.
-vi.mock('../registry/appRegistry', () => ({
-  getAppDefaultSize: (_componentType: string, fallback: Size) => fallback,
-}));
+// Windows must not open maximized during these desktop-sized tests.
 vi.mock('../utils/device', () => ({
   isSmallScreen: () => false,
 }));

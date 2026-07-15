@@ -24,7 +24,6 @@ export function ResumeApp() {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white transition-colors"
-            title={t('resume.openNewTab')}
           >
             <ExternalLink className="w-3.5 h-3.5" />
             {t('resume.openNewTab')}
@@ -33,7 +32,6 @@ export function ResumeApp() {
             href={pdfUrl}
             download="Byunghoon-Kang-Resume.pdf"
             className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white transition-colors"
-            title={t('resume.download')}
           >
             <Download className="w-3.5 h-3.5" />
             {t('resume.download')}

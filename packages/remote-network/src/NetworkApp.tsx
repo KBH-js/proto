@@ -67,7 +67,9 @@ function Dashboard() {
   const selected = networks.find((n) => n.id === selectedId) ?? null;
 
   return (
-    <div className="remote-network flex h-full w-full flex-col overflow-hidden bg-surface font-sans text-body">
+    // @container: layout responds to the app's own width — required because the
+    // shell window resizes independently of the viewport; also correct standalone.
+    <div className="remote-network @container flex h-full w-full flex-col overflow-hidden bg-surface font-sans text-body">
       {/* Toolbar */}
       <header className="flex items-center justify-between gap-3 border-b border-line bg-panel px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -112,8 +114,9 @@ function Dashboard() {
         )}
       </div>
 
-      {/* Master–detail */}
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-3 p-4">
+      {/* Master–detail: stacks vertically in narrow windows, side-by-side from
+          @2xl (672px of app width); each half keeps its own internal scroll. */}
+      <div className="grid min-h-0 flex-1 gap-3 p-4 grid-cols-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] @2xl:grid-rows-1 @2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
         <section className="flex flex-col overflow-hidden rounded-xl border border-line bg-panel">
           <div className="border-b border-line px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-muted">
             {t('sumNetworks')}

@@ -63,6 +63,9 @@ export const en: Resources = {
   loading: {
     generic: 'Loading...',
   },
+  toast: {
+    dismiss: 'Dismiss notification',
+  },
   resume: {
     filename: 'Resume.pdf',
     openNewTab: 'Open in new tab',
@@ -193,7 +196,7 @@ export const en: Resources = {
       },
       calculator: {
         title: 'Launch a remote app',
-        body: "Double-click Calculator to load it from the separately-deployed remote-calculator. You'll see the load time as a toast and an MFE badge in the title bar.",
+        body: "Click Calculator to load it from the separately-deployed remote-calculator. You'll see the load time as a toast and an MFE badge in the title bar.",
       },
       inspector: {
         title: 'Look inside the runtime',
@@ -208,14 +211,5 @@ export const en: Resources = {
         body: 'Open the About app to see each résumé claim mapped to a live demo. You can replay this tour anytime.',
       },
     },
-  },
-  desktop: {
-    openAbout: 'About',
-    openInspector: 'Federation Inspector',
-    toggleTheme: 'Toggle theme',
-    toggleLocale: 'Toggle language',
-    replayTour: 'Replay guide tour',
-    refreshRemotes: 'Refresh remote modules',
-    remotesRefreshed: 'Re-registered every remote module.',
   },
 };

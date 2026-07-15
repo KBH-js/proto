@@ -1,4 +1,4 @@
-/** Coarse pointer = touch-first device (no reliable double-click) */
+/** Coarse pointer = touch-first device (no hover) */
 export const isTouchDevice = (): boolean =>
   window.matchMedia('(pointer: coarse)').matches;
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTourStore } from '../../store/tourStore';
 import { usePrefsStore } from '../../store/prefsStore';
 import { useTranslation } from '../../i18n';
@@ -68,11 +68,31 @@ export function FirstRunTour() {
   const isDark = usePrefsStore((s) => s.theme === 'dark');
 
   const [rect, setRect] = useState<DOMRect | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const primaryBtnRef = useRef<HTMLButtonElement>(null);
+  const prevFocusRef = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+  const bodyId = useId();
 
   // Auto-start once per browser (gated by the persisted `seen` flag).
   useEffect(() => {
     if (!useTourStore.getState().seen) start();
   }, [start]);
+
+  // Capture focus when the tour starts, restore it when the tour ends.
+  useEffect(() => {
+    if (!active) return;
+    prevFocusRef.current = document.activeElement as HTMLElement | null;
+    return () => {
+      const prev = prevFocusRef.current;
+      if (prev?.isConnected) prev.focus();
+    };
+  }, [active]);
+
+  // Keep keyboard users inside the dialog: focus the primary button each step.
+  useEffect(() => {
+    if (active) primaryBtnRef.current?.focus();
+  }, [active, stepIndex]);
 
   const step = active ? STEPS[stepIndex] : undefined;
 
@@ -107,6 +127,25 @@ export function FirstRunTour() {
 
   const isLast = stepIndex === STEPS.length - 1;
   const onNext = () => (isLast ? finish() : next());
+
+  // Wrap Tab/Shift+Tab across the card's buttons (the dim panels already
+  // block pointer interaction with the rest of the shell).
+  const handleCardKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+    const card = cardRef.current;
+    if (!card) return;
+    const focusables = Array.from(card.querySelectorAll<HTMLElement>('button'));
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
 
   // Spotlight hole = the anchor rect plus 8px padding. The dim is drawn as
   // four panels *around* the hole (cheap to paint) rather than one giant
@@ -143,6 +182,12 @@ export function FirstRunTour() {
 
       {/* Caption card */}
       <div
+        ref={cardRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={bodyId}
+        onKeyDown={handleCardKeyDown}
         className="absolute pointer-events-auto rounded-2xl bg-white dark:bg-neutral-800 shadow-2xl border border-black/5 dark:border-white/10 p-4"
         style={cardPlacement(rect)}
       >
@@ -157,8 +202,8 @@ export function FirstRunTour() {
             {t('tour.skip')}
           </button>
         </div>
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t(step.titleKey)}</h3>
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">{t(step.bodyKey)}</p>
+        <h3 id={titleId} className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t(step.titleKey)}</h3>
+        <p id={bodyId} className="text-xs text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">{t(step.bodyKey)}</p>
         <div className="flex items-center justify-end gap-2 mt-3">
           {stepIndex > 0 && (
             <button
@@ -169,6 +214,7 @@ export function FirstRunTour() {
             </button>
           )}
           <button
+            ref={primaryBtnRef}
             onClick={onNext}
             className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-accent hover:brightness-110 transition-all"
           >

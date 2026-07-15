@@ -13,7 +13,7 @@ export function SummaryCards({ summary, t }: { summary: NetworkSummary; t: TFunc
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+    <div className="grid grid-cols-2 gap-2 @2xl:grid-cols-5">
       {cards.map((c) => (
         <div key={c.label} className="rounded-xl border border-line bg-surface px-3 py-2.5">
           <div className="flex items-center gap-1.5 text-muted">

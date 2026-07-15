@@ -2,6 +2,7 @@ import { WindowControls } from '../molecules/WindowControls';
 import { isDevelopment } from '../../config/portfolio.config';
 import { getAppIcon } from '../shared/appIcons';
 import { useTranslation } from '../../i18n';
+import { Tooltip } from '../atoms/Tooltip';
 
 interface TitleBarProps {
   title: string;
@@ -65,19 +66,21 @@ export function TitleBar({
 
       {isRemote && (
         <div className="flex-shrink-0 ml-2">
-          <span
-            className={`
-              inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
-              ${isActive 
-                ? 'bg-cyan-500 text-white shadow-sm shadow-cyan-500/50' 
-                : 'bg-cyan-600/50 text-cyan-100'
-              }
-            `}
-            title={remoteTooltip}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            {remoteBadgeLabel}
-          </span>
+          <Tooltip label={remoteTooltip} side="bottom">
+            <span
+              className={`
+                inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                ${isActive
+                  ? 'bg-cyan-500 text-white shadow-sm shadow-cyan-500/50'
+                  : 'bg-cyan-600/50 text-cyan-100'
+                }
+              `}
+              aria-label={remoteTooltip}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              {remoteBadgeLabel}
+            </span>
+          </Tooltip>
         </div>
       )}
 

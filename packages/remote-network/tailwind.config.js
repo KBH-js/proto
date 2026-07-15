@@ -1,6 +1,7 @@
 // Non-color scales come from the shared token copy; colors are resolved from
 // CSS variables (see src/index.css) so they flip with the host `.dark` ancestor.
 import { spacing, borderRadius, fontFamily, fontSize, boxShadow } from './src/theme.js';
+import containerQueries from '@tailwindcss/container-queries';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -34,5 +35,9 @@ export default {
       boxShadow,
     },
   },
-  plugins: [],
+  // Container queries: embedded in the shell this remote lives in a window
+  // that resizes independently of the viewport, so layout breaks on the
+  // app root's @container width (NetworkApp adds its own @container class
+  // to stay self-contained when run standalone).
+  plugins: [containerQueries],
 };

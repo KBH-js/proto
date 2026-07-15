@@ -1,5 +1,4 @@
 import { getAppIcon, getAppIconColor } from '../shared/appIcons';
-import { isTouchDevice } from '../../utils/device';
 
 interface DesktopIconProps {
   /** Lucide icon name (from the shared app icon map) or an emoji fallback */
@@ -13,21 +12,18 @@ interface DesktopIconProps {
 export function DesktopIcon({ icon, label, onLaunch, componentType }: DesktopIconProps) {
   const IconComponent = getAppIcon(icon);
 
-  // Touch devices have no double-click — launch on a single tap there
-  const launchProps = isTouchDevice()
-    ? { onClick: onLaunch }
-    : { onDoubleClick: onLaunch };
-
   return (
+    // Single click launches everywhere (touch, mouse, and — since a native
+    // button fires click on Enter/Space — keyboard too).
     <button
-      {...launchProps}
+      onClick={onLaunch}
       data-app-icon={componentType}
       className="
         flex flex-col items-center gap-1 p-2 rounded-lg
         w-20 cursor-pointer
-        hover:bg-white/10 active:bg-white/20
+        hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20
         transition-colors duration-150
-        focus:outline-none focus:ring-2 focus:ring-white/30
+        focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/30
         select-none
       "
     >
@@ -38,7 +34,10 @@ export function DesktopIcon({ icon, label, onLaunch, componentType }: DesktopIco
       ) : (
         <span className="text-4xl drop-shadow-lg">{icon}</span>
       )}
-      <span className="text-xs text-white text-center leading-tight drop-shadow-md truncate w-full">
+      {/* lg-text swaps its text-shadow with the theme (white lift on light
+          glass, dark drop on graphite) — the old text-white was authored for
+          the pre-glass dark wallpaper and vanished on the light rail. */}
+      <span className="lg-text text-xs text-gray-800 dark:text-gray-100 text-center leading-tight truncate w-full">
         {label}
       </span>
     </button>

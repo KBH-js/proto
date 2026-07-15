@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useRef, useState, useEffect } from 'react';
+import { Suspense, lazy, useCallback, useLayoutEffect, useRef, useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import { LiquidGlass } from '@proto/shared/glass';
 import { WindowState, Position, SnapZone, DEFAULT_MIN_SIZE } from '../../types/window.types';
@@ -21,8 +21,10 @@ interface WindowFrameProps {
 /** Pointer movement (px) before a drag un-tiles a snapped window */
 const UNSNAP_SLOP = 2;
 
-/** Must match .animate-window-minimize's duration in index.css */
-const MINIMIZE_ANIMATION_MS = 150;
+/** Must match the genie animation durations in index.css */
+const GENIE_ANIMATION_MS = 220;
+
+type MinimizePhase = 'idle' | 'minimizing' | 'restoring';
 
 /**
  * Extract viewport pointer coordinates from react-draggable's event,
@@ -95,16 +97,55 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
   const dragStartPointerRef = useRef<Position | null>(null);
   const armedZoneRef = useRef<SnapZone | null>(null);
 
-  // Transient: plays the minimize animation before committing to the store
-  const [isMinimizing, setIsMinimizing] = useState(false);
+  // Genie minimize/restore. The phase is DERIVED from store transitions
+  // (adjust-state-during-render pattern) instead of a pre-commit timer, so
+  // every minimize path animates — including taskbar clicks, which call the
+  // store directly. It must run before the isMinimized null-gate below so a
+  // just-minimized frame stays mounted long enough to play its animation.
+  const [phase, setPhase] = useState<MinimizePhase>('idle');
+  // Suppresses the mount 'animate-window-open' replay right after a genie
+  // restore finishes (the class swap would otherwise restart the animation).
+  const [hasRestored, setHasRestored] = useState(false);
+  const [prevMinimized, setPrevMinimized] = useState(win.isMinimized);
+  if (prevMinimized !== win.isMinimized) {
+    setPrevMinimized(win.isMinimized);
+    setPhase(win.isMinimized ? 'minimizing' : 'restoring');
+  }
+
+  const frameRef = useRef<HTMLElement>(null);
+
+  // Aim the genie at this window's own taskbar item: measure both rects
+  // pre-paint and hand the offset/scale to the keyframes as CSS variables.
+  useLayoutEffect(() => {
+    if (phase === 'idle') return;
+    const el = frameRef.current;
+    if (el) {
+      const frameRect = el.getBoundingClientRect();
+      let tx = 0;
+      let ty = frameRect.height > 0 ? frameRect.height / 2 : 24;
+      let scale = 0.1;
+      if (frameRect.width > 0) {
+        const item = document.querySelector(`[data-window-id="${win.id}"]`);
+        if (item) {
+          const itemRect = item.getBoundingClientRect();
+          tx = itemRect.left + itemRect.width / 2 - (frameRect.left + frameRect.width / 2);
+          ty = itemRect.top + itemRect.height / 2 - (frameRect.top + frameRect.height / 2);
+        }
+        scale = Math.min(Math.max(48 / frameRect.width, 0.05), 0.2);
+      }
+      el.style.setProperty('--genie-tx', `${tx}px`);
+      el.style.setProperty('--genie-ty', `${ty}px`);
+      el.style.setProperty('--genie-scale', `${scale}`);
+    }
+    const timer = window.setTimeout(() => {
+      if (phase === 'restoring') setHasRestored(true);
+      setPhase('idle');
+    }, GENIE_ANIMATION_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase, win.id]);
 
   const handleMinimize = () => {
-    if (isMinimizing) return;
-    setIsMinimizing(true);
-    setTimeout(() => {
-      setIsMinimizing(false);
-      minimizeWindow(win.id);
-    }, MINIMIZE_ANIMATION_MS);
+    minimizeWindow(win.id);
   };
 
   const isActive = activeWindowId === win.id;
@@ -185,8 +226,9 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
     }
   };
 
-  // Don't render if minimized
-  if (win.isMinimized) {
+  // Don't render if minimized — except while the genie-minimize animation is
+  // still playing (restore renders first, then animates back out).
+  if (win.isMinimized && phase !== 'minimizing') {
     return null;
   }
 
@@ -290,12 +332,20 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
       bounds="parent"
     >
       <LiquidGlass
+        ref={frameRef}
         variant="window"
         className={`
           flex flex-col h-full
           overflow-hidden
-          origin-bottom
-          ${isMinimizing ? 'animate-window-minimize' : 'animate-window-open'}
+          ${
+            phase === 'minimizing'
+              ? 'animate-window-genie-min'
+              : phase === 'restoring'
+                ? 'animate-window-genie-restore'
+                : hasRestored
+                  ? ''
+                  : 'animate-window-open'
+          }
           ${isActive ? 'ring-1 ring-white/25 dark:ring-white/15' : ''}
         `}
       >
@@ -313,8 +363,9 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
 
         {/* Content Area — transparent so the window's Liquid Glass panel shows
             through. Host-local apps paint their own (often translucent) surface;
-            remotes paint their opaque background over the glass. */}
-        <div className="flex-1 overflow-auto">
+            remotes paint their opaque background over the glass. @container makes
+            app layouts respond to the window's width instead of the viewport's. */}
+        <div className="flex-1 overflow-auto @container">
           {AppComponent ? (
             <ErrorBoundary
               appName={displayTitle}

@@ -12,7 +12,6 @@ import {
   DEFAULT_MIN_SIZE,
   CASCADE_OFFSET,
 } from '../types/window.types';
-import { getAppDefaultSize } from '../registry/appRegistry';
 import { isSmallScreen } from '../utils/device';
 import {
   clampPosition,
@@ -121,14 +120,41 @@ const raiseAndNormalize = (windows: WindowState[], id: string): WindowState[] =>
   return changed ? next : windows;
 };
 
-const getDefaultSize = (): Size => ({
-  w: Math.floor(window.innerWidth * 0.5),
-  h: Math.floor((window.innerHeight - TASKBAR_HEIGHT) * 0.5),
-});
+/**
+ * Horizontal space reserved for the left app-launcher rail:
+ * pl-3 (12) + dock padding (2×8) + icon width (80) + breathing room.
+ * Fresh windows open to the RIGHT of this so the launcher stays visible.
+ */
+const APP_RAIL_RESERVE = 124;
+
+/** Cap so ultrawide monitors don't get an absurdly wide default window */
+const MAX_DEFAULT_WIDTH = 1080;
+
+/**
+ * One uniform default size for every app (per-app defaultSize is no longer
+ * consulted): a large window filling most of the work area — the region
+ * left over after the app rail (left) and the taskbar (bottom).
+ */
+const getDefaultSize = (): Size => {
+  const availW = Math.max(
+    DEFAULT_MIN_SIZE.w,
+    window.innerWidth - APP_RAIL_RESERVE - 16,
+  );
+  const workH = window.innerHeight - TASKBAR_HEIGHT;
+  return {
+    w: Math.floor(Math.min(availW * 0.78, MAX_DEFAULT_WIDTH)),
+    h: Math.floor(workH * 0.8),
+  };
+};
 
 const getCenteredPosition = (size: Size): Position => ({
-  x: Math.floor((window.innerWidth - size.w) / 2),
-  y: Math.floor((window.innerHeight - TASKBAR_HEIGHT - size.h) / 2),
+  // Centered within the area right of the app rail — never over the
+  // launcher; the cascade only pushes further down-right from here.
+  x: Math.max(
+    APP_RAIL_RESERVE,
+    APP_RAIL_RESERVE + Math.floor((window.innerWidth - APP_RAIL_RESERVE - size.w) / 2),
+  ),
+  y: Math.max(12, Math.floor((window.innerHeight - TASKBAR_HEIGHT - size.h) / 2)),
 });
 
 /**
@@ -176,10 +202,7 @@ export const useWindowStore = create<WindowStore>()(
     }
 
     const viewport = getViewport();
-    const size = clampSize(
-      getAppDefaultSize(componentType, getDefaultSize()),
-      viewport,
-    );
+    const size = clampSize(getDefaultSize(), viewport);
     const position = getCascadePosition(size, windows.length);
 
     // Small screens get no useful floating layout — open maximized,
