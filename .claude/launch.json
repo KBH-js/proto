@@ -31,6 +31,13 @@
       "runtimeArgs": ["dev"],
       "port": 5173,
       "autoPort": true
+    },
+    {
+      "name": "host-preview",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["preview"],
+      "port": 5173,
+      "autoPort": true
     }
   ]
 }
