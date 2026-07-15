@@ -14,6 +14,7 @@ export const en: Resources = {
     calculator: 'Calculator',
     notes: 'Notes',
     network: 'Network',
+    compute: 'Compute',
     tokens: 'Design Tokens',
   },
   taskbar: {

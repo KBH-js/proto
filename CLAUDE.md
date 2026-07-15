@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-calculator`, `packages/remote-notes`, `packages/remote-network`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 Vitest+MSW(`pnpm test`).
+pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-calculator`, `packages/remote-notes`, `packages/remote-network`, `packages/remote-compute`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 Vitest+MSW(`pnpm test`).
 
 ## Commands
 
@@ -8,7 +8,7 @@ Host (루트):
 
 ```bash
 pnpm dev          # http://localhost:5173
-pnpm dev:remotes  # 모든 remote를 dev 모드로 병렬 실행 (:5001, :5002)
+pnpm dev:remotes  # 모든 remote를 dev 모드로 병렬 실행 (:5001–:5004)
 pnpm build        # tsc -b && rsbuild build
 pnpm lint         # eslint . (호스트에만 lint 스크립트 있음)
 pnpm preview
@@ -36,6 +36,7 @@ Remote (각 `packages/remote-*`): `pnpm dev` — Rsbuild MF 플러그인은 dev 
 - `src/config/portfolio.config.ts` — 소유자 정보, 소셜 링크, 이력서 URL 등 포트폴리오 설정.
 - `packages/shared` — 디자인 토큰(`theme.js` + `theme.d.ts`)만 export(`@proto/shared/theme`)하는 패키지, 빌드 스텝 없음. remote들은 독립 배포를 위해 로컬 복사본(`src/theme.js`) 사용. 호스트는 이 단일 소스를 직접 소비(Desktop wallpaper, Design Tokens 앱).
 - `packages/remote-network` — OpenStack Neutron 네트워크 대시보드 remote(포트 5003). MSW-mockable `fetch` REST(호스트 임베드 시 cross-origin SW 불가 → 인메모리 폴백; 표준은 Vitest node로 검증) + **TanStack Query**(캐싱/로딩/에러/장애 주입). i18n은 remote-local 사전 + `useHostLocale`(아래 브리지), 테마는 `.remote-network` 스코프 CSS-변수 토큰으로 호스트 `.dark`에 반응.
+- `packages/remote-compute` — OpenStack Nova 컴퓨트 대시보드 remote(포트 5004). remote-network와 동일 아키텍처(`/api/nova/*` MSW REST + 인메모리 폴백, TanStack Query, `.remote-compute` 스코프 토큰 — accent만 violet). 시드 데이터의 fixed IP는 remote-network의 플로팅 IP 매핑과 교차 일치.
 - `src/federation/hostBridge.ts` — prefs→remote 브리지. locale/theme 변화를 `window.__PROTO_LOCALE__`/`__PROTO_THEME__` 시드 + `host:locale-changed`/`host:theme-changed` CustomEvent로 발행(`bootstrap.tsx`에서 1회 init). 독립 빌드 remote가 호스트 i18n/테마를 import하지 않고 소비하는 경로.
 - `src/apps/DesignTokensApp.tsx` + `designTokens.ts` — 3-layer(primitive→semantic→component) 토큰 갤러리 로컬 앱. `@proto/shared/theme` 단일 소스에서 파생.
 - **토큰 가드레일**: `eslint-rules/no-raw-colors.js`(`local/no-raw-colors`)가 `.ts/.tsx`의 raw hex/rgb/hsl을 error로 차단. 색은 토큰 소스(`theme.js`, CSS 변수)·Tailwind 토큰 클래스에서만. 예외: `src/store/toastStore.ts`(콘솔 `%c` 아트, config 오버라이드).
