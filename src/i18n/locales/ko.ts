@@ -62,6 +62,9 @@ export const ko = {
   loading: {
     generic: '불러오는 중...',
   },
+  toast: {
+    dismiss: '알림 닫기',
+  },
   resume: {
     filename: 'Resume.pdf',
     openNewTab: '새 탭에서 열기',

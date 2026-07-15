@@ -63,6 +63,9 @@ export const en: Resources = {
   loading: {
     generic: 'Loading...',
   },
+  toast: {
+    dismiss: 'Dismiss notification',
+  },
   resume: {
     filename: 'Resume.pdf',
     openNewTab: 'Open in new tab',

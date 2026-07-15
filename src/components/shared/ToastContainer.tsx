@@ -1,7 +1,9 @@
 import { Info, CheckCircle2, AlertTriangle, XCircle, Zap, X } from 'lucide-react';
 import { useToastStore, Toast } from '../../store/toastStore';
+import { useTranslation } from '../../i18n';
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+  const { t } = useTranslation();
   const typeStyles = {
     info: 'bg-blue-900/90 border-blue-500',
     success: 'bg-green-900/90 border-green-500',
@@ -20,6 +22,9 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
 
   return (
     <div
+      // status → polite, alert → assertive; per-item roles avoid the whole
+      // stack being re-announced when one toast is added or removed.
+      role={toast.type === 'error' ? 'alert' : 'status'}
       className={`
         flex items-start gap-3 p-3 rounded-lg border-l-4
         backdrop-blur-sm shadow-xl
@@ -38,6 +43,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
       </div>
       <button
         onClick={onDismiss}
+        aria-label={t('toast.dismiss')}
         className="text-gray-400 hover:text-white transition-colors"
       >
         <X className="w-4 h-4" />
@@ -50,10 +56,8 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
 export function ToastContainer() {
   const { toasts, removeToast } = useToastStore();
 
-  if (toasts.length === 0) {
-    return null;
-  }
-
+  // Always mounted (no early return) so assistive tech reliably announces
+  // toasts inserted into an existing live region; the empty div is invisible.
   return (
     <div className="fixed bottom-20 right-4 z-[9999] flex flex-col gap-2 max-w-md">
       {toasts.map((toast) => (
