@@ -67,6 +67,7 @@ pnpm dev
 | Remote Calculator | 5001 | `/mf-manifest.json`, `/remoteEntry.js` |
 | Remote Notes | 5002 | `/mf-manifest.json`, `/remoteEntry.js` |
 | Remote Network | 5003 | `/mf-manifest.json`, `/remoteEntry.js` |
+| Remote Compute | 5004 | `/mf-manifest.json`, `/remoteEntry.js` |
 
 > Remotes can start **after** the host — a remote is only contacted when its window opens. If it's down, that window shows an error UI with a retry button.
 
@@ -212,7 +213,7 @@ plus a seeded global for the initial synchronous read:
 
 ## Deployment (Vercel)
 
-Three independent Vercel projects:
+Independent Vercel projects (one per app):
 
 | Project | Root directory | Notes |
 |---|---|---|
@@ -220,6 +221,7 @@ Three independent Vercel projects:
 | `remote-calculator` | `packages/remote-calculator` | CORS headers required |
 | `remote-notes` | `packages/remote-notes` | CORS headers required |
 | `remote-network` | `packages/remote-network` | CORS headers required; deployed at `https://remote-network.vercel.app` (ASSET_PREFIX set) |
+| `remote-compute` | `packages/remote-compute` | CORS headers required; deployed at `https://remote-compute.vercel.app` (ASSET_PREFIX set) |
 
 Per remote project:
 

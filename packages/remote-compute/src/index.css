@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens as CSS variables, SCOPED to `.remote-compute` (the exposed
+ * app's root wrapper). Scoping keeps these out of the host document's global
+ * styles (Critical Rule #3) while still reacting to the host's `.dark` ancestor
+ * class — `.dark .remote-compute` overrides cascade down to this subtree.
+ *
+ * Values are space-separated RGB channels (not hex) so Tailwind's `/opacity`
+ * modifiers work via `rgb(var(--cmp-x) / <alpha-value>)` (see tailwind.config).
+ * Color values live here (a CSS file, the sanctioned home for raw color), so
+ * .tsx product code stays token-only and passes the no-raw-colors lint rule.
+ *
+ * Same palette as remote-network except the accent: violet (vs indigo) gives
+ * each OpenStack dashboard its own identity while staying in one family.
+ */
+.remote-compute {
+  --cmp-surface: 255 255 255;
+  --cmp-panel: 248 250 252;
+  --cmp-sunken: 241 245 249;
+  --cmp-line: 226 232 240;
+  --cmp-body: 30 41 59;
+  --cmp-muted: 100 116 139;
+  --cmp-faint: 148 163 184;
+  --cmp-accent: 139 92 246;
+  --cmp-accent-soft: 245 243 255;
+  --cmp-ok: 22 163 74;
+  --cmp-warn: 217 119 6;
+  --cmp-danger: 220 38 38;
+  --cmp-info: 37 99 235;
+}
+
+.dark .remote-compute {
+  --cmp-surface: 15 23 42;
+  --cmp-panel: 30 41 59;
+  --cmp-sunken: 23 32 51;
+  --cmp-line: 51 65 85;
+  --cmp-body: 226 232 240;
+  --cmp-muted: 148 163 184;
+  --cmp-faint: 100 116 139;
+  --cmp-accent: 167 139 250;
+  --cmp-accent-soft: 46 16 101;
+  --cmp-ok: 74 222 128;
+  --cmp-warn: 251 191 36;
+  --cmp-danger: 248 113 113;
+  --cmp-info: 96 165 250;
+}

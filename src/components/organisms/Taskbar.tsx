@@ -90,21 +90,17 @@ export function Taskbar() {
           (justify-center + overflow would make the left edge unreachable) */}
       <div className="relative flex-1 min-w-0 overflow-x-auto taskbar-scroll">
         <div className="flex items-center gap-1 w-max mx-auto h-full">
-          {windows.length === 0 ? (
-            <span className="text-gray-600 dark:text-gray-300 text-sm whitespace-nowrap">{t('taskbar.noWindows')}</span>
-          ) : (
-            windows.map((win) => {
-              const isActive = activeWindowId === win.id;
-              return (
-                <TaskbarItem
-                  key={win.id}
-                  window={win}
-                  isActive={isActive}
-                  onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
-                />
-              );
-            })
-          )}
+          {windows.map((win) => {
+            const isActive = activeWindowId === win.id;
+            return (
+              <TaskbarItem
+                key={win.id}
+                window={win}
+                isActive={isActive}
+                onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
+              />
+            );
+          })}
         </div>
       </div>
 
