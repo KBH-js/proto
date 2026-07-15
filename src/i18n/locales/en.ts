@@ -21,7 +21,6 @@ export const en: Resources = {
     startMenu: 'Start Menu',
     apps: 'Apps',
     connect: 'Connect',
-    noWindows: 'No open windows',
     githubDesc: 'View source code',
     linkedinDesc: 'Professional profile',
     email: 'Email',
@@ -118,7 +117,7 @@ export const en: Resources = {
   about: {
     subtitle: 'Module Federation web desktop · a resume you can run',
     honesty:
-      "A clean-room reproduction of an in-house project. The source can't leave the corporate network, so only the architecture and workflow are rebuilt — everything tagged “live” below actually runs in this screen.",
+      'A clean-room reproduction of the projects on my résumé, rebuilt from their architecture and specs with AI-assisted coding.',
     claimsTitle: 'Claims → Evidence',
     claimsCaption: 'Each résumé point mapped to a demo that actually runs. Click a row to open it.',
     tagLive: 'live',
@@ -127,7 +126,7 @@ export const en: Resources = {
     claim: {
       federation: {
         title: 'Runtime remote-URL injection + independent deploys',
-        desc: "The host declares no remotes at build time. It fetches a manifest at boot and registers each remote at runtime via registerRemotes(). The résumé's 13 apps are represented here by 2 (Calculator, Notes), each deployed independently.",
+        desc: 'The host declares no remotes at build time. It fetches a manifest at boot and registers each remote at runtime via registerRemotes().',
       },
       recovery: {
         title: 'Post-redeploy stale-chunk recovery — only the failed frame',
@@ -143,49 +142,23 @@ export const en: Resources = {
       },
       theming: {
         title: 'Design tokens + dark mode',
-        desc: 'Theme is a class toggle on the shell root; tokens come from a shared package. Switch it with the theme button. (A Storybook light/dark VRT matrix is planned.)',
-      },
-      testing: {
-        title: 'Vitest / MSW integration tests',
-        desc: 'Unit + integration tests for the catalog, window store, and geometry run via pnpm test. (~160 Playwright E2E specs are planned.)',
-      },
-      compiler: {
-        title: 'React Compiler migration',
-        desc: "The host runs React Compiler. That's why the remote-retry wrapper lives in useState, not useMemo — the compiler skips the recompute, so a cached rejection would be reused.",
-      },
-      domain: {
-        title: 'Virtual scroll · debounced search · client caching',
-        desc: 'Large-list optimizations from prior work. Planned for a Tier 2 domain remote — not in this demo yet.',
-      },
-      aidx: {
-        title: 'AI dev-workflow conventions',
-        desc: "The repo's CLAUDE.md conventions and lint gate constrain agent work. Hook-based CI blocking and a verification skill are partially reproduced.",
+        desc: 'Theme is a class toggle on the shell root; tokens come from a shared package. Switch it with the theme button.',
       },
     },
     act: {
       inspector: 'Show in Inspector',
-      source: 'View source',
       theme: 'Toggle theme',
       locale: 'Toggle language',
-      test: 'Test source',
     },
     decisionsTitle: 'Technical decisions · trade-offs',
     decision: {
       runtime: {
         title: 'Runtime, not build-time, registration',
-        desc: 'Adding or moving a remote is just a manifest edit — no host rebuild. The trade-off is giving up type-safe static imports.',
-      },
-      recovery: {
-        title: 'Per-window isolation + a fresh lazy wrapper',
-        desc: 'React.lazy permanently caches a rejected promise, so retry must build a fresh wrapper — kept in useState so it survives React Compiler memoization.',
-      },
-      css: {
-        title: 'Exposed modules import their own CSS',
-        desc: "That's how styles reach the host. Global body/html rules stay in the standalone entry only, so they never pollute the host document.",
+        desc: 'Adding or moving a remote is just a manifest edit — no host rebuild. Each user gets a personalized app set, and apps can be added or removed freely.',
       },
       singleton: {
-        title: 'Matched React singleton version',
-        desc: 'Host and remotes share requiredVersion ^19 to prevent two Reacts from loading.',
+        title: 'Shared-module config: performance + a matched React singleton',
+        desc: 'Host and remotes share requiredVersion ^19 to prevent two Reacts from loading. Dependencies common to several apps are served by the host as one shared bundle, which optimizes performance.',
       },
     },
     linksTitle: 'Deployments · source',
