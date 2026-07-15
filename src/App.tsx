@@ -19,7 +19,8 @@ function App() {
   useShortcuts();
 
   // Fetch the remote app catalog and register remotes with the MF runtime.
-  // Idempotent — guarded against StrictMode double-invocation internally.
+  // Idempotent on store state — StrictMode double-invocation joins the
+  // in-flight fetch, and a dev-HMR store reset re-runs the merge.
   useEffect(() => {
     initializeAppRegistry();
   }, []);
