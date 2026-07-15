@@ -1,5 +1,4 @@
 import { getAppIcon, getAppIconColor } from '../shared/appIcons';
-import { isTouchDevice } from '../../utils/device';
 
 interface DesktopIconProps {
   /** Lucide icon name (from the shared app icon map) or an emoji fallback */
@@ -13,25 +12,11 @@ interface DesktopIconProps {
 export function DesktopIcon({ icon, label, onLaunch, componentType }: DesktopIconProps) {
   const IconComponent = getAppIcon(icon);
 
-  // Touch devices have no double-click — launch on a single tap there.
-  // On pointer devices only double-click launches, so Enter/Space (which fire
-  // a plain click) need their own keydown path to keep the icon usable from
-  // the keyboard. The touch branch's onClick already covers keyboard natively.
-  const launchProps = isTouchDevice()
-    ? { onClick: onLaunch }
-    : {
-        onDoubleClick: onLaunch,
-        onKeyDown: (e: React.KeyboardEvent) => {
-          if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {
-            e.preventDefault();
-            onLaunch();
-          }
-        },
-      };
-
   return (
+    // Single click launches everywhere (touch, mouse, and — since a native
+    // button fires click on Enter/Space — keyboard too).
     <button
-      {...launchProps}
+      onClick={onLaunch}
       data-app-icon={componentType}
       className="
         flex flex-col items-center gap-1 p-2 rounded-lg

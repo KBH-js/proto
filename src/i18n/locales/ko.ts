@@ -221,7 +221,7 @@ export const ko = {
       },
       calculator: {
         title: '원격 앱을 실행해 보세요',
-        body: 'Calculator를 더블클릭하면 별도로 배포된 remote-calculator에서 로드됩니다. 로드 시간이 토스트로, 타이틀바엔 MFE 배지가 표시됩니다.',
+        body: 'Calculator를 클릭하면 별도로 배포된 remote-calculator에서 로드됩니다. 로드 시간이 토스트로, 타이틀바엔 MFE 배지가 표시됩니다.',
       },
       inspector: {
         title: '런타임을 들여다보기',
@@ -236,15 +236,5 @@ export const ko = {
         body: '소개(About) 앱에서 이력서 주장이 어떤 데모로 증명되는지 확인하세요. 이 투어는 언제든 다시 볼 수 있습니다.',
       },
     },
-  },
-  desktop: {
-    menuLabel: '데스크톱 메뉴',
-    openAbout: '소개',
-    openInspector: '페더레이션 인스펙터',
-    toggleTheme: '테마 전환',
-    toggleLocale: '언어 전환',
-    replayTour: '가이드 투어 다시 보기',
-    refreshRemotes: '원격 모듈 새로고침',
-    remotesRefreshed: '모든 원격 모듈을 다시 등록했습니다.',
   },
 };

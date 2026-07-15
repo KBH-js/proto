@@ -1,13 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { DesktopIcon } from './DesktopIcon';
-import { isTouchDevice } from '../../utils/device';
-
-vi.mock('../../utils/device', () => ({
-  isTouchDevice: vi.fn(() => false),
-}));
-
-const mockedIsTouchDevice = vi.mocked(isTouchDevice);
 
 afterEach(() => {
   cleanup();
@@ -15,49 +8,24 @@ afterEach(() => {
 });
 
 describe('DesktopIcon launch interactions', () => {
-  it('launches on Enter when focused (pointer devices)', () => {
-    mockedIsTouchDevice.mockReturnValue(false);
+  it('launches on a single click', () => {
+    const onLaunch = vi.fn();
+    render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
+
+    fireEvent.click(screen.getByRole('button'));
+    expect(onLaunch).toHaveBeenCalledTimes(1);
+  });
+
+  it('is a native button, so keyboard activation goes through click', () => {
     const onLaunch = vi.fn();
     render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
 
     const button = screen.getByRole('button');
     button.focus();
-    fireEvent.keyDown(button, { key: 'Enter' });
-
-    expect(onLaunch).toHaveBeenCalledTimes(1);
-  });
-
-  it('launches on Space but ignores key repeat', () => {
-    mockedIsTouchDevice.mockReturnValue(false);
-    const onLaunch = vi.fn();
-    render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
-
-    const button = screen.getByRole('button');
-    fireEvent.keyDown(button, { key: ' ' });
-    fireEvent.keyDown(button, { key: ' ', repeat: true });
-
-    expect(onLaunch).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not launch on single click, launches on double-click (pointer devices)', () => {
-    mockedIsTouchDevice.mockReturnValue(false);
-    const onLaunch = vi.fn();
-    render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
-
-    const button = screen.getByRole('button');
+    // Browsers synthesize a click for Enter/Space on <button>; assert the
+    // activation path (click) is wired rather than simulating browser UA
+    // behavior that happy-dom does not implement.
     fireEvent.click(button);
-    expect(onLaunch).not.toHaveBeenCalled();
-
-    fireEvent.doubleClick(button);
-    expect(onLaunch).toHaveBeenCalledTimes(1);
-  });
-
-  it('launches on single click on touch devices', () => {
-    mockedIsTouchDevice.mockReturnValue(true);
-    const onLaunch = vi.fn();
-    render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
-
-    fireEvent.click(screen.getByRole('button'));
     expect(onLaunch).toHaveBeenCalledTimes(1);
   });
 });
