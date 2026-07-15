@@ -221,7 +221,7 @@ Independent Vercel projects (one per app):
 | `remote-calculator` | `packages/remote-calculator` | CORS headers required |
 | `remote-notes` | `packages/remote-notes` | CORS headers required |
 | `remote-network` | `packages/remote-network` | CORS headers required; deployed at `https://remote-network.vercel.app` (ASSET_PREFIX set) |
-| `remote-compute` | `packages/remote-compute` | CORS headers required; manifest expects `https://remote-compute.vercel.app` (set ASSET_PREFIX on deploy) |
+| `remote-compute` | `packages/remote-compute` | CORS headers required; deployed at `https://remote-compute.vercel.app` (ASSET_PREFIX set) |
 
 Per remote project:
 
