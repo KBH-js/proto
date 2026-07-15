@@ -40,12 +40,40 @@ const STEPS: TourStep[] = [
   { titleKey: 'tour.step.done.title', bodyKey: 'tour.step.done.body' },
 ];
 
-const CARD_WIDTH = 300;
+const CARD_WIDTH = 340;
+const MOBILE_QUERY = '(max-width: 639px)';
+
+/** Tailwind's `sm` breakpoint, as state — the card switches layout below it. */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_QUERY).matches);
+  useEffect(() => {
+    const mql = window.matchMedia(MOBILE_QUERY);
+    const onChange = () => setIsMobile(mql.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
+  return isMobile;
+}
 
 /** Position the caption card relative to the spotlighted rect (or centered). */
-function cardPlacement(rect: DOMRect | null): React.CSSProperties {
+function cardPlacement(rect: DOMRect | null, isMobile: boolean): React.CSSProperties {
+  // Phones have no room to sit a 340px card beside a 44px icon, so the card
+  // becomes an edge-to-edge sheet, flipped to whichever half the anchor isn't
+  // in (the tray is at the bottom, the icons at the top).
+  if (isMobile) {
+    const inset: React.CSSProperties = { left: 12, right: 12 };
+    return rect && rect.top > window.innerHeight / 2
+      ? { ...inset, top: 12 }
+      : { ...inset, bottom: 12 };
+  }
   if (!rect) {
-    return { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' };
+    return {
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: CARD_WIDTH,
+      maxWidth: 'calc(100vw - 32px)',
+    };
   }
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -66,6 +94,7 @@ export function FirstRunTour() {
   const back = useTourStore((s) => s.back);
   const finish = useTourStore((s) => s.finish);
   const isDark = usePrefsStore((s) => s.theme === 'dark');
+  const isMobile = useIsMobile();
 
   const [rect, setRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -188,27 +217,27 @@ export function FirstRunTour() {
         aria-labelledby={titleId}
         aria-describedby={bodyId}
         onKeyDown={handleCardKeyDown}
-        className="absolute pointer-events-auto rounded-2xl bg-white dark:bg-neutral-800 shadow-2xl border border-black/5 dark:border-white/10 p-4"
-        style={cardPlacement(rect)}
+        className="absolute pointer-events-auto rounded-2xl bg-white dark:bg-neutral-800 shadow-2xl border border-black/5 dark:border-white/10 p-4 sm:p-5"
+        style={cardPlacement(rect, isMobile)}
       >
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] font-mono text-gray-400 dark:text-gray-500">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-mono text-gray-400 dark:text-gray-500">
             {t('tour.progress', { current: stepIndex + 1, total: STEPS.length })}
           </span>
           <button
             onClick={finish}
-            className="text-[11px] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            className="-mr-1 px-1 py-0.5 text-xs sm:text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
           >
             {t('tour.skip')}
           </button>
         </div>
-        <h3 id={titleId} className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t(step.titleKey)}</h3>
-        <p id={bodyId} className="text-xs text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">{t(step.bodyKey)}</p>
-        <div className="flex items-center justify-end gap-2 mt-3">
+        <h3 id={titleId} className="text-lg sm:text-base font-semibold text-gray-900 dark:text-gray-100">{t(step.titleKey)}</h3>
+        <p id={bodyId} className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{t(step.bodyKey)}</p>
+        <div className="flex items-center justify-end gap-2 mt-4">
           {stepIndex > 0 && (
             <button
               onClick={back}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             >
               {t('tour.back')}
             </button>
@@ -216,7 +245,7 @@ export function FirstRunTour() {
           <button
             ref={primaryBtnRef}
             onClick={onNext}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-accent hover:brightness-110 transition-all"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-white bg-accent hover:brightness-110 transition-all"
           >
             {isLast ? t('tour.done') : t('tour.next')}
           </button>
