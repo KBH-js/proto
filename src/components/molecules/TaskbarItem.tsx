@@ -20,7 +20,7 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
     <button
       onClick={onClick}
       className={`
-        flex items-center gap-2 px-3 py-1.5 rounded-xl
+        flex items-center gap-2 px-3 py-1.5 rounded-xl flex-shrink-0
         transition-all duration-150
         ${isActive
           ? 'bg-white/70 dark:bg-white/15 shadow-inner ring-1 ring-white/70 dark:ring-white/20'
@@ -31,7 +31,7 @@ export function TaskbarItem({ window, isActive, onClick }: TaskbarItemProps) {
       title={title}
     >
       <IconComponent className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-      <span className="text-sm text-gray-800 dark:text-gray-100 truncate max-w-[120px]">
+      <span className="hidden sm:inline text-sm text-gray-800 dark:text-gray-100 truncate max-w-[120px]">
         {title}
       </span>
 

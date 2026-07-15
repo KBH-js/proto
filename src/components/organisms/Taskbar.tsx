@@ -55,14 +55,14 @@ export function Taskbar() {
       {/* Floating Liquid Glass Dock — detached from the screen edges */}
       <LiquidGlass
         variant="dock"
-        className="pointer-events-auto flex items-center gap-1 mb-2 mx-3 h-12 px-2"
+        className="pointer-events-auto flex items-center gap-1 mb-2 mx-3 h-12 px-2 max-w-full min-w-0"
       >
       {/* Start Button */}
       <button
         ref={startButtonRef}
         onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
         className={`
-          relative flex items-center justify-center w-10 h-10 rounded-xl
+          relative flex items-center justify-center w-10 h-10 rounded-xl flex-shrink-0
           transition-all duration-200
           ${isStartMenuOpen
             ? 'aqua-gel text-white'
@@ -79,29 +79,32 @@ export function Taskbar() {
       )}
 
       {/* Separator */}
-      <div className="relative w-px h-6 bg-black/10 dark:bg-white/10 mx-2" />
+      <div className="relative w-px h-6 bg-black/10 dark:bg-white/10 mx-2 flex-shrink-0" />
 
-      {/* Taskbar items container */}
-      <div className="relative flex-1 flex items-center justify-center gap-1">
-        {windows.length === 0 ? (
-          <span className="text-gray-600 dark:text-gray-300 text-sm">{t('taskbar.noWindows')}</span>
-        ) : (
-          windows.map((win) => {
-            const isActive = activeWindowId === win.id;
-            return (
-              <TaskbarItem
-                key={win.id}
-                window={win}
-                isActive={isActive}
-                onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
-              />
-            );
-          })
-        )}
+      {/* Taskbar items container — centers when short, scrolls when long
+          (justify-center + overflow would make the left edge unreachable) */}
+      <div className="relative flex-1 min-w-0 overflow-x-auto taskbar-scroll">
+        <div className="flex items-center gap-1 w-max mx-auto h-full">
+          {windows.length === 0 ? (
+            <span className="text-gray-600 dark:text-gray-300 text-sm whitespace-nowrap">{t('taskbar.noWindows')}</span>
+          ) : (
+            windows.map((win) => {
+              const isActive = activeWindowId === win.id;
+              return (
+                <TaskbarItem
+                  key={win.id}
+                  window={win}
+                  isActive={isActive}
+                  onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
+                />
+              );
+            })
+          )}
+        </div>
       </div>
 
       {/* System tray — federation status + theme + language toggles */}
-      <div className="relative flex items-center gap-1" data-tour="tray">
+      <div className="relative flex items-center gap-1 flex-shrink-0" data-tour="tray">
         {/* Module Federation status strip — click to open the Inspector */}
         <button
           onClick={() => openWindow('inspector', 'Inspector')}

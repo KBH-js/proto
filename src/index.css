@@ -282,6 +282,16 @@ html, body, #root {
   animation: window-minimize 150ms ease-in forwards;
 }
 
+/* Taskbar item strip: scrolls horizontally when windows overflow the dock,
+   but hides the scrollbar so the glass shelf stays clean. */
+.taskbar-scroll {
+  scrollbar-width: none;
+}
+
+.taskbar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* Toast slide-in animation */
 @keyframes slide-in-right {
   from {
