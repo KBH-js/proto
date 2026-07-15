@@ -104,6 +104,22 @@
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
   }
 
+  /*
+   * Invisible hit-area extension: the visible dot is only 13px, well under
+   * comfortable click/touch targets. Dots sit at a 21px pitch (13px + 8px
+   * gap), so ±4px horizontally makes adjacent zones meet exactly without
+   * overlapping; ±6px vertically stays inside the titlebar. ::before is the
+   * specular glare, so the hit pad lives on ::after.
+   */
+  .aqua-traffic::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    left: -4px;
+    right: -4px;
+  }
+
   .aqua-traffic:active {
     filter: brightness(0.9);
   }
