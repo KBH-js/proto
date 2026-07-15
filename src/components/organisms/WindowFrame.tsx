@@ -313,8 +313,9 @@ export function WindowFrame({ window: win }: WindowFrameProps) {
 
         {/* Content Area — transparent so the window's Liquid Glass panel shows
             through. Host-local apps paint their own (often translucent) surface;
-            remotes paint their opaque background over the glass. */}
-        <div className="flex-1 overflow-auto">
+            remotes paint their opaque background over the glass. @container makes
+            app layouts respond to the window's width instead of the viewport's. */}
+        <div className="flex-1 overflow-auto @container">
           {AppComponent ? (
             <ErrorBoundary
               appName={displayTitle}

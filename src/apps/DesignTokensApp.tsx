@@ -60,7 +60,7 @@ function Layer({
             <p className="mb-1 font-mono text-[11px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
               {g.group}
             </p>
-            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-1.5 @lg:grid-cols-2">
               {g.tokens.map((tok) => (
                 <Swatch key={tok.name} name={tok.name} value={tok.value} ref={tok.ref} />
               ))}

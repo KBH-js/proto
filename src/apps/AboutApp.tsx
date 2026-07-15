@@ -228,7 +228,7 @@ export function AboutApp() {
               aria-label={t('about.replayTour')}
             >
               <PlayCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('about.replayTour')}</span>
+              <span className="hidden @lg:inline">{t('about.replayTour')}</span>
             </LiquidGlass>
           </Tooltip>
         </div>
@@ -286,7 +286,7 @@ export function AboutApp() {
         {/* Technical decisions */}
         <section>
           <SectionTitle>{t('about.decisionsTitle')}</SectionTitle>
-          <div className="grid sm:grid-cols-2 gap-2">
+          <div className="grid @lg:grid-cols-2 gap-2">
             {DECISIONS.map((key) => (
               <LiquidGlass variant="card" key={key} radius={12} className="p-3">
                 <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100">
@@ -304,7 +304,7 @@ export function AboutApp() {
         <section>
           <SectionTitle>{t('about.linksTitle')}</SectionTitle>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 -mt-1">{t('about.linksCaption')}</p>
-          <div className="grid sm:grid-cols-2 gap-2">
+          <div className="grid @lg:grid-cols-2 gap-2">
             {deployLinks.map((link) => {
               const Icon = link.icon;
               return (
@@ -335,7 +335,7 @@ export function AboutApp() {
         {/* Keyboard shortcuts */}
         <section>
           <SectionTitle>{t('about.shortcutsTitle')}</SectionTitle>
-          <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5">
+          <div className="grid @lg:grid-cols-2 gap-x-4 gap-y-1.5">
             {SHORTCUTS.map((s) => (
               <div key={s.key} className="flex items-center justify-between gap-2">
                 <span className="text-xs text-gray-600 dark:text-gray-300">{t(`about.shortcut.${s.key}`)}</span>

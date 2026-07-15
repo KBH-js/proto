@@ -1,3 +1,5 @@
+import containerQueries from '@tailwindcss/container-queries';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   // Shell theme is toggled by a `dark` class on the shell root
@@ -25,5 +27,8 @@ export default {
       },
     },
   },
-  plugins: [],
+  // Container queries (@container/@lg:…): window content must respond to the
+  // WINDOW's width, not the viewport's — a small floating window on a large
+  // monitor must not get the wide layout.
+  plugins: [containerQueries],
 }

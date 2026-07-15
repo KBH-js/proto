@@ -67,7 +67,9 @@ function Dashboard() {
   const selected = networks.find((n) => n.id === selectedId) ?? null;
 
   return (
-    <div className="remote-network flex h-full w-full flex-col overflow-hidden bg-surface font-sans text-body">
+    // @container: layout responds to the app's own width — required because the
+    // shell window resizes independently of the viewport; also correct standalone.
+    <div className="remote-network @container flex h-full w-full flex-col overflow-hidden bg-surface font-sans text-body">
       {/* Toolbar */}
       <header className="flex items-center justify-between gap-3 border-b border-line bg-panel px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
