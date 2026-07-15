@@ -274,21 +274,17 @@ export function Taskbar() {
 
       {/* Taskbar items container */}
       <div className="relative flex-1 flex items-center justify-center gap-1">
-        {windows.length === 0 ? (
-          <span className="text-gray-600 dark:text-gray-300 text-sm">{t('taskbar.noWindows')}</span>
-        ) : (
-          windows.map((win) => {
-            const isActive = activeWindowId === win.id;
-            return (
-              <TaskbarItem
-                key={win.id}
-                window={win}
-                isActive={isActive}
-                onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
-              />
-            );
-          })
-        )}
+        {windows.map((win) => {
+          const isActive = activeWindowId === win.id;
+          return (
+            <TaskbarItem
+              key={win.id}
+              window={win}
+              isActive={isActive}
+              onClick={() => handleTaskbarItemClick(win.id, win.isMinimized, isActive)}
+            />
+          );
+        })}
       </div>
 
       {/* System tray — federation status + theme + language toggles */}

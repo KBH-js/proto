@@ -20,7 +20,6 @@ export const ko = {
     startMenu: '시작 메뉴',
     apps: '앱',
     connect: '연결',
-    noWindows: '열린 창 없음',
     githubDesc: '소스 코드 보기',
     linkedinDesc: '프로필 보기',
     email: '이메일',
@@ -116,8 +115,7 @@ export const ko = {
   },
   about: {
     subtitle: 'Module Federation 웹 데스크톱 · 실행 가능한 이력서',
-    honesty:
-      '사내 실프로젝트의 clean-room 재현입니다. 코드는 반출할 수 없어 아키텍처와 절차만 다시 세웠고, 아래 “라이브”로 표시된 것은 이 화면에서 실제로 실행됩니다.',
+    honesty: '이력서의 프로젝트를 아키텍처와 스펙 기반 AI assisted coding으로 clean-room 재현합니다.',
     claimsTitle: '주장 → 증거',
     claimsCaption: '이력서의 각 항목을 실제로 도는 데모로 연결합니다. 행을 누르면 해당 기능이 열립니다.',
     tagLive: '라이브',
@@ -126,7 +124,7 @@ export const ko = {
     claim: {
       federation: {
         title: '런타임 동적 Remote URL 주입 + 독립 배포',
-        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다. 이력서의 13개 앱은 여기선 대표 2개(Calculator·Notes)로 각각 독립 배포됩니다.',
+        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다.',
       },
       recovery: {
         title: '재배포 후 stale-chunk 복구 — 실패한 프레임만',
@@ -142,49 +140,23 @@ export const ko = {
       },
       theming: {
         title: '디자인 토큰 + 다크 모드',
-        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다. (Storybook 라이트/다크 VRT 매트릭스는 예정)',
-      },
-      testing: {
-        title: 'Vitest / MSW 통합 테스트',
-        desc: '카탈로그·윈도우 스토어·지오메트리에 대한 단위+통합 테스트를 pnpm test로 실행합니다. (Playwright E2E ~160개는 예정)',
-      },
-      compiler: {
-        title: 'React Compiler 마이그레이션',
-        desc: 'Host는 React Compiler를 씁니다. remote 재시도 래퍼를 useMemo가 아닌 useState로 둔 이유가 그것 — Compiler가 재계산을 건너뛰어 캐시된 rejection이 재사용되기 때문입니다.',
-      },
-      domain: {
-        title: '가상 스크롤 · 디바운스 검색 · 클라이언트 캐싱',
-        desc: '대용량 리스트 최적화 경력. Tier 2 도메인 remote 앱에서 재현 예정 — 아직 이 데모엔 없습니다.',
-      },
-      aidx: {
-        title: 'AI 개발 워크플로 규약',
-        desc: '레포의 CLAUDE.md 팀 규약과 lint 게이트로 에이전트 작업을 제약합니다. 훅 기반 CI 차단·검증 Skill은 부분 재현입니다.',
+        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다.',
       },
     },
     act: {
       inspector: '인스펙터에서 보기',
-      source: '소스 보기',
       theme: '테마 전환',
       locale: '언어 전환',
-      test: '테스트 소스',
     },
     decisionsTitle: '기술 결정 · 트레이드오프',
     decision: {
       runtime: {
         title: '빌드타임이 아닌 런타임 등록',
-        desc: 'remote 추가·이동이 매니페스트 수정으로 끝나고 Host 재빌드가 필요 없습니다. 대가로 타입 안전한 정적 import를 포기합니다.',
-      },
-      recovery: {
-        title: '창 단위 격리 + fresh lazy 래퍼',
-        desc: 'React.lazy는 거부된 프로미스를 영구 캐시하므로 재시도는 새 래퍼를 만들어야 합니다. 래퍼를 useState에 보관해 React Compiler 메모이제이션을 넘깁니다.',
-      },
-      css: {
-        title: 'Exposed 모듈이 자기 CSS를 import',
-        desc: '그래야 스타일이 호스트에 주입됩니다. body/html 전역 규칙은 standalone 엔트리에만 둬서 호스트 document 오염을 막습니다.',
+        desc: 'remote 추가·이동이 매니페스트 수정으로 끝나고 Host 재빌드가 필요 없습니다. 유저별 앱 구성 개인화와 앱 추가·제거의 유연성을 보장합니다.',
       },
       singleton: {
-        title: 'React 싱글턴 버전 일치',
-        desc: 'Host와 remote가 requiredVersion ^19를 공유해 두 개의 React가 로드되는 것을 막습니다.',
+        title: '공유 모듈 설정으로 성능 최적화 및 React 싱글턴 버전 일치',
+        desc: 'Host와 remote가 requiredVersion ^19를 공유해 두 개의 React가 로드되는 것을 막습니다. 여러 앱이 공유하는 의존성을 Host가 공유 번들로 제공해 성능을 최적화합니다.',
       },
     },
     linksTitle: '배포 · 소스',

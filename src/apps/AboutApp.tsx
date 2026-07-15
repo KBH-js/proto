@@ -5,10 +5,6 @@ import {
   Package,
   Languages,
   Palette,
-  FlaskConical,
-  Cpu,
-  Gauge,
-  Bot,
   Activity,
   Github,
   Sun,
@@ -37,12 +33,7 @@ import { portfolioConfig } from '../config/portfolio.config';
 
 type Tag = 'live' | 'partial' | 'planned';
 
-type ClaimAction =
-  | { kind: 'inspector' }
-  | { kind: 'source'; href: string }
-  | { kind: 'theme' }
-  | { kind: 'locale' }
-  | { kind: 'none' };
+type ClaimAction = { kind: 'inspector' } | { kind: 'theme' } | { kind: 'locale' };
 
 interface ClaimRow {
   /** i18n key under about.claim.<key> */
@@ -52,31 +43,15 @@ interface ClaimRow {
   action: ClaimAction;
 }
 
-const REPO = portfolioConfig.repo;
-
 const CLAIMS: ClaimRow[] = [
   { key: 'federation', icon: Boxes, tag: 'live', action: { kind: 'inspector' } },
   { key: 'recovery', icon: ShieldCheck, tag: 'live', action: { kind: 'inspector' } },
   { key: 'singleton', icon: Package, tag: 'live', action: { kind: 'inspector' } },
   { key: 'i18n', icon: Languages, tag: 'live', action: { kind: 'locale' } },
   { key: 'theming', icon: Palette, tag: 'partial', action: { kind: 'theme' } },
-  {
-    key: 'testing',
-    icon: FlaskConical,
-    tag: 'live',
-    action: { kind: 'source', href: `${REPO}/tree/main/src/test` },
-  },
-  {
-    key: 'compiler',
-    icon: Cpu,
-    tag: 'live',
-    action: { kind: 'source', href: `${REPO}/blob/main/src/components/organisms/WindowFrame.tsx` },
-  },
-  { key: 'domain', icon: Gauge, tag: 'planned', action: { kind: 'none' } },
-  { key: 'aidx', icon: Bot, tag: 'partial', action: { kind: 'source', href: `${REPO}/blob/main/CLAUDE.md` } },
 ];
 
-const DECISIONS = ['runtime', 'recovery', 'css', 'singleton'] as const;
+const DECISIONS = ['runtime', 'singleton'] as const;
 
 const SHORTCUTS: { keys: string; key: string }[] = [
   { keys: 'Alt + A', key: 'about' },
@@ -166,22 +141,6 @@ function ClaimActionButton({ action, t }: { action: ClaimAction; t: TFunction })
           {t('about.act.locale')}
         </LiquidGlass>
       );
-    case 'source':
-      return (
-        <LiquidGlass
-          variant="button"
-          as="a"
-          href={action.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`${base} text-gray-700 dark:text-gray-100`}
-        >
-          <Github className="w-3 h-3" />
-          {t('about.act.source')}
-        </LiquidGlass>
-      );
-    case 'none':
-      return null;
   }
 }
 
@@ -267,11 +226,9 @@ export function AboutApp() {
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                         {t(`about.claim.${row.key}.desc`)}
                       </p>
-                      {row.action.kind !== 'none' && (
-                        <div className="mt-2">
-                          <ClaimActionButton action={row.action} t={t} />
-                        </div>
-                      )}
+                      <div className="mt-2">
+                        <ClaimActionButton action={row.action} t={t} />
+                      </div>
                     </div>
                   </div>
                 </LiquidGlass>
