@@ -10,6 +10,7 @@ import { useMenuFocus } from '../../hooks/useMenuFocus';
 import { getAppIcon } from '../shared/appIcons';
 import { TASKBAR_Z_INDEX } from '../../types/window.types';
 import { portfolioConfig } from '../../config/portfolio.config';
+import { Tooltip } from '../atoms/Tooltip';
 import { Github, Linkedin, Mail, ExternalLink, User, Copy, Package } from 'lucide-react';
 
 interface StartMenuLink {
@@ -208,15 +209,17 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
                         <p className="text-xs text-gray-500 dark:text-gray-400">{link.href}</p>
                       )}
                     </div>
-                    <button
-                      role="menuitem"
-                      tabIndex={-1}
-                      onClick={() => handleCopyEmail(link.href)}
-                      className="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 focus:bg-black/10 dark:focus:bg-white/10 focus:outline-none transition-colors"
-                      title={t('taskbar.copyEmail')}
-                    >
-                      <Copy className="w-4 h-4 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100" />
-                    </button>
+                    <Tooltip label={t('taskbar.copyEmail')}>
+                      <button
+                        role="menuitem"
+                        tabIndex={-1}
+                        aria-label={t('taskbar.copyEmail')}
+                        onClick={() => handleCopyEmail(link.href)}
+                        className="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 focus:bg-black/10 dark:focus:bg-white/10 focus:outline-none transition-colors"
+                      >
+                        <Copy className="w-4 h-4 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100" />
+                      </button>
+                    </Tooltip>
                   </div>
                 );
               }

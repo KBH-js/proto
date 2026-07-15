@@ -24,6 +24,7 @@ import { usePrefsStore } from '../store/prefsStore';
 import { useTourStore } from '../store/tourStore';
 import { useTranslation, type TFunction } from '../i18n';
 import { portfolioConfig } from '../config/portfolio.config';
+import { Tooltip } from '../components/atoms/Tooltip';
 
 /**
  * About — the portfolio's thesis, in engineer tone.
@@ -217,17 +218,19 @@ export function AboutApp() {
             <p className="text-sm text-white/90">{portfolioConfig.owner.title}</p>
             <p className="text-xs text-white/70 mt-1">{t('about.subtitle')}</p>
           </div>
-          <LiquidGlass
-            variant="button"
-            as="button"
-            onClick={startTour}
-            radius={10}
-            className="lg-text flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-white hover:brightness-110 transition-[filter] flex-shrink-0"
-            title={t('about.replayTour')}
-          >
-            <PlayCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('about.replayTour')}</span>
-          </LiquidGlass>
+          <Tooltip label={t('about.replayTour')}>
+            <LiquidGlass
+              variant="button"
+              as="button"
+              onClick={startTour}
+              radius={10}
+              className="lg-text flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-white hover:brightness-110 transition-[filter] flex-shrink-0"
+              aria-label={t('about.replayTour')}
+            >
+              <PlayCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('about.replayTour')}</span>
+            </LiquidGlass>
+          </Tooltip>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { useWindowStore } from '../store/windowStore';
 import { useToastStore } from '../store/toastStore';
 import { forceRefreshRemote } from '../federation/runtime';
 import { useTranslation, translateAppTitle } from '../i18n';
+import { Tooltip } from '../components/atoms/Tooltip';
 
 /**
  * Federation Inspector — makes the runtime Module Federation layer visible.
@@ -136,14 +137,15 @@ export function FederationInspectorApp() {
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               {t('inspector.colApp')}
             </span>
-            <button
-              onClick={handleHealAll}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 dark:text-green-300 dark:bg-green-500/10 dark:hover:bg-green-500/20 transition-colors"
-              title={t('inspector.healAllTitle')}
-            >
-              <HeartPulse className="w-3.5 h-3.5" />
-              {t('inspector.healAll')}
-            </button>
+            <Tooltip label={t('inspector.healAllTitle')}>
+              <button
+                onClick={handleHealAll}
+                className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 dark:text-green-300 dark:bg-green-500/10 dark:hover:bg-green-500/20 transition-colors"
+              >
+                <HeartPulse className="w-3.5 h-3.5" />
+                {t('inspector.healAll')}
+              </button>
+            </Tooltip>
           </div>
 
           {remoteApps.length === 0 ? (
@@ -214,14 +216,15 @@ export function FederationInspectorApp() {
                         <Play className="w-3 h-3" />
                         {t('inspector.openApp')}
                       </button>
-                      <button
-                        onClick={() => handleBreak(e.defaultConfig.componentType, e.defaultConfig.title, remote.name)}
-                        className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-red-700 bg-red-50 hover:bg-red-100 dark:text-red-300 dark:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors"
-                        title={t('inspector.breakTitle')}
-                      >
-                        <ShieldAlert className="w-3 h-3" />
-                        {t('inspector.break')}
-                      </button>
+                      <Tooltip label={t('inspector.breakTitle')}>
+                        <button
+                          onClick={() => handleBreak(e.defaultConfig.componentType, e.defaultConfig.title, remote.name)}
+                          className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-red-700 bg-red-50 hover:bg-red-100 dark:text-red-300 dark:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors"
+                        >
+                          <ShieldAlert className="w-3 h-3" />
+                          {t('inspector.break')}
+                        </button>
+                      </Tooltip>
                     </div>
                   </li>
                 );
