@@ -17,6 +17,7 @@ import { useAppRegistry } from '../../registry/appRegistry';
 import { useToastStore } from '../../store/toastStore';
 import { forceRefreshRemote } from '../../federation/runtime';
 import { useTranslation } from '../../i18n';
+import { useMenuFocus } from '../../hooks/useMenuFocus';
 
 interface DesktopContextMenuProps {
   x: number;
@@ -49,25 +50,23 @@ export function DesktopContextMenu({ x, y, onClose }: DesktopContextMenuProps) {
     top: Math.min(y, Math.max(8, window.innerHeight - MENU_MAX_HEIGHT - 8)),
   }));
 
-  // Dismiss on outside pointer, Escape, scroll, or resize.
+  // Dismiss on outside pointer, scroll, or resize. Escape (plus roving
+  // focus and focus restore) is handled by useMenuFocus.
   useEffect(() => {
     const onPointerDown = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
     window.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('keydown', onKey);
     window.addEventListener('resize', onClose);
     window.addEventListener('scroll', onClose, true);
     return () => {
       window.removeEventListener('mousedown', onPointerDown);
-      window.removeEventListener('keydown', onKey);
       window.removeEventListener('resize', onClose);
       window.removeEventListener('scroll', onClose, true);
     };
   }, [onClose]);
+
+  useMenuFocus(ref, onClose);
 
   const run = (fn: () => void) => () => {
     fn();
@@ -86,6 +85,8 @@ export function DesktopContextMenu({ x, y, onClose }: DesktopContextMenuProps) {
     <div className={theme === 'dark' ? 'dark' : ''}>
       <div
         ref={ref}
+        role="menu"
+        aria-label={t('desktop.menuLabel')}
         className="fixed z-[10000] w-56 glass-chrome rounded-xl border border-white/50 dark:border-white/10 shadow-2xl p-1.5"
         style={{ left: pos.left, top: pos.top }}
         onContextMenu={(e) => e.preventDefault()}
@@ -115,8 +116,10 @@ export function DesktopContextMenu({ x, y, onClose }: DesktopContextMenuProps) {
 function MenuItem({ icon: Icon, label, onClick }: { icon: LucideIcon; label: string; onClick: () => void }) {
   return (
     <button
+      role="menuitem"
+      tabIndex={-1}
       onClick={onClick}
-      className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-left"
+      className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 focus:bg-black/5 dark:focus:bg-white/10 focus:outline-none transition-colors text-left"
     >
       <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
       <span className="flex-1">{label}</span>

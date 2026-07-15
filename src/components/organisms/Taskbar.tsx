@@ -60,6 +60,8 @@ export function Taskbar() {
       {/* Start Button */}
       <button
         ref={startButtonRef}
+        aria-haspopup="menu"
+        aria-expanded={isStartMenuOpen}
         onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
         className={`
           relative flex items-center justify-center w-10 h-10 rounded-xl flex-shrink-0

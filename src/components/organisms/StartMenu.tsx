@@ -6,6 +6,7 @@ import { useAppRegistry } from '../../registry/appRegistry';
 import { usePrefsStore } from '../../store/prefsStore';
 import { useTranslation, translateAppTitle } from '../../i18n';
 import { useAppLauncher } from '../../hooks/useAppLauncher';
+import { useMenuFocus } from '../../hooks/useMenuFocus';
 import { getAppIcon } from '../shared/appIcons';
 import { TASKBAR_Z_INDEX } from '../../types/window.types';
 import { portfolioConfig } from '../../config/portfolio.config';
@@ -47,6 +48,8 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
   );
   const launchApp = useAppLauncher();
   const addToast = useToastStore((state) => state.addToast);
+
+  useMenuFocus(menuRef, onClose);
 
   // Measure the anchor once on open. Safe because any viewport resize closes
   // the menu (see the effect below), so the rect can never go stale.
@@ -131,6 +134,8 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
       <LiquidGlass
         ref={menuRef}
         variant="menu"
+        role="menu"
+        aria-label={t('taskbar.startMenu')}
         className="fixed w-72 flex flex-col overflow-hidden"
         style={{
           left: position.left,
@@ -162,11 +167,13 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
               return (
                 <button
                   key={app.componentType}
+                  role="menuitem"
+                  tabIndex={-1}
                   onClick={() => {
                     launchApp(app);
                     onClose();
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors group"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 focus:bg-black/5 dark:focus:bg-white/10 focus:outline-none transition-colors group"
                 >
                   <AppIcon className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-100 transition-colors" />
                   <span className="flex-1 text-left text-sm text-gray-800 dark:text-gray-100">
@@ -202,8 +209,10 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
                       )}
                     </div>
                     <button
+                      role="menuitem"
+                      tabIndex={-1}
                       onClick={() => handleCopyEmail(link.href)}
-                      className="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                      className="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 focus:bg-black/10 dark:focus:bg-white/10 focus:outline-none transition-colors"
                       title={t('taskbar.copyEmail')}
                     >
                       <Copy className="w-4 h-4 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100" />
@@ -218,7 +227,9 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors group"
+                  role="menuitem"
+                  tabIndex={-1}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 focus:bg-black/5 dark:focus:bg-white/10 focus:outline-none transition-colors group"
                   onClick={onClose}
                 >
                   <span className="text-gray-500 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-100 transition-colors">

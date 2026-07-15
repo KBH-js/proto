@@ -239,6 +239,7 @@ export const en: Resources = {
     },
   },
   desktop: {
+    menuLabel: 'Desktop menu',
     openAbout: 'About',
     openInspector: 'Federation Inspector',
     toggleTheme: 'Toggle theme',

@@ -238,6 +238,7 @@ export const ko = {
     },
   },
   desktop: {
+    menuLabel: '데스크톱 메뉴',
     openAbout: '소개',
     openInspector: '페더레이션 인스펙터',
     toggleTheme: '테마 전환',
