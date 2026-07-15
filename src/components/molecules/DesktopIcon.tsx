@@ -13,10 +13,21 @@ interface DesktopIconProps {
 export function DesktopIcon({ icon, label, onLaunch, componentType }: DesktopIconProps) {
   const IconComponent = getAppIcon(icon);
 
-  // Touch devices have no double-click — launch on a single tap there
+  // Touch devices have no double-click — launch on a single tap there.
+  // On pointer devices only double-click launches, so Enter/Space (which fire
+  // a plain click) need their own keydown path to keep the icon usable from
+  // the keyboard. The touch branch's onClick already covers keyboard natively.
   const launchProps = isTouchDevice()
     ? { onClick: onLaunch }
-    : { onDoubleClick: onLaunch };
+    : {
+        onDoubleClick: onLaunch,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {
+            e.preventDefault();
+            onLaunch();
+          }
+        },
+      };
 
   return (
     <button
