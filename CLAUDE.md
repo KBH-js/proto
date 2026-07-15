@@ -43,6 +43,8 @@ Remote (각 `packages/remote-*`): `pnpm dev` — Rsbuild MF 플러그인은 dev 
 
 ## 새 Remote 추가 절차
 
+**Remote 앱 생성/추가 요청이 오면 반드시 `add-remote-app` skill(`.claude/skills/add-remote-app/SKILL.md`)을 먼저 구동하고 그 절차를 따른다** — 어떤 표현이든("remote app 만들어줘", "리모트 앱 추가", "new MF remote" 등) 해당하며, skill 없이 아래 요약만으로 진행하지 말 것.
+
 1. `packages/remote-notes`를 미러링해 패키지 생성 — rsbuild.config.ts(`name`, `exposes`, singleton `shared`, `dts: false`, 고유 포트, `dev.assetPrefix`), async boundary 엔트리, exposed 모듈에 `import './index.css'`.
 2. `public/remotes.manifest.json`에 앱 엔트리 추가 — **호스트 코드 수정 없음**. 아이콘이 새 이름이면 `DesktopIcon.tsx`/`TaskbarItem.tsx`의 iconMap에 추가.
 3. 배포 시: 새 Vercel 프로젝트(root: 해당 패키지), CORS 헤더 유지(vercel.json), `ASSET_PREFIX` env 설정 후 manifest의 `entryUrl` 갱신.
