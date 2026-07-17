@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-calculator`, `packages/remote-notes`, `packages/remote-network`, `packages/remote-compute`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 Vitest+MSW(`pnpm test`).
+pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-calculator`, `packages/remote-notes`, `packages/remote-network`, `packages/remote-compute`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 Vitest+MSW(`pnpm test`) + Playwright E2E(`pnpm test:e2e`).
+
+크로스커팅 규약(게이트·가드레일·커밋 컨벤션)은 [AGENTS.md](./AGENTS.md)가 단일 소스다.
 
 ## Commands
 

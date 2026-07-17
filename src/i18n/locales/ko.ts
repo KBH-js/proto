@@ -139,19 +139,43 @@ export const ko = {
         title: 'React 19 싱글턴 공유',
         desc: 'React/ReactDOM은 한 번 협상되어 모든 remote가 공유합니다. Inspector가 현재 협상된 단일 버전을 보여줍니다.',
       },
+      windowing: {
+        title: '창 시스템 — 이동·리사이즈·스냅·복원',
+        desc: 'react-rnd 기반 창 레이어입니다. Aero 스냅, 최소화 지니 애니메이션, 창 배치 localStorage 복원까지 셸이 직접 구현합니다. 지금 이 창을 화면 가장자리로 드래그해 보세요.',
+      },
+      openstack: {
+        title: 'OpenStack 대시보드 — Neutron·Nova remote',
+        desc: '네트워크(Neutron)·컴퓨트(Nova) 대시보드가 독립 배포 remote로 돌아갑니다. TanStack Query 캐싱과 MSW 목 REST 위에 장애 주입 데모까지 포함합니다.',
+      },
+      testing: {
+        title: '테스트 인프라 — Vitest/MSW + Playwright E2E + CI 게이트',
+        desc: 'Vitest+MSW 단위·통합 테스트와 Playwright E2E(창 조작·remote 로드·장애 복구 플로우)가 GitHub Actions PR 게이트에서 매 PR마다 강제됩니다.',
+      },
       i18n: {
         title: 'i18n ko/en 파이프라인 · 누락 키 차단',
-        desc: 'ko가 소스, en은 ko의 타입 미러라 키가 빠지면 컴파일 에러입니다 — CI 누락 키 체크의 프로토 아날로그. 트레이의 언어 버튼으로 지금 전환해 보세요.',
+        desc: 'ko가 소스, en은 ko의 타입 미러라 키가 빠지면 컴파일 에러입니다 — CI PR 게이트의 빌드 단계가 이를 강제합니다. 트레이의 언어 버튼으로 지금 전환해 보세요.',
       },
       theming: {
         title: '디자인 토큰 + 다크 모드',
-        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다.',
+        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다. Playwright 시각 회귀(VRT) 매트릭스는 예정입니다.',
+      },
+      aidx: {
+        title: 'AI 협업 DX — AGENTS.md 규약 + 기계적 가드레일',
+        desc: '팀 규약을 AGENTS.md 하나로 단일화하고, raw 컬러·px lint와 i18n 타입 미러가 AI가 작성한 코드도 컨벤션을 따르게 강제합니다. remote 스캐폴딩은 검증된 Skill로 자동화했습니다.',
+      },
+      perf: {
+        title: '렌더링 성능 — 가상 스크롤 10,000건 · 디바운스 검색',
+        desc: '이전 직장(티맥스) 경력의 주장입니다. 이 데스크톱의 주제(MF 아키텍처·엔지니어링 워크플로우) 밖이라 아직 재현하지 않았습니다.',
       },
     },
     act: {
       inspector: '인스펙터에서 보기',
       theme: '테마 전환',
       locale: '언어 전환',
+      open: '앱 열기',
+      source: '소스 보기',
+      ci: 'CI 실행 보기',
+      agents: 'AGENTS.md 보기',
     },
     decisionsTitle: '기술 결정 · 트레이드오프',
     decision: {
@@ -163,6 +187,10 @@ export const ko = {
         title: '공유 모듈 설정으로 성능 최적화 및 React 싱글턴 버전 일치',
         desc: 'Host와 remote가 requiredVersion ^19를 공유해 두 개의 React가 로드되는 것을 막습니다. 여러 앱이 공유하는 의존성을 Host가 공유 번들로 제공해 성능을 최적화합니다.',
       },
+      compiler: {
+        title: 'React Compiler 마이그레이션 — watch()가 멈춘 이유',
+        desc: '수동 메모이제이션을 걷어내는 과정에서 react-hook-form watch()의 가변 참조가 컴파일러 캐싱과 충돌해 화면이 갱신되지 않는 문제를 발견했고, 구독 기반 useWatch로 전환해 해결했습니다. 이 레포에서도 같은 계열의 결정이 반복됩니다 — 재시도 래퍼를 useMemo가 아닌 useState로 보관합니다(WindowFrame).',
+      },
     },
     linksTitle: '배포 · 소스',
     linksCaption: '실제로 배포되어 이 데스크톱이 런타임에 로드합니다.',
@@ -170,6 +198,8 @@ export const ko = {
       host: 'Host (웹 데스크톱)',
       calculator: 'Remote · Calculator',
       notes: 'Remote · Notes',
+      network: 'Remote · Network',
+      compute: 'Remote · Compute',
       repo: '소스 저장소',
     },
     shortcutsTitle: '키보드 단축키',

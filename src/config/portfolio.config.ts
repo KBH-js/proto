@@ -19,6 +19,8 @@ export const portfolioConfig = {
     host: 'https://proto-six-iota.vercel.app',
     calculator: 'https://remote-calculator-sage.vercel.app',
     notes: 'https://remote-notes.vercel.app',
+    network: 'https://remote-network.vercel.app',
+    compute: 'https://remote-compute.vercel.app',
   },
 
   resume: {

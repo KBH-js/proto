@@ -5,6 +5,10 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Playwright
+playwright-report/
+test-results/
+
 # IDE
 .idea/
 *.swp

@@ -34,4 +34,10 @@ export default tseslint.config(
     files: ['src/store/toastStore.ts'],
     rules: { 'local/no-raw-colors': 'off' },
   },
+  {
+    // Playwright's fixture API names its provider callback `use`, which the
+    // React hooks rule misreads as a hook call — there is no React in e2e.
+    files: ['e2e/**/*.ts', 'playwright.config.ts'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
+  },
 );
