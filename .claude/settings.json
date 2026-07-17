@@ -23,9 +23,7 @@
           }
         ]
       }
-    ]
-  },
-  "hooks": {
+    ],
     "SessionStart": [
       {
         "hooks": [
