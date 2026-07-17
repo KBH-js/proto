@@ -34,11 +34,9 @@ const ko = {
   // network table
   colName: '이름',
   colStatus: '상태',
-  colType: '유형',
   colSubnets: '서브넷',
   typeExternal: '외부',
   typeShared: '공유',
-  typeTenant: '테넌트',
   // detail
   selectPrompt: '왼쪽에서 네트워크를 선택하세요',
   detailSubnets: '서브넷',
@@ -60,7 +58,6 @@ const ko = {
   colFixedIp: '고정 IP',
   unassociated: '미할당',
   // states
-  loading: '불러오는 중…',
   errorTitle: '데이터를 불러오지 못했습니다',
   errorBody: 'Neutron 컨트롤 플레인에 연결할 수 없습니다. 장애 주입을 해제하고 다시 시도하세요.',
   retry: '다시 시도',
@@ -90,11 +87,9 @@ const en: Dict = {
   critical: 'Critical',
   colName: 'Name',
   colStatus: 'Status',
-  colType: 'Type',
   colSubnets: 'Subnets',
   typeExternal: 'External',
   typeShared: 'Shared',
-  typeTenant: 'Tenant',
   selectPrompt: 'Select a network on the left',
   detailSubnets: 'Subnets',
   detailPorts: 'Ports',
@@ -113,7 +108,6 @@ const en: Dict = {
   colFloatingIp: 'Floating IP',
   colFixedIp: 'Fixed IP',
   unassociated: 'Unassociated',
-  loading: 'Loading…',
   errorTitle: 'Failed to load data',
   errorBody:
     'Cannot reach the Neutron control plane. Disable the simulated outage and try again.',

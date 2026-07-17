@@ -31,8 +31,6 @@ export function detectLocale(): Locale {
 interface PrefsState {
   locale: Locale;
   theme: Theme;
-  setLocale: (locale: Locale) => void;
-  setTheme: (theme: Theme) => void;
   toggleLocale: () => void;
   toggleTheme: () => void;
 }
@@ -42,8 +40,6 @@ export const usePrefsStore = create<PrefsState>()(
     (set) => ({
       locale: detectLocale(),
       theme: 'dark',
-      setLocale: (locale) => set({ locale }),
-      setTheme: (theme) => set({ theme }),
       toggleLocale: () => set((s) => ({ locale: s.locale === 'ko' ? 'en' : 'ko' })),
       toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
     }),

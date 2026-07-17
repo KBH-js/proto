@@ -13,7 +13,6 @@ interface ToastState {
   toasts: Toast[];
   addToast: (toast: Omit<Toast, 'id' | 'timestamp'>) => string;
   removeToast: (id: string) => void;
-  clearAll: () => void;
 }
 
 let toastCounter = 0;
@@ -48,10 +47,6 @@ export const useToastStore = create<ToastState>((set) => ({
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
     }));
-  },
-
-  clearAll: () => {
-    set({ toasts: [] });
   },
 }));
 

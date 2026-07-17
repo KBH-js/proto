@@ -168,10 +168,6 @@ export function listNetworks(): Promise<NeutronNetwork[]> {
   return respond(networks.map((n) => ({ ...n })));
 }
 
-export function getNetwork(id: string): Promise<NeutronNetwork | undefined> {
-  return respond(networks.find((n) => n.id === id));
-}
-
 export function listRouters(): Promise<Router[]> {
   return respond(routers.map((r) => ({ ...r })));
 }

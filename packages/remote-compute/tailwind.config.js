@@ -26,7 +26,6 @@ export default {
         ok: 'rgb(var(--cmp-ok) / <alpha-value>)',
         warn: 'rgb(var(--cmp-warn) / <alpha-value>)',
         danger: 'rgb(var(--cmp-danger) / <alpha-value>)',
-        info: 'rgb(var(--cmp-info) / <alpha-value>)',
       },
       spacing,
       borderRadius,

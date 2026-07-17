@@ -47,9 +47,6 @@ export const en: Resources = {
   },
   boot: {
     init: 'Initializing KBH-Desktop v1.0.0...',
-    loadingRemotes: 'Loading Remote Modules via Module Federation...',
-    startingWm: 'Starting window manager...',
-    ready: 'System ready.',
     subtitle: 'Micro-Frontend Architecture Demo',
   },
   error: {
@@ -82,9 +79,6 @@ export const en: Resources = {
     statusDegraded: 'degraded',
     noRemotes: 'No remotes registered',
     colApp: 'Remote app',
-    colEntry: 'Entry URL',
-    colStatus: 'Status',
-    colLoadTime: 'Load time',
     colLoads: 'Loads',
     dev: 'DEV',
     prod: 'PROD',

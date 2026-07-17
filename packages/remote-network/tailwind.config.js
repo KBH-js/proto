@@ -26,7 +26,6 @@ export default {
         ok: 'rgb(var(--net-ok) / <alpha-value>)',
         warn: 'rgb(var(--net-warn) / <alpha-value>)',
         danger: 'rgb(var(--net-danger) / <alpha-value>)',
-        info: 'rgb(var(--net-info) / <alpha-value>)',
       },
       spacing,
       borderRadius,

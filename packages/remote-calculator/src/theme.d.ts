@@ -19,7 +19,6 @@ export declare const borderRadius: Record<string, string>;
 export declare const fontFamily: Record<string, string[]>;
 export declare const fontSize: Record<string, [string, { lineHeight: string }]>;
 export declare const boxShadow: Record<string, string>;
-export declare const zIndex: Record<string, number>;
 
 /** Calculator-local Liquid Glass tints for the <LiquidGlass tint> prop. */
 export declare const glassTint: {

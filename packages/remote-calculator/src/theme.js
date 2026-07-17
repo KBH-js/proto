@@ -73,11 +73,6 @@ export const boxShadow = {
   window: '0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)',
 };
 
-export const zIndex = {
-  desktop: 0, window: 10, 'window-focused': 20,
-  modal: 100, popover: 200, tooltip: 300, taskbar: 9999,
-};
-
 // Calculator-local Liquid Glass tints (NOT mirrored from shared/theme):
 // translucent overrides for the <LiquidGlass tint> prop, derived from the
 // palette above. The calculator keeps a fixed dark-glass identity in both
@@ -90,10 +85,4 @@ export const glassTint = {
   clear: 'rgba(248, 113, 113, 0.5)',   // error @ 50%
 };
 
-export const transition = {
-  fast: '150ms ease-in-out',
-  normal: '200ms ease-in-out',
-  slow: '300ms ease-in-out',
-};
-
-export default { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow, zIndex, transition };
+export default { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow };
