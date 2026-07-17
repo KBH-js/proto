@@ -119,13 +119,12 @@ export const ko = {
     layerComponentDesc: '컴포넌트가 소비하는 토큰',
   },
   about: {
-    subtitle: 'Module Federation 웹 데스크톱 · 실행 가능한 이력서',
-    honesty: '이력서의 프로젝트를 아키텍처와 스펙 기반 AI assisted coding으로 clean-room 재현합니다.',
+    subtitle: 'Module Federation 웹 데스크톱 · 인터랙티브 포트폴리오',
+    honesty:
+      '실무 프로젝트를 아키텍처와 스펙 기반 AI assisted coding으로 clean-room 재현한 인터랙티브 포트폴리오입니다 — 여기 보이는 모든 것이 실제로 실행됩니다.',
     claimsTitle: '주장 → 증거',
-    claimsCaption: '이력서의 각 항목을 실제로 도는 데모로 연결합니다. 행을 누르면 해당 기능이 열립니다.',
+    claimsCaption: '각 주장을 실제로 도는 데모로 연결합니다. 행을 누르면 해당 기능이 열립니다.',
     tagLive: '라이브',
-    tagPartial: '부분',
-    tagPlanned: '예정',
     claim: {
       federation: {
         title: '런타임 동적 Remote URL 주입 + 독립 배포',
@@ -148,12 +147,8 @@ export const ko = {
         desc: '네트워크(Neutron)·컴퓨트(Nova) 대시보드가 독립 배포 remote로 돌아갑니다. TanStack Query 캐싱과 MSW 목 REST 위에 장애 주입 데모까지 포함합니다.',
       },
       testing: {
-        title: '테스트 인프라 — Vitest/MSW + Playwright E2E + CI 게이트',
-        desc: 'Vitest+MSW 단위·통합 테스트와 Playwright E2E(창 조작·remote 로드·장애 복구 플로우)가 GitHub Actions PR 게이트에서 매 PR마다 강제됩니다.',
-      },
-      i18n: {
-        title: 'i18n ko/en 파이프라인 · 누락 키 차단',
-        desc: 'ko가 소스, en은 ko의 타입 미러라 키가 빠지면 컴파일 에러입니다 — CI PR 게이트의 빌드 단계가 이를 강제합니다. 트레이의 언어 버튼으로 지금 전환해 보세요.',
+        title: '테스트 인프라 · i18n 파이프라인 — CI 게이트로 강제',
+        desc: 'Vitest+MSW 단위·통합 테스트와 Playwright E2E(창 조작·remote 로드·장애 복구 플로우)가 GitHub Actions PR 게이트에서 매 PR마다 강제됩니다. i18n은 ko가 소스·en이 타입 미러라 누락 키가 컴파일 에러 — 같은 게이트의 빌드 단계가 차단합니다. 트레이의 언어 버튼으로 지금 전환해 보세요.',
       },
       theming: {
         title: '디자인 토큰 + 다크 모드',
@@ -162,10 +157,6 @@ export const ko = {
       aidx: {
         title: 'AI 협업 DX — AGENTS.md 규약 + 기계적 가드레일',
         desc: '팀 규약을 AGENTS.md 하나로 단일화하고, raw 컬러·px lint와 i18n 타입 미러가 AI가 작성한 코드도 컨벤션을 따르게 강제합니다. remote 스캐폴딩은 검증된 Skill로 자동화했습니다.',
-      },
-      perf: {
-        title: '렌더링 성능 — 가상 스크롤 10,000건 · 디바운스 검색',
-        desc: '이전 직장(티맥스) 경력의 주장입니다. 이 데스크톱의 주제(MF 아키텍처·엔지니어링 워크플로우) 밖이라 아직 재현하지 않았습니다.',
       },
     },
     act: {
@@ -192,22 +183,22 @@ export const ko = {
         desc: '수동 메모이제이션을 걷어내는 과정에서 react-hook-form watch()의 가변 참조가 컴파일러 캐싱과 충돌해 화면이 갱신되지 않는 문제를 발견했고, 구독 기반 useWatch로 전환해 해결했습니다. 이 레포에서도 같은 계열의 결정이 반복됩니다 — 재시도 래퍼를 useMemo가 아닌 useState로 보관합니다(WindowFrame).',
       },
     },
-    linksTitle: '배포 · 소스',
-    linksCaption: '실제로 배포되어 이 데스크톱이 런타임에 로드합니다.',
-    link: {
+    archTitle: '아키텍처',
+    archCaption:
+      '실제 배포 토폴로지입니다 — 이 데스크톱이 런타임에 로드합니다. 노드를 누르면 배포된 주소가 열립니다.',
+    arch: {
       host: 'Host (웹 데스크톱)',
-      remote: 'Remote · {{name}}',
+      remotes: '독립 배포 remote · {{count}}개',
+      edge: 'mf-manifest.json · 런타임 로드',
+      singleton: 'React 19 싱글턴 — Host와 모든 remote가 공유',
       repo: '소스 저장소',
     },
-    shortcutsTitle: '키보드 단축키',
-    shortcut: {
-      about: '소개 열기',
-      inspector: '인스펙터 열기',
-      theme: '테마 전환',
-      locale: '언어 전환',
-      tour: '가이드 투어',
-    },
     stackTitle: '기술 스택',
+    stackGroup: {
+      core: '코어',
+      state: 'UI · 상태',
+      quality: '품질 · CI',
+    },
     replayTour: '가이드 투어 다시 보기',
   },
   tour: {
@@ -235,7 +226,7 @@ export const ko = {
       },
       done: {
         title: '준비 완료',
-        body: "'시작하기'를 누르면 소개(About) 앱이 열립니다 — 이력서의 주장이 어떤 데모로 증명되는지 확인하세요. 투어는 Alt + / 로 언제든 다시 볼 수 있습니다.",
+        body: "'시작하기'를 누르면 소개(About) 앱이 열립니다 — 각 주장이 어떤 데모로 증명되는지 확인하세요. 투어는 소개 앱 상단의 다시 보기 버튼으로 언제든 볼 수 있습니다.",
       },
     },
   },
