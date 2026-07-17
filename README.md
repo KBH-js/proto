@@ -48,6 +48,7 @@ graph TD
 
     subgraph Shared ["Shared Singletons"]
         ReactLib[React 19]
+        GlassLib["@proto/shared/glass"]
     end
 
     Runtime -.->|mf-manifest.json| Calc
@@ -55,6 +56,7 @@ graph TD
     Runtime -.->|mf-manifest.json| Net
     Runtime -.->|mf-manifest.json| Comp
     Host -.-> ReactLib
+    Host -.-> GlassLib
     Calc -.-> ReactLib
     Notes -.-> ReactLib
     Net -.-> ReactLib
@@ -63,7 +65,7 @@ graph TD
     class Manifest manifest
     class Runtime,Registry,Desktop host
     class Calc,Notes,Net,Comp remote
-    class ReactLib shared
+    class ReactLib,GlassLib shared
 ```
 
 ### Why Module Federation 2.x Runtime?

@@ -171,8 +171,9 @@ export default defineConfig({
 ### Step 3: Register in the manifest — that's it
 
 Add an entry to `public/remotes.manifest.json` (see schema above).
-**No host code changes, no host rebuild.** The icon name must exist in the
-`iconMap` of `DesktopIcon.tsx`/`TaskbarItem.tsx` (add it if new).
+**No host code changes, no host rebuild.** The icon name must exist in
+`appIconMap` in `src/components/shared/appIcons.ts` (if new, add it there
+plus a tint in `getAppIconColor`).
 
 ## Critical Rules (learned the hard way)
 

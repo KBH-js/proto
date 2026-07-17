@@ -8,7 +8,6 @@ export const portfolioConfig = {
   links: {
     github: 'https://github.com/KBH-js',
     linkedin: 'https://www.linkedin.com/in/byunghoon-kang-293369302/',
-    email: 'mailto:byunghoon.kang.job@gmail.com',
   },
 
   /** Source repo for this portfolio — deep-linked from the About "evidence" table */

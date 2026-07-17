@@ -46,9 +46,6 @@ export const ko = {
   },
   boot: {
     init: 'KBH-Desktop v1.0.0 초기화 중...',
-    loadingRemotes: 'Module Federation으로 원격 모듈 로딩 중...',
-    startingWm: '윈도우 매니저 시작 중...',
-    ready: '시스템 준비 완료.',
     subtitle: 'Micro-Frontend 아키텍처 데모',
   },
   error: {
@@ -81,9 +78,6 @@ export const ko = {
     statusDegraded: '저하됨',
     noRemotes: '등록된 remote가 없습니다',
     colApp: '원격 앱',
-    colEntry: '엔트리 URL',
-    colStatus: '상태',
-    colLoadTime: '로드 시간',
     colLoads: '로드',
     dev: 'DEV',
     prod: 'PROD',

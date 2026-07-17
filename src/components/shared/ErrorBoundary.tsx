@@ -183,5 +183,3 @@ function ErrorFallback({
     </div>
   );
 }
-
-export default ErrorBoundary;

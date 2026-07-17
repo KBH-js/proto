@@ -69,7 +69,6 @@ const ko = {
   colPublic: '공개',
   tenant: '테넌트',
   // states
-  loading: '불러오는 중…',
   errorTitle: '데이터를 불러오지 못했습니다',
   errorBody: 'Nova 컨트롤 플레인에 연결할 수 없습니다. 장애 주입을 해제하고 다시 시도하세요.',
   retry: '다시 시도',
@@ -131,7 +130,6 @@ const en: Dict = {
   colDisk: 'Disk',
   colPublic: 'Public',
   tenant: 'Tenant',
-  loading: 'Loading…',
   errorTitle: 'Failed to load data',
   errorBody: 'Cannot reach the Nova control plane. Disable the simulated outage and try again.',
   retry: 'Retry',

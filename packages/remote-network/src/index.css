@@ -26,7 +26,6 @@
   --net-ok: 22 163 74;
   --net-warn: 217 119 6;
   --net-danger: 220 38 38;
-  --net-info: 37 99 235;
 }
 
 .dark .remote-network {
@@ -42,5 +41,4 @@
   --net-ok: 74 222 128;
   --net-warn: 251 191 36;
   --net-danger: 248 113 113;
-  --net-info: 96 165 250;
 }
