@@ -11,10 +11,22 @@ import { persist, createJSONStorage } from 'zustand/middleware';
  *     `dark` class on the shell root; Tailwind runs in darkMode:'class')
  *
  * Persisted to localStorage so the choice survives reloads. Defaults:
- * Korean + dark (the portfolio's primary presentation).
+ * browser-language locale (first visit only — persisted picks win) + dark
+ * (the portfolio's primary presentation).
  */
 export type Locale = 'ko' | 'en';
 export type Theme = 'dark' | 'light';
+
+/**
+ * First-visit locale: Korean browsers get ko, everyone else en. Only feeds
+ * the initial state — zustand's persist merge overwrites it whenever a
+ * stored preference exists, so an explicit choice always survives reloads.
+ */
+export function detectLocale(): Locale {
+  return typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('ko')
+    ? 'ko'
+    : 'en';
+}
 
 interface PrefsState {
   locale: Locale;
@@ -28,7 +40,7 @@ interface PrefsState {
 export const usePrefsStore = create<PrefsState>()(
   persist(
     (set) => ({
-      locale: 'ko',
+      locale: detectLocale(),
       theme: 'dark',
       setLocale: (locale) => set({ locale }),
       setTheme: (theme) => set({ theme }),

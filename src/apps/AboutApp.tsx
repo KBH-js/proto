@@ -7,6 +7,8 @@ import {
   Palette,
   Activity,
   Github,
+  Linkedin,
+  Mail,
   Sun,
   Moon,
   ArrowUpRight,
@@ -18,7 +20,9 @@ import { LiquidGlass } from '@proto/shared/glass';
 import { useWindowStore } from '../store/windowStore';
 import { usePrefsStore } from '../store/prefsStore';
 import { useTourStore } from '../store/tourStore';
-import { useTranslation, type TFunction } from '../i18n';
+import { useAppRegistry } from '../registry/appRegistry';
+import { useCopyEmail } from '../hooks/useCopyEmail';
+import { useTranslation, translateAppTitle, type TFunction } from '../i18n';
 import { portfolioConfig } from '../config/portfolio.config';
 import { Tooltip } from '../components/atoms/Tooltip';
 
@@ -156,12 +160,35 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export function AboutApp() {
   const { t } = useTranslation();
   const startTour = useTourStore((s) => s.start);
+  const copyEmail = useCopyEmail();
+  const registryEntries = useAppRegistry((s) => s.entries);
+
+  // Remote deployments come from the registry (fed by remotes.manifest.json),
+  // so adding a remote never leaves this list stale. `prodEntry` is the
+  // manifest's production URL — `entry` resolves to localhost under dev.
+  const remoteLinks = Object.values(registryEntries)
+    .filter((entry) => entry.isRemote && entry.remote)
+    .map((entry) => {
+      const { prodEntry } = entry.remote!;
+      let href = prodEntry;
+      try {
+        href = new URL(prodEntry).origin;
+      } catch {
+        // keep the raw manifest value if it isn't a valid absolute URL
+      }
+      const name = translateAppTitle(t, entry.defaultConfig.componentType, entry.defaultConfig.title);
+      return { label: t('about.link.remote', { name }), href, icon: Boxes };
+    });
 
   const deployLinks: { label: string; href: string; icon: LucideIcon }[] = [
     { label: t('about.link.host'), href: portfolioConfig.deployments.host, icon: Server },
-    { label: t('about.link.calculator'), href: portfolioConfig.deployments.calculator, icon: Boxes },
-    { label: t('about.link.notes'), href: portfolioConfig.deployments.notes, icon: Boxes },
+    ...remoteLinks,
     { label: t('about.link.repo'), href: portfolioConfig.repo, icon: Github },
+  ];
+
+  const contactLinks = [
+    { label: 'GitHub', href: portfolioConfig.links.github, icon: Github },
+    { label: 'LinkedIn', href: portfolioConfig.links.linkedin, icon: Linkedin },
   ];
 
   return (
@@ -177,19 +204,50 @@ export function AboutApp() {
             <p className="text-sm text-white/90">{portfolioConfig.owner.title}</p>
             <p className="text-xs text-white/70 mt-1">{t('about.subtitle')}</p>
           </div>
-          <Tooltip label={t('about.replayTour')}>
-            <LiquidGlass
-              variant="button"
-              as="button"
-              onClick={startTour}
-              radius={10}
-              className="lg-text flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-white hover:brightness-110 transition-[filter] flex-shrink-0"
-              aria-label={t('about.replayTour')}
-            >
-              <PlayCircle className="w-4 h-4" />
-              <span className="hidden @lg:inline">{t('about.replayTour')}</span>
-            </LiquidGlass>
-          </Tooltip>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {/* Contact — the funnel's endpoint lives right where the tour lands */}
+            {contactLinks.map(({ label, href, icon: Icon }) => (
+              <Tooltip key={label} label={label}>
+                <LiquidGlass
+                  variant="button"
+                  as="a"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  radius={10}
+                  className="lg-text flex items-center p-1.5 text-white hover:brightness-110 transition-[filter]"
+                  aria-label={label}
+                >
+                  <Icon className="w-4 h-4" />
+                </LiquidGlass>
+              </Tooltip>
+            ))}
+            <Tooltip label={t('taskbar.copyEmail')}>
+              <LiquidGlass
+                variant="button"
+                as="button"
+                onClick={() => copyEmail(portfolioConfig.owner.email)}
+                radius={10}
+                className="lg-text flex items-center p-1.5 text-white hover:brightness-110 transition-[filter]"
+                aria-label={t('taskbar.copyEmail')}
+              >
+                <Mail className="w-4 h-4" />
+              </LiquidGlass>
+            </Tooltip>
+            <Tooltip label={t('about.replayTour')}>
+              <LiquidGlass
+                variant="button"
+                as="button"
+                onClick={startTour}
+                radius={10}
+                className="lg-text flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-white hover:brightness-110 transition-[filter]"
+                aria-label={t('about.replayTour')}
+              >
+                <PlayCircle className="w-4 h-4" />
+                <span className="hidden @lg:inline">{t('about.replayTour')}</span>
+              </LiquidGlass>
+            </Tooltip>
+          </div>
         </div>
       </div>
 

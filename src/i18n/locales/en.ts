@@ -170,8 +170,7 @@ export const en: Resources = {
     linksCaption: 'Actually deployed — this desktop loads them at runtime.',
     link: {
       host: 'Host (web desktop)',
-      calculator: 'Remote · Calculator',
-      notes: 'Remote · Notes',
+      remote: 'Remote · {{name}}',
       repo: 'Source repository',
     },
     shortcutsTitle: 'Keyboard shortcuts',
@@ -198,19 +197,19 @@ export const en: Resources = {
       },
       calculator: {
         title: 'Launch a remote app',
-        body: "Click Calculator to load it from the separately-deployed remote-calculator. You'll see the load time as a toast and an MFE badge in the title bar.",
+        body: "Calculator loads at runtime from the separately-deployed remote-calculator. After the tour, try this icon — you'll see the load time as a toast and an MFE badge in the title bar.",
       },
       inspector: {
         title: 'Look inside the runtime',
         body: "The Federation Inspector shows each remote's injected URL and load time, and lets you demo the failure → recovery flow with one click.",
       },
       tray: {
-        title: 'Language · theme · status',
-        body: 'Switch Korean/English and dark/light here, and see how many remotes are currently connected.',
+        title: 'Language · theme',
+        body: 'This tray switches Korean/English and dark/light themes. After the tour, try toggling them yourself.',
       },
       done: {
         title: "You're all set",
-        body: 'Open the About app to see each résumé claim mapped to a live demo. You can replay this tour anytime.',
+        body: 'Press "Get started" to open the About app — see each résumé claim mapped to a live demo. Replay this tour anytime with Alt + /.',
       },
     },
   },

@@ -19,6 +19,7 @@ const ko = {
   refresh: '새로고침',
   simulateOutage: '장애 주입',
   outageArmed: '장애 주입됨',
+  demoData: '데모 시드 데이터',
   // summary
   sumNetworks: '네트워크',
   sumActive: '활성',
@@ -76,6 +77,7 @@ const en: Dict = {
   refresh: 'Refresh',
   simulateOutage: 'Simulate outage',
   outageArmed: 'Outage armed',
+  demoData: 'Demo seed data',
   sumNetworks: 'Networks',
   sumActive: 'Active',
   sumRouters: 'Routers',

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LiquidGlass } from '@proto/shared/glass';
-import { useToastStore } from '../../store/toastStore';
 import { useAppRegistry } from '../../registry/appRegistry';
 import { usePrefsStore } from '../../store/prefsStore';
 import { useTranslation, translateAppTitle } from '../../i18n';
 import { useAppLauncher } from '../../hooks/useAppLauncher';
+import { useCopyEmail } from '../../hooks/useCopyEmail';
 import { useMenuFocus } from '../../hooks/useMenuFocus';
 import { getAppIcon } from '../shared/appIcons';
 import { TASKBAR_Z_INDEX } from '../../types/window.types';
@@ -48,7 +48,7 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
     [entries],
   );
   const launchApp = useAppLauncher();
-  const addToast = useToastStore((state) => state.addToast);
+  const copyEmail = useCopyEmail();
 
   useMenuFocus(menuRef, onClose);
 
@@ -111,21 +111,7 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
   ];
 
   const handleCopyEmail = async (email: string) => {
-    try {
-      await navigator.clipboard.writeText(email);
-      addToast({
-        message: t('taskbar.emailCopied'),
-        type: 'success',
-        duration: 3000,
-      });
-      onClose();
-    } catch {
-      addToast({
-        message: t('taskbar.copyFailed'),
-        type: 'error',
-        duration: 3000,
-      });
-    }
+    if (await copyEmail(email)) onClose();
   };
 
   return createPortal(

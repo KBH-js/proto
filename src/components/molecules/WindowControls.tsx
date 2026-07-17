@@ -21,7 +21,9 @@ export function WindowControls({
   const { t } = useTranslation();
 
   return (
-    <div className="aqua-traffic-cluster flex items-center gap-2">
+    // gap-4 sets the 29px dot pitch the .aqua-traffic ::after hit pads are
+    // sized against (index.css) — change them together.
+    <div className="aqua-traffic-cluster flex items-center gap-4">
       <button
         onClick={onClose}
         className={`aqua-traffic ${isActive ? 'aqua-traffic--close' : 'aqua-traffic--muted'}`}

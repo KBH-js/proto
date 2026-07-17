@@ -41,9 +41,14 @@ export function Desktop() {
       />
 
       {/* Left sidebar Dock — a vertical Liquid Glass rail of app launchers,
-          vertically centred against the left edge. */}
+          vertically centred against the left edge. Phones get two columns so
+          all icons fit on short screens without hidden overflow (windows open
+          maximized there, so the wider rail only shows on an empty desktop). */}
       <div className="relative h-full flex items-center pl-3">
-        <LiquidGlass variant="dock" className="flex flex-col gap-1 p-2 max-h-full overflow-y-auto">
+        <LiquidGlass
+          variant="dock"
+          className="grid grid-cols-2 sm:grid-cols-1 gap-1 p-2 max-h-full overflow-y-auto"
+        >
           {availableApps.map((app) => (
             <DesktopIcon
               key={app.componentType}

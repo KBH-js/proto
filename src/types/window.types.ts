@@ -63,6 +63,8 @@ export interface WindowStore {
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
+  /** Minimizes every open window (used to clear the stage for the guide tour) */
+  minimizeAll: () => void;
   maximizeWindow: (id: string) => void;
   /** Restores a window from minimized or maximized state */
   restoreWindow: (id: string) => void;

@@ -67,7 +67,9 @@ function Dashboard() {
   const selected = servers.find((s) => s.id === selectedId) ?? null;
 
   return (
-    <div className="remote-compute flex h-full w-full flex-col overflow-hidden bg-surface font-sans text-body">
+    // @container: layout responds to the app's own width — required because the
+    // shell window resizes independently of the viewport; also correct standalone.
+    <div className="remote-compute @container flex h-full w-full flex-col overflow-hidden bg-surface font-sans text-body">
       {/* Toolbar */}
       <header className="flex items-center justify-between gap-3 border-b border-line bg-panel px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -75,26 +77,38 @@ function Dashboard() {
             <ServerIcon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-bold text-body">{t('title')}</h1>
+            <div className="flex items-center gap-1.5">
+              <h1 className="truncate text-sm font-bold text-body">{t('title')}</h1>
+              {/* Seeded ERROR/SHUTOFF instances are intentional (they demo the
+                  error states) — label them so degraded health reads as
+                  fixture data, not a broken app. */}
+              <span className="inline-flex flex-shrink-0 items-center rounded-full bg-warn/15 px-2 py-0.5 text-2xs font-medium text-warn">
+                {t('demoData')}
+              </span>
+            </div>
             <p className="truncate text-2xs text-muted">{t('subtitle')}</p>
           </div>
         </div>
+        {/* Button labels collapse to icons below @md so narrow windows keep
+            room for the title (each keeps an aria-label). */}
         <div className="flex flex-shrink-0 items-center gap-1.5">
           <button
             onClick={refresh}
+            aria-label={t('refresh')}
             className="inline-flex items-center gap-1.5 rounded-md bg-sunken px-2.5 py-1.5 text-xs font-medium text-body transition-colors hover:bg-line"
           >
             <RefreshCw className="h-3.5 w-3.5" />
-            {t('refresh')}
+            <span className="hidden @md:inline">{t('refresh')}</span>
           </button>
           <button
             onClick={toggleOutage}
+            aria-label={outage ? t('outageArmed') : t('simulateOutage')}
             className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
               outage ? 'bg-danger/15 text-danger' : 'bg-sunken text-muted hover:bg-line'
             }`}
           >
             <Zap className="h-3.5 w-3.5" />
-            {outage ? t('outageArmed') : t('simulateOutage')}
+            <span className="hidden @md:inline">{outage ? t('outageArmed') : t('simulateOutage')}</span>
           </button>
         </div>
       </header>
@@ -112,8 +126,9 @@ function Dashboard() {
         )}
       </div>
 
-      {/* Master–detail */}
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-3 p-4">
+      {/* Master–detail: stacks vertically in narrow windows, side-by-side from
+          @2xl (672px of app width); each half keeps its own internal scroll. */}
+      <div className="grid min-h-0 flex-1 gap-3 p-4 grid-cols-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] @2xl:grid-rows-1 @2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
         <section className="flex flex-col overflow-hidden rounded-xl border border-line bg-panel">
           <div className="border-b border-line px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-muted">
             {t('sumInstances')}
