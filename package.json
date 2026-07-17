@@ -16,8 +16,10 @@
     "preview": "rsbuild preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:ui": "playwright test --project=chromium --ui",
+    "test:vrt": "playwright test --project=vrt",
+    "test:vrt:update": "playwright test --project=vrt --update-snapshots"
   },
   "dependencies": {
     "@module-federation/enhanced": "^2.7.0",

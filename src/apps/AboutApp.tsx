@@ -82,7 +82,7 @@ const CLAIMS: ClaimRow[] = [
     action: { kind: 'link', href: `${portfolioConfig.repo}/actions`, labelKey: 'about.act.ci' },
   },
   { key: 'i18n', icon: Languages, tag: 'live', action: { kind: 'locale' } },
-  { key: 'theming', icon: Palette, tag: 'partial', action: { kind: 'theme' } },
+  { key: 'theming', icon: Palette, tag: 'live', action: { kind: 'theme' } },
   {
     key: 'aidx',
     icon: Bot,

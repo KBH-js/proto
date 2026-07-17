@@ -19,7 +19,37 @@ export default defineConfig({
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    // Functional E2E (pnpm test:e2e)
+    {
+      name: 'chromium',
+      testDir: 'e2e',
+      testIgnore: '**/vrt/**',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    /**
+     * Visual regression (pnpm test:vrt) — 3 surfaces × light/dark.
+     * Baselines are rendered on CI (ubuntu) and committed; font/AA rendering
+     * differs per OS, so local runs compare against the linux baselines with
+     * a small tolerance and are best-effort only (see TESTING.md).
+     */
+    {
+      name: 'vrt',
+      testDir: 'e2e/vrt',
+      // One platform-agnostic baseline set (the CI-rendered one) instead of
+      // Playwright's default per-OS suffixed snapshots.
+      snapshotPathTemplate: '{testDir}/__screenshots__/{testFileName}/{arg}{ext}',
+      expect: {
+        toHaveScreenshot: {
+          maxDiffPixelRatio: 0.02,
+          animations: 'disabled',
+          caret: 'hide',
+          scale: 'css',
+        },
+      },
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
   webServer: [
     {
       command: 'pnpm -C packages/remote-calculator dev',
