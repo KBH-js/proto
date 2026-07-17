@@ -1,25 +1,10 @@
 /**
  * Shared Theme Tokens (inlined for independent deployment)
  *
- * A copy of @proto/shared/theme for Vercel deployment. Only the non-color
- * scales (spacing/radius/font/shadow) are consumed by tailwind.config.js;
- * this remote resolves its colors from CSS variables (src/index.css).
+ * The non-color scales from @proto/shared/theme, copied for Vercel deployment
+ * and consumed by tailwind.config.js; this remote resolves its colors from
+ * CSS variables (src/index.css).
  */
-
-export const colors = {
-  background: {
-    primary: '#1a1a2e',
-    secondary: '#16213e',
-    tertiary: '#0f3460',
-    surface: '#1f1f3d',
-  },
-  foreground: {
-    primary: '#ffffff',
-    secondary: '#a0a0b0',
-    tertiary: '#6b6b7b',
-    inverse: '#1a1a2e',
-  },
-};
 
 export const spacing = {
   px: '1px', 0: '0', 0.5: '0.125rem', 1: '0.25rem', 1.5: '0.375rem',
@@ -57,4 +42,4 @@ export const boxShadow = {
   lg: '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3)',
 };
 
-export default { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow };
+export default { spacing, borderRadius, fontFamily, fontSize, boxShadow };

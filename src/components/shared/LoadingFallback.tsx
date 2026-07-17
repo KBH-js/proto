@@ -41,5 +41,3 @@ export function LoadingFallback({
     </div>
   );
 }
-
-export default LoadingFallback;

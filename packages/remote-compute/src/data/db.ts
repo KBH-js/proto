@@ -217,10 +217,6 @@ export function listServers(): Promise<Server[]> {
   return respond(servers.map((s) => ({ ...s })));
 }
 
-export function getServer(id: string): Promise<Server | undefined> {
-  return respond(servers.find((s) => s.id === id));
-}
-
 export function listFlavors(): Promise<Flavor[]> {
   return respond(flavors.map((f) => ({ ...f })));
 }

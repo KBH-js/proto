@@ -29,7 +29,6 @@
   --cmp-ok: 22 163 74;
   --cmp-warn: 217 119 6;
   --cmp-danger: 220 38 38;
-  --cmp-info: 37 99 235;
 }
 
 .dark .remote-compute {
@@ -45,5 +44,4 @@
   --cmp-ok: 74 222 128;
   --cmp-warn: 251 191 36;
   --cmp-danger: 248 113 113;
-  --cmp-info: 96 165 250;
 }

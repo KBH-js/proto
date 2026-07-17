@@ -1,7 +1,7 @@
 /*
  * Standalone-mode-only global styles.
  *
- * Imported ONLY by main.tsx (the standalone entry). These rules style the
+ * Imported ONLY by bootstrap.tsx (the standalone entry). These rules style the
  * page body, so they must never be part of the exposed module graph —
  * otherwise they would leak into the host document when the Notes app
  * is loaded via Module Federation.

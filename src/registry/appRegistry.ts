@@ -228,12 +228,3 @@ if (import.meta.webpackHot) {
 export function getApp(componentType: string): AppRegistryEntry | undefined {
   return useAppRegistry.getState().entries[componentType];
 }
-
-/**
- * Get all available apps for the desktop launcher
- *
- * @returns Array of app configs that can be launched
- */
-export function getAvailableApps(): AppConfig[] {
-  return Object.values(useAppRegistry.getState().entries).map((entry) => entry.defaultConfig);
-}

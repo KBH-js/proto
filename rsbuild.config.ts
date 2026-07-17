@@ -30,9 +30,10 @@ export default defineConfig({
       shared: {
         react: { singleton: true, requiredVersion: '^19.0.0' },
         'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
-        // Liquid Glass surface — shared as a singleton so the host provides one
-        // instance (one <defs> filter, one token set) to every remote that
-        // imports it, mirroring the React singleton contract.
+        // Liquid Glass surface — shared as a singleton (one <defs> filter, one
+        // token set). Today only host code imports it; the singleton entry means
+        // any remote that adopts it later gets the host's instance instead of
+        // bundling its own.
         '@proto/shared/glass': { singleton: true, requiredVersion: false },
       },
       dts: false,

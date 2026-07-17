@@ -77,15 +77,4 @@ export const boxShadow = {
   window: '0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)',
 };
 
-export const zIndex = {
-  desktop: 0, window: 10, 'window-focused': 20,
-  modal: 100, popover: 200, tooltip: 300, taskbar: 9999,
-};
-
-export const transition = {
-  fast: '150ms ease-in-out',
-  normal: '200ms ease-in-out',
-  slow: '300ms ease-in-out',
-};
-
-export default { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow, zIndex, transition };
+export default { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow };
