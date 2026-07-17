@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { WindowFrame } from './WindowFrame';
 import { useAppRegistry, type AppRegistryEntry } from '../../registry/appRegistry';
+import { usePrefsStore } from '../../store/prefsStore';
 import { translate } from '../../i18n';
 import type { WindowState } from '../../types/window.types';
 
@@ -28,6 +29,7 @@ const CALCULATOR_ENTRY: AppRegistryEntry = {
     name: 'remoteCalculator',
     entry: 'http://localhost:5001/mf-manifest.json',
     module: 'CalculatorApp',
+    prodEntry: 'https://remote-calculator-sage.vercel.app/mf-manifest.json',
   },
   defaultConfig: {
     componentType: 'calculator',
@@ -65,6 +67,9 @@ function resolveCatalog() {
 
 describe('WindowFrame remote rehydration', () => {
   beforeEach(() => {
+    // The assertions below are Korean literals; pin the locale, since the
+    // store default now follows navigator.language (en under happy-dom).
+    usePrefsStore.setState({ locale: 'ko' });
     useAppRegistry.setState(pristineRegistry, true);
     loadRemoteComponent.mockReset();
     loadRemoteComponent.mockImplementation(() =>

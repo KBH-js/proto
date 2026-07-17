@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useTourStore } from '../../store/tourStore';
 import { usePrefsStore } from '../../store/prefsStore';
+import { useWindowStore } from '../../store/windowStore';
 import { useTranslation } from '../../i18n';
 
 /**
@@ -37,7 +38,11 @@ const STEPS: TourStep[] = [
     anchor: '[data-app-icon="inspector"]',
   },
   { titleKey: 'tour.step.tray.title', bodyKey: 'tour.step.tray.body', anchor: '[data-tour="tray"]' },
-  { titleKey: 'tour.step.done.title', bodyKey: 'tour.step.done.body' },
+  {
+    titleKey: 'tour.step.done.title',
+    bodyKey: 'tour.step.done.body',
+    anchor: '[data-app-icon="about"]',
+  },
 ];
 
 const CARD_WIDTH = 340;
@@ -109,9 +114,13 @@ export function FirstRunTour() {
   }, [start]);
 
   // Capture focus when the tour starts, restore it when the tour ends.
+  // Also clear the stage: open windows would otherwise cover the spotlighted
+  // anchors (icons live under the window layer); minimized ones restore from
+  // the taskbar, and finishing via "Get started" reopens About anyway.
   useEffect(() => {
     if (!active) return;
     prevFocusRef.current = document.activeElement as HTMLElement | null;
+    useWindowStore.getState().minimizeAll();
     return () => {
       const prev = prevFocusRef.current;
       if (prev?.isConnected) prev.focus();
@@ -144,11 +153,21 @@ export function FirstRunTour() {
     return () => window.removeEventListener('resize', measure);
   }, [active, stepIndex]);
 
-  // Escape skips the tour.
+  // Escape skips the tour; ←/→ step through it (reading the store in the
+  // handler keeps the listener attached once instead of per-step).
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') finish();
+      if (e.key === 'Escape') {
+        finish();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        const s = useTourStore.getState();
+        if (s.stepIndex < STEPS.length - 1) s.next();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        useTourStore.getState().back();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -157,7 +176,16 @@ export function FirstRunTour() {
   if (!active || !step) return null;
 
   const isLast = stepIndex === STEPS.length - 1;
-  const onNext = () => (isLast ? finish() : next());
+  // Completing the tour (unlike Escape/Skip) lands the visitor in the About
+  // app — the tour's promised destination, mapping résumé claims to demos.
+  const onNext = () => {
+    if (!isLast) {
+      next();
+      return;
+    }
+    finish();
+    useWindowStore.getState().openWindow('about', 'About');
+  };
 
   // Wrap Tab/Shift+Tab across the card's buttons (the dim panels already
   // block pointer interaction with the rest of the shell).
@@ -226,12 +254,15 @@ export function FirstRunTour() {
           <span className="text-xs font-mono text-gray-400 dark:text-gray-500">
             {t('tour.progress', { current: stepIndex + 1, total: STEPS.length })}
           </span>
-          <button
-            onClick={finish}
-            className="-mr-1 px-1 py-0.5 text-xs sm:text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
-          >
-            {t('tour.skip')}
-          </button>
+          {/* Skip is meaningless on the last step — the primary button ends the tour */}
+          {!isLast && (
+            <button
+              onClick={finish}
+              className="-mr-1 px-1 py-0.5 text-xs sm:text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            >
+              {t('tour.skip')}
+            </button>
+          )}
         </div>
         <h3 id={titleId} className="text-lg sm:text-base font-semibold text-gray-900 dark:text-gray-100">{t(step.titleKey)}</h3>
         <p id={bodyId} className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{t(step.bodyKey)}</p>

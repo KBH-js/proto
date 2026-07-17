@@ -77,26 +77,38 @@ function Dashboard() {
             <NetworkIcon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-bold text-body">{t('title')}</h1>
+            <div className="flex items-center gap-1.5">
+              <h1 className="truncate text-sm font-bold text-body">{t('title')}</h1>
+              {/* Seeded DOWN/ERROR resources are intentional (they demo the
+                  error states) — label them so 'Critical' health reads as
+                  fixture data, not a broken app. */}
+              <span className="inline-flex flex-shrink-0 items-center rounded-full bg-warn/15 px-2 py-0.5 text-2xs font-medium text-warn">
+                {t('demoData')}
+              </span>
+            </div>
             <p className="truncate text-2xs text-muted">{t('subtitle')}</p>
           </div>
         </div>
+        {/* Button labels collapse to icons below @md so narrow windows keep
+            room for the title (each keeps an aria-label). */}
         <div className="flex flex-shrink-0 items-center gap-1.5">
           <button
             onClick={refresh}
+            aria-label={t('refresh')}
             className="inline-flex items-center gap-1.5 rounded-md bg-sunken px-2.5 py-1.5 text-xs font-medium text-body transition-colors hover:bg-line"
           >
             <RefreshCw className="h-3.5 w-3.5" />
-            {t('refresh')}
+            <span className="hidden @md:inline">{t('refresh')}</span>
           </button>
           <button
             onClick={toggleOutage}
+            aria-label={outage ? t('outageArmed') : t('simulateOutage')}
             className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
               outage ? 'bg-danger/15 text-danger' : 'bg-sunken text-muted hover:bg-line'
             }`}
           >
             <Zap className="h-3.5 w-3.5" />
-            {outage ? t('outageArmed') : t('simulateOutage')}
+            <span className="hidden @md:inline">{outage ? t('outageArmed') : t('simulateOutage')}</span>
           </button>
         </div>
       </header>

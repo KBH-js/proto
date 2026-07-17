@@ -87,6 +87,18 @@ describe('focus / close / minimize', () => {
     expect(state.activeWindowId).toBe(aboutId);
   });
 
+  it('minimizeAll hides every window and clears the active id', () => {
+    const store = useWindowStore.getState();
+    store.openWindow('about', 'About');
+    store.openWindow('resume', 'Resume');
+
+    store.minimizeAll();
+
+    const state = useWindowStore.getState();
+    expect(state.windows.every((w) => w.isMinimized)).toBe(true);
+    expect(state.activeWindowId).toBeNull();
+  });
+
   it('restoring a minimized window re-activates it', () => {
     const store = useWindowStore.getState();
     store.openWindow('about', 'About');

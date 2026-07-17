@@ -100,8 +100,9 @@ export function TitleBar({
         </span>
       </div>
 
-      {/* Spacer for balance (same width as controls + badge space) */}
-      <div className={`flex-shrink-0 ${isRemote ? 'w-[6.25rem]' : 'w-[3.25rem]'}`} />
+      {/* Spacer for balance (same width as controls + badge space; the
+          cluster is 71px wide at the gap-4 pitch — see WindowControls) */}
+      <div className={`flex-shrink-0 ${isRemote ? 'w-[7.25rem]' : 'w-[4.5rem]'}`} />
     </div>
   );
 }

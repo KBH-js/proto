@@ -14,13 +14,13 @@ export const portfolioConfig = {
   /** Source repo for this portfolio — deep-linked from the About "evidence" table */
   repo: 'https://github.com/KBH-js/proto',
 
-  /** Live deployments this desktop actually loads at runtime (About links to these) */
+  /**
+   * Host deployment (About links to it). Remote deployment links are derived
+   * from the app registry (remotes.manifest.json entryUrl), not listed here —
+   * adding a remote must not require touching this config.
+   */
   deployments: {
     host: 'https://proto-six-iota.vercel.app',
-    calculator: 'https://remote-calculator-sage.vercel.app',
-    notes: 'https://remote-notes.vercel.app',
-    network: 'https://remote-network.vercel.app',
-    compute: 'https://remote-compute.vercel.app',
   },
 
   resume: {

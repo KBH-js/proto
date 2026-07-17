@@ -1,6 +1,7 @@
 import { usePrefsStore, type Locale } from '../store/prefsStore';
 import { ko } from './locales/ko';
 import { en } from './locales/en';
+import { resolveJosa } from './josa';
 
 /**
  * Minimal shell i18n — a typed JSON resource pipeline (ko = source, en
@@ -43,7 +44,9 @@ export function translate(locale: Locale, key: string, params?: TransParams): st
     if (import.meta.env.DEV) console.warn(`[i18n] missing key: ${key}`);
     return key;
   }
-  return interpolate(str, params);
+  // Fix hedged particles ('을(를)') once interpolated values are in place.
+  // English strings contain no hedge patterns, so this is a no-op for en.
+  return resolveJosa(interpolate(str, params));
 }
 
 export type TFunction = (key: string, params?: TransParams) => string;

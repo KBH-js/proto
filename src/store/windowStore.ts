@@ -285,6 +285,13 @@ export const useWindowStore = create<WindowStore>()(
     });
   },
 
+  minimizeAll: () => {
+    set((state) => ({
+      windows: state.windows.map((w) => (w.isMinimized ? w : { ...w, isMinimized: true })),
+      activeWindowId: null,
+    }));
+  },
+
   maximizeWindow: (id: string) => {
     set((state) => ({
       windows: state.windows.map((w) => {
