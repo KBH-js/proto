@@ -29,9 +29,12 @@ export default defineConfig({
     },
     /**
      * Visual regression (pnpm test:vrt) — 3 surfaces × light/dark.
-     * Baselines are rendered on CI (ubuntu) and committed; font/AA rendering
-     * differs per OS, so local runs compare against the linux baselines with
-     * a small tolerance and are best-effort only (see TESTING.md).
+     * Baselines are rendered on CI (ubuntu) and committed. The comparison is
+     * CI-vs-CI (identical environment), so the tolerance only needs to absorb
+     * anti-aliasing noise — 0.02 was measured to let a real UI change (three
+     * new header buttons) pass unnoticed. Local Windows/macOS runs exceed any
+     * sane tolerance on font rendering alone and are best-effort only (see
+     * TESTING.md).
      */
     {
       name: 'vrt',
@@ -41,7 +44,7 @@ export default defineConfig({
       snapshotPathTemplate: '{testDir}/__screenshots__/{testFileName}/{arg}{ext}',
       expect: {
         toHaveScreenshot: {
-          maxDiffPixelRatio: 0.02,
+          maxDiffPixelRatio: 0.002,
           animations: 'disabled',
           caret: 'hide',
           scale: 'css',

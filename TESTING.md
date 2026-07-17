@@ -98,10 +98,13 @@ localStorage contract as the shared fixture), one describe block per theme.
 **Baselines are rendered on CI (ubuntu) and committed** under
 `e2e/vrt/__screenshots__/` via a platform-agnostic `snapshotPathTemplate` —
 font rasterization and anti-aliasing differ per OS, so screenshots rendered
-on local Windows/macOS must never be committed. The comparison runs with
-`maxDiffPixelRatio: 0.02` + `animations: 'disabled'`, which absorbs minor
-rendering drift but not cross-OS font deltas: treat a local `pnpm test:vrt`
-as best-effort and let CI arbitrate.
+on local Windows/macOS must never be committed. Because the comparison is
+CI-vs-CI (identical environment), the tolerance is tight:
+`maxDiffPixelRatio: 0.002` + `animations: 'disabled'` absorbs anti-aliasing
+noise only — a looser 0.02 was measured to let a real UI change (new header
+buttons in the About window) slip through. Cross-OS font deltas exceed any
+sane tolerance, so treat a local `pnpm test:vrt` as best-effort and let CI
+arbitrate.
 
 To create or refresh baselines: run the **VRT baseline** workflow
 (`.github/workflows/vrt-baseline.yml`, manual `workflow_dispatch`) on your
