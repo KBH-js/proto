@@ -159,7 +159,7 @@ export const en: Resources = {
       },
       theming: {
         title: 'Design tokens + dark mode',
-        desc: 'Theme is a class toggle on the shell root; tokens come from a shared package. Switch it with the theme button. A Playwright visual-regression (VRT) matrix is planned.',
+        desc: 'Theme is a class toggle on the shell root; tokens come from a shared package. Switch it with the theme button. A Playwright visual-regression (VRT) light/dark matrix runs in CI.',
       },
       aidx: {
         title: 'AI-collaboration DX — AGENTS.md conventions + hard guardrails',
