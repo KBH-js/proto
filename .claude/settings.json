@@ -7,5 +7,20 @@
       "Bash(pnpm dev)",
       "Bash(pnpm preview)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -d node_modules ] || pnpm install --prefer-offline",
+            "shell": "bash",
+            "timeout": 300,
+            "statusMessage": "node_modules 없음 — pnpm install 실행 중 (worktree bootstrap)"
+          }
+        ]
+      }
+    ]
   }
 }
