@@ -7,11 +7,6 @@ name: VRT baseline
 
 on:
   workflow_dispatch:
-  # TEMP bootstrap — a workflow_dispatch workflow is only dispatchable once it
-  # exists on the default branch, so until PR #24 merges, also run on pushes
-  # to its branch. Remove this trigger after the first baselines are committed.
-  push:
-    branches: [claude/practical-mayer-190d3b]
 
 permissions:
   contents: write
