@@ -131,7 +131,7 @@ export const en: Resources = {
     claim: {
       federation: {
         title: 'Runtime remote-URL injection + independent deploys',
-        desc: 'The host declares no remotes at build time. It fetches a manifest at boot and registers each remote at runtime via registerRemotes().',
+        desc: 'The host declares no remotes at build time. It fetches a manifest at boot and registers each remote at runtime via registerRemotes(). Remotes span two tiers — minimal-contract references (Calculator · Notes) and domain dashboards (Neutron · Nova).',
       },
       recovery: {
         title: 'Post-redeploy stale-chunk recovery — only the failed frame',

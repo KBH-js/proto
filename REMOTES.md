@@ -1,6 +1,8 @@
 # Remote Micro-Frontend Architecture
 
-This document describes the **Module Federation 2.x runtime architecture** used to integrate remote micro-frontend applications into the Proto OS host.
+This document describes the **Module Federation 2.x runtime architecture** used to integrate remote micro-frontend applications into the KBH-Desktop host.
+
+The four remotes deliberately span two tiers: **reference remotes** (Calculator :5001, Notes :5002) keep the minimal MF contract visible and serve as the lab for the failure-isolation demo, while **domain remotes** (Network :5003, Compute :5004) are full OpenStack-style dashboards (TanStack Query + mocked REST) proving the same contract carries real product surface.
 
 ## Overview
 
@@ -21,7 +23,7 @@ This enables:
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
-│                     Host (Proto OS) :5173                     │
+│                    Host (KBH-Desktop) :5173                   │
 │                                                               │
 │  boot ──► fetch /remotes.manifest.json                        │
 │              │                                                │
@@ -39,12 +41,14 @@ This enables:
 │     │ (About, ...) │   │ (lazy MF)    │                       │
 │     └──────────────┘   └──────┬───────┘                       │
 └───────────────────────────────┼───────────────────────────────┘
-                 ┌──────────────┴──────────────┐
-                 ▼                             ▼
-      ┌───────────────────┐        ┌───────────────────┐
-      │ Calculator :5001  │        │ Notes :5002       │
-      │ mf-manifest.json  │        │ mf-manifest.json  │
-      └───────────────────┘        └───────────────────┘
+        ┌─────────────────┬─────┴───────────┬─────────────────┐
+        ▼                 ▼                 ▼                 ▼
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│ Calculator    │ │ Notes         │ │ Network       │ │ Compute       │
+│ :5001         │ │ :5002         │ │ :5003         │ │ :5004         │
+│ mf-manifest   │ │ mf-manifest   │ │ mf-manifest   │ │ mf-manifest   │
+└───────────────┘ └───────────────┘ └───────────────┘ └───────────────┘
+    reference         reference          domain            domain
 ```
 
 ## Quick Start
@@ -104,9 +108,14 @@ The manifest is fetched with `cache: 'no-store'`, validated in `src/federation/c
 
 ## Creating a New Remote App
 
+> **Always scaffold through the `add-remote-app` skill**
+> (`.claude/skills/add-remote-app/SKILL.md`) — it encodes and verifies these
+> steps. The walkthrough below explains *what* the skill produces.
+
 ### Step 1: Scaffold the package
 
-Mirror `packages/remote-notes` (the minimal reference):
+Mirror `packages/remote-notes` (the minimal, no-data-layer reference below);
+for a data-backed dashboard remote, mirror `packages/remote-compute` instead:
 
 ```
 packages/remote-myapp/

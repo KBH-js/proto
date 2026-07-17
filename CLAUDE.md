@@ -13,6 +13,9 @@ pnpm dev          # http://localhost:5173
 pnpm dev:remotes  # 모든 remote를 dev 모드로 병렬 실행 (:5001–:5004)
 pnpm build        # tsc -b && rsbuild build
 pnpm lint         # eslint . (호스트에만 lint 스크립트 있음)
+pnpm typecheck    # tsc -b + 전 패키지 typecheck
+pnpm test         # Vitest — host + remote 패키지 + eslint-rules 전 스위트
+pnpm test:e2e     # Playwright (dev 서버 5개 자동 기동)
 pnpm preview
 ```
 

@@ -10,13 +10,15 @@ Three layers, all enforced per-PR by CI (`.github/workflows/ci.yml`):
 
 ## Vitest (unit + integration)
 
-The host and the remote packages' data layers (`packages/remote-network`,
-`packages/remote-compute`) are covered by **Vitest** (unit + component) and
-**Vitest + MSW** (integration) — one root config runs all 14 suites.
+One root config runs every suite: host specs (unit + component), the remote
+packages' data layers (`packages/remote-network`, `packages/remote-compute`,
+integration via **Vitest + MSW**), and RuleTester specs for the custom
+design-token lint rules (`eslint-rules/*.test.js`).
 Tests run on their own esbuild pipeline — the Rsbuild / Module Federation /
 React Compiler build config does not apply — under the **happy-dom**
-environment by default; `catalog.test.ts` opts into Node per-file because
-happy-dom's `Response.json()` locks its stream under MSW.
+environment by default. `catalog.test.ts` and `manifestFile.test.ts` opt
+into Node per-file (happy-dom's `Response.json()` locks its stream under
+MSW); the RuleTester specs run in Node because ESLint needs no DOM.
 
 ```bash
 pnpm test        # run once (CI-style)
@@ -28,10 +30,13 @@ pnpm test:watch  # watch mode
 | `src/utils/windowGeometry.test.ts` | unit | Aero-snap rects, edge/corner detection, size + titlebar-above-taskbar clamping |
 | `src/store/windowStore.test.ts` | unit | single-instance launch, cascade + zIndex compaction, focus/close/minimize/restore promotion, snap vs maximize |
 | `src/store/tourStore.test.ts` | unit | first-run tour lifecycle: start/advance/back clamping, finish marks seen, reset allows replay |
+| `src/store/prefsStore.test.ts` | unit | browser-language locale detection (`detectLocale`) |
 | `src/registry/appRegistry.test.ts` | unit (mocked catalog) | remote-catalog merge into seeded locals, StrictMode in-flight join, dev-HMR re-init after store reset, degrade-on-failure without retry |
 | `src/hooks/useShortcuts.test.ts` | unit | Alt+key chord mapping, ctrl/meta rejection, suppression while a form field is focused |
+| `src/i18n/josa.test.ts` | unit | Korean particle resolution (을/를·이/가) by final consonant (`resolveJosa`) |
 | `src/apps/designTokens.test.ts` | unit | 3-layer token gallery derives from `@proto/shared/theme` without drift; semantic→primitive resolution |
 | `src/federation/catalog.test.ts` | integration (MSW) | manifest happy path + every validation/error branch, dev vs prod entry resolution |
+| `src/federation/manifestFile.test.ts` | integration (MSW) | the real shipped `public/remotes.manifest.json` passes the production validator — no schema drift |
 | `src/components/molecules/DesktopIcon.test.tsx` | component | single-click launch; keyboard activation via native button semantics |
 | `src/components/organisms/StartMenu.test.tsx` | component | ARIA menu role + initial focus, ArrowDown focus movement, Escape close with focus return |
 | `src/components/organisms/WindowFrame.test.tsx` | component | persisted remote window rehydrates once the catalog resolves after boot (MF runtime + react-rnd mocked) |
@@ -39,6 +44,8 @@ pnpm test:watch  # watch mode
 | `packages/remote-network/src/data/networkApi.test.ts` | integration (MSW) | REST contract for `/api/*` + transport facade: fetch/MSW when armed, in-memory fallback otherwise |
 | `packages/remote-compute/src/data/db.test.ts` | unit | Nova seed selectors: servers + addresses, flavor/hypervisor referential integrity, volumes, summary/health, armed-outage 503 |
 | `packages/remote-compute/src/data/computeApi.test.ts` | integration (MSW) | same REST/facade contract as remote-network, against `/api/nova/*` |
+| `eslint-rules/no-raw-colors.test.js` | RuleTester | raw hex/`rgb()`/`hsl()` literals error; token sources stay clean |
+| `eslint-rules/no-raw-px.test.js` | RuleTester | Tailwind arbitrary px errors; rem values and scale tokens pass |
 
 Notes:
 - `windowStore.test.ts` mocks `registry/appRegistry` and `utils/device` so the

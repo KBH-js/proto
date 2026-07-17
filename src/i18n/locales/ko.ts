@@ -129,7 +129,7 @@ export const ko = {
     claim: {
       federation: {
         title: '런타임 동적 Remote URL 주입 + 독립 배포',
-        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다.',
+        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다. remote는 2계층 — 최소 계약을 보여주는 레퍼런스(계산기·메모)와 도메인 대시보드(Neutron·Nova) — 로 구성됩니다.',
       },
       recovery: {
         title: '재배포 후 stale-chunk 복구 — 실패한 프레임만',
