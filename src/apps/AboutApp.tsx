@@ -12,6 +12,11 @@ import {
   ArrowUpRight,
   Server,
   PlayCircle,
+  AppWindow,
+  Cloud,
+  FlaskConical,
+  Bot,
+  Gauge,
   type LucideIcon,
 } from 'lucide-react';
 import { LiquidGlass } from '@proto/shared/glass';
@@ -34,25 +39,64 @@ import { Tooltip } from '../components/atoms/Tooltip';
 
 type Tag = 'live' | 'partial' | 'planned';
 
-type ClaimAction = { kind: 'inspector' } | { kind: 'theme' } | { kind: 'locale' };
+type ClaimAction =
+  | { kind: 'inspector' }
+  | { kind: 'theme' }
+  | { kind: 'locale' }
+  | { kind: 'open'; app: string; title: string }
+  | { kind: 'link'; href: string; labelKey: string };
 
 interface ClaimRow {
   /** i18n key under about.claim.<key> */
   key: string;
   icon: LucideIcon;
   tag: Tag;
-  action: ClaimAction;
+  /** Omitted on rows with nothing runnable to show (e.g. planned work) */
+  action?: ClaimAction;
 }
 
 const CLAIMS: ClaimRow[] = [
   { key: 'federation', icon: Boxes, tag: 'live', action: { kind: 'inspector' } },
   { key: 'recovery', icon: ShieldCheck, tag: 'live', action: { kind: 'inspector' } },
   { key: 'singleton', icon: Package, tag: 'live', action: { kind: 'inspector' } },
+  {
+    key: 'windowing',
+    icon: AppWindow,
+    tag: 'live',
+    action: {
+      kind: 'link',
+      href: `${portfolioConfig.repo}/blob/main/src/store/windowStore.ts`,
+      labelKey: 'about.act.source',
+    },
+  },
+  {
+    key: 'openstack',
+    icon: Cloud,
+    tag: 'live',
+    action: { kind: 'open', app: 'network', title: 'Network' },
+  },
+  {
+    key: 'testing',
+    icon: FlaskConical,
+    tag: 'live',
+    action: { kind: 'link', href: `${portfolioConfig.repo}/actions`, labelKey: 'about.act.ci' },
+  },
   { key: 'i18n', icon: Languages, tag: 'live', action: { kind: 'locale' } },
   { key: 'theming', icon: Palette, tag: 'partial', action: { kind: 'theme' } },
+  {
+    key: 'aidx',
+    icon: Bot,
+    tag: 'live',
+    action: {
+      kind: 'link',
+      href: `${portfolioConfig.repo}/blob/main/AGENTS.md`,
+      labelKey: 'about.act.agents',
+    },
+  },
+  { key: 'perf', icon: Gauge, tag: 'planned' },
 ];
 
-const DECISIONS = ['runtime', 'singleton'] as const;
+const DECISIONS = ['runtime', 'singleton', 'compiler'] as const;
 
 const SHORTCUTS: { keys: string; key: string }[] = [
   { keys: 'Alt + A', key: 'about' },
@@ -67,9 +111,13 @@ const STACK = [
   'TypeScript',
   'Module Federation',
   'Rsbuild (Rspack)',
+  'TanStack Query',
   'Zustand',
   'Tailwind',
   'Vitest',
+  'MSW',
+  'Playwright',
+  'GitHub Actions',
 ];
 
 // Only text/dot colour survives — the pill body is now a Liquid Glass surface.
@@ -142,6 +190,32 @@ function ClaimActionButton({ action, t }: { action: ClaimAction; t: TFunction })
           {t('about.act.locale')}
         </LiquidGlass>
       );
+    case 'open':
+      return (
+        <LiquidGlass
+          variant="button"
+          as="button"
+          onClick={() => openWindow(action.app, action.title)}
+          className={`${base} text-emerald-700 dark:text-emerald-300`}
+        >
+          <PlayCircle className="w-3 h-3" />
+          {t('about.act.open')}
+        </LiquidGlass>
+      );
+    case 'link':
+      return (
+        <LiquidGlass
+          variant="button"
+          as="a"
+          href={action.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${base} text-gray-700 dark:text-gray-200`}
+        >
+          <ArrowUpRight className="w-3 h-3" />
+          {t(action.labelKey)}
+        </LiquidGlass>
+      );
   }
 }
 
@@ -161,6 +235,8 @@ export function AboutApp() {
     { label: t('about.link.host'), href: portfolioConfig.deployments.host, icon: Server },
     { label: t('about.link.calculator'), href: portfolioConfig.deployments.calculator, icon: Boxes },
     { label: t('about.link.notes'), href: portfolioConfig.deployments.notes, icon: Boxes },
+    { label: t('about.link.network'), href: portfolioConfig.deployments.network, icon: Boxes },
+    { label: t('about.link.compute'), href: portfolioConfig.deployments.compute, icon: Boxes },
     { label: t('about.link.repo'), href: portfolioConfig.repo, icon: Github },
   ];
 
@@ -229,9 +305,11 @@ export function AboutApp() {
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                         {t(`about.claim.${row.key}.desc`)}
                       </p>
-                      <div className="mt-2">
-                        <ClaimActionButton action={row.action} t={t} />
-                      </div>
+                      {row.action && (
+                        <div className="mt-2">
+                          <ClaimActionButton action={row.action} t={t} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </LiquidGlass>
