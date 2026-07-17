@@ -129,7 +129,7 @@ export const ko = {
     claim: {
       federation: {
         title: '런타임 동적 Remote URL 주입 + 독립 배포',
-        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다.',
+        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다. remote는 2계층 — 최소 계약을 보여주는 레퍼런스(계산기·메모)와 도메인 대시보드(Neutron·Nova) — 로 구성됩니다.',
       },
       recovery: {
         title: '재배포 후 stale-chunk 복구 — 실패한 프레임만',
@@ -157,7 +157,7 @@ export const ko = {
       },
       theming: {
         title: '디자인 토큰 + 다크 모드',
-        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다. Playwright 시각 회귀(VRT)가 라이트/다크 매트릭스로 CI에서 돌아갑니다.',
+        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다. raw 컬러·px 리터럴은 커스텀 lint 룰이 차단해 모든 색과 사이즈가 토큰 소스에서만 나옵니다.',
       },
       aidx: {
         title: 'AI 협업 DX — AGENTS.md 규약 + 기계적 가드레일',
