@@ -5,7 +5,39 @@
       "Bash(pnpm lint)",
       "Bash(pnpm build)",
       "Bash(pnpm dev)",
-      "Bash(pnpm preview)"
+      "Bash(pnpm preview)",
+      "Bash(pnpm test)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm typecheck)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/lint-changed.mjs",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -d node_modules ] || pnpm install --prefer-offline",
+            "shell": "bash",
+            "timeout": 300,
+            "statusMessage": "node_modules 없음 — pnpm install 실행 중 (worktree bootstrap)"
+          }
+        ]
+      }
     ]
   }
 }

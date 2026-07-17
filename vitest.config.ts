@@ -21,7 +21,12 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['src/test/setup.ts'],
     // Host specs (incl. .tsx component smoke tests) + remote-package logic
-    // specs (the root has msw/happy-dom/vitest).
-    include: ['src/**/*.test.{ts,tsx}', 'packages/**/src/**/*.test.ts'],
+    // specs (the root has msw/happy-dom/vitest) + RuleTester specs for the
+    // custom design-token lint rules.
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'packages/**/src/**/*.test.{ts,tsx}',
+      'eslint-rules/*.test.js',
+    ],
   },
 });

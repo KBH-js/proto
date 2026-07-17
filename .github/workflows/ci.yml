@@ -1,16 +1,22 @@
 name: CI
 
 on:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  quality:
-    name: Lint · Unit tests · Host build
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      # pnpm must be installed before setup-node resolves its `cache: pnpm`;
+      # the pnpm version comes from the root package.json "packageManager".
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -18,28 +24,17 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - run: pnpm typecheck
       - run: pnpm test
+      # Host build (tsc -b && rsbuild build)
       - run: pnpm build
-
-  build-remotes:
-    name: Build ${{ matrix.pkg }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        pkg: [remote-calculator, remote-notes, remote-network, remote-compute]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @proto/${{ matrix.pkg }} build
+      # Remote builds; packages/shared has no build script and is skipped.
+      # No env needed — ASSET_PREFIX defaults to 'auto'.
+      - run: pnpm -r build
 
   e2e:
-    name: Playwright E2E
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -49,6 +44,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      # webServer in playwright.config.ts boots the host dev server (:5173)
+      # plus all four remote dev servers (:5001-:5004) before the specs run.
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()

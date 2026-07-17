@@ -3,12 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "rsbuild dev",
     "dev:remotes": "pnpm --parallel --filter \"@proto/remote-*\" dev",
     "build": "tsc -b && rsbuild build",
     "lint": "eslint .",
+    "typecheck": "tsc -b && pnpm -r typecheck",
     "preview": "rsbuild preview",
     "test": "vitest run",
     "test:watch": "vitest",
