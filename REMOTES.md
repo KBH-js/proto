@@ -2,7 +2,7 @@
 
 This document describes the **Module Federation 2.x runtime architecture** used to integrate remote micro-frontend applications into the KBH-Desktop host.
 
-The four remotes deliberately span two tiers: **reference remotes** (Calculator :5001, Notes :5002) keep the minimal MF contract visible and serve as the lab for the failure-isolation demo, while **domain remotes** (Network :5003, Compute :5004) are full OpenStack-style dashboards (TanStack Query + mocked REST) proving the same contract carries real product surface.
+The four remotes deliberately span two tiers: **reference remotes** (Calculator :5001, Notes :5002) keep the minimal MF contract visible and serve as the lab for the failure-isolation demo, while **domain remotes** (Network :5003, Compute :5004) are OpenStack-style dashboards (TanStack Query + mocked REST) built on the same contract.
 
 ## Overview
 
