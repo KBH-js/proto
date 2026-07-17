@@ -78,6 +78,18 @@ export const zIndex = {
   modal: 100, popover: 200, tooltip: 300, taskbar: 9999,
 };
 
+// Calculator-local Liquid Glass tints (NOT mirrored from shared/theme):
+// translucent overrides for the <LiquidGlass tint> prop, derived from the
+// palette above. The calculator keeps a fixed dark-glass identity in both
+// host themes (like the macOS calculator), so these do not react to `.dark`.
+export const glassTint = {
+  display: 'rgba(22, 33, 62, 0.55)',   // background.secondary @ 55%
+  key: 'rgba(255, 255, 255, 0.08)',    // neutral key on dark glass
+  operation: 'rgba(83, 52, 131, 0.6)', // accent.secondary @ 60%
+  accent: 'rgba(233, 69, 96, 0.65)',   // accent.primary @ 65%
+  clear: 'rgba(248, 113, 113, 0.5)',   // error @ 50%
+};
+
 export const transition = {
   fast: '150ms ease-in-out',
   normal: '200ms ease-in-out',

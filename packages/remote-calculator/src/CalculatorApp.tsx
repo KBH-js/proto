@@ -1,7 +1,12 @@
 import React, { useState, useCallback } from 'react';
+// Liquid Glass surface — MF singleton: embedded it resolves to the host's
+// instance (host theme tokens + one filter set); standalone it falls back to
+// the bundled copy, whose glass.css literals need no host tokens.
+import { LiquidGlass } from '@proto/shared/glass';
 // CSS must be imported by the exposed module itself so it is part of the
 // federated module graph and gets injected when the host loads this app.
 import './index.css';
+import { glassTint } from './theme.js';
 
 type Operation = '+' | '-' | '×' | '÷' | null;
 
@@ -148,6 +153,8 @@ export default function CalculatorApp() {
     });
   }, []);
 
+  // Every key is a Liquid Glass button surface. The tint keeps the semantic
+  // colour (neutral / operator / equals / clear) as translucent dark glass.
   const Button = ({
     children,
     onClick,
@@ -158,33 +165,27 @@ export default function CalculatorApp() {
     onClick: () => void;
     variant?: 'default' | 'operation' | 'accent' | 'clear';
     span?: number;
-  }) => {
-    const baseClasses =
-      'flex items-center justify-center text-xl font-medium rounded-lg transition-all duration-150 active:scale-95 select-none';
-
-    const variantClasses = {
-      default: 'bg-background-secondary hover:bg-background-tertiary text-foreground-primary',
-      operation: 'bg-accent-secondary hover:bg-accent-primary text-foreground-primary',
-      accent: 'bg-accent-primary hover:bg-accent-hover text-foreground-primary',
-      clear: 'bg-error hover:bg-error-dark text-foreground-primary',
-    };
-
-    const spanClasses = span === 2 ? 'col-span-2' : '';
-
-    return (
-      <button
-        className={`${baseClasses} ${variantClasses[variant]} ${spanClasses} h-14`}
-        onClick={onClick}
-      >
-        {children}
-      </button>
-    );
-  };
+  }) => (
+    <LiquidGlass
+      variant="button"
+      as="button"
+      radius={12}
+      tint={variant === 'default' ? glassTint.key : glassTint[variant]}
+      onClick={onClick}
+      className={`lg-text flex items-center justify-center text-xl font-medium text-foreground-primary transition-all duration-150 hover:brightness-110 active:scale-95 select-none ${
+        span === 2 ? 'col-span-2' : ''
+      }`}
+    >
+      {children}
+    </LiquidGlass>
+  );
 
   return (
-    <div className="flex flex-col h-full w-full bg-background-primary p-4">
-      <div className="bg-background-secondary rounded-xl p-4 mb-4">
-        <div className="text-right text-4xl font-mono text-foreground-primary truncate">
+    // Translucent over the window's glass surface — the desktop wallpaper
+    // refracts through instead of sitting on an opaque slab.
+    <div className="flex flex-col h-full w-full bg-background-primary/40 p-4">
+      <LiquidGlass variant="card" radius={12} tint={glassTint.display} className="p-4 mb-4">
+        <div className="lg-text text-right text-4xl font-mono text-foreground-primary truncate">
           {display}
         </div>
         {operation && (
@@ -192,9 +193,11 @@ export default function CalculatorApp() {
             {previousValue} {operation}
           </div>
         )}
-      </div>
+      </LiquidGlass>
 
-      <div className="grid grid-cols-4 gap-2 flex-1">
+      {/* Keys fill their grid tracks (no fixed height), so the keypad scales
+          with the window instead of opening gaps between fixed-height rows. */}
+      <div className="grid grid-cols-4 grid-rows-5 gap-2 flex-1 min-h-0">
         <Button variant="clear" onClick={clearAll}>C</Button>
         <Button onClick={() => setState(prev => ({
           ...prev,
