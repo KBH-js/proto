@@ -1,0 +1,52 @@
+# Post-deploy smoke gate.
+#
+# Vercel reports every deployment through the GitHub Deployments API; this
+# workflow fires on each status update and, once a deployment is live
+# (state == success, Preview and Production alike), runs the e2e/deploy smoke
+# suite against its URL. It verifies what local E2E cannot: the deployed
+# host boots, the production manifest resolves, and every remote entry
+# answers with CORS headers.
+#
+# The check attaches to the deployed commit SHA, so Preview runs show up on
+# the PR. Per-deployment URLs sit behind Vercel SSO — the
+# VERCEL_AUTOMATION_BYPASS_SECRET repo secret (Vercel → Settings →
+# Deployment Protection → Protection Bypass for Automation) lets the suite
+# through.
+#
+# Note: deployment_status workflows only trigger once this file is on the
+# default branch.
+name: Deploy Smoke
+
+on:
+  deployment_status:
+
+concurrency:
+  group: deploy-smoke-${{ github.event.deployment.environment }}-${{ github.event.deployment.sha }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # For deployment_status events GITHUB_SHA is already the deployed
+      # commit, so the smoke spec matches the code that was deployed.
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:smoke
+        env:
+          SMOKE_URL: ${{ github.event.deployment_status.environment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: deploy-smoke-report
+          path: playwright-report/
+          retention-days: 7

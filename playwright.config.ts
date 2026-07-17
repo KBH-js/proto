@@ -10,6 +10,9 @@ const CI = !!process.env.CI;
  */
 export default defineConfig({
   testDir: 'e2e',
+  // e2e/deploy is the post-deploy smoke suite — it targets a live Vercel URL
+  // and runs via playwright.deploy.config.ts (pnpm test:smoke), never here.
+  testIgnore: '**/deploy/**',
   fullyParallel: true,
   forbidOnly: CI,
   retries: CI ? 2 : 0,

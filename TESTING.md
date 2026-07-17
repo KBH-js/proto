@@ -32,7 +32,6 @@ pnpm test:watch  # watch mode
 | `src/store/tourStore.test.ts` | unit | first-run tour lifecycle: start/advance/back clamping, finish marks seen, reset allows replay |
 | `src/store/prefsStore.test.ts` | unit | browser-language locale detection (`detectLocale`) |
 | `src/registry/appRegistry.test.ts` | unit (mocked catalog) | remote-catalog merge into seeded locals, StrictMode in-flight join, dev-HMR re-init after store reset, degrade-on-failure without retry |
-| `src/hooks/useShortcuts.test.ts` | unit | Alt+key chord mapping, ctrl/meta rejection, suppression while a form field is focused |
 | `src/i18n/josa.test.ts` | unit | Korean particle resolution (을/를·이/가) by final consonant (`resolveJosa`) |
 | `src/apps/designTokens.test.ts` | unit | 3-layer token gallery derives from `@proto/shared/theme` without drift; semantic→primitive resolution |
 | `src/federation/catalog.test.ts` | integration (MSW) | manifest happy path + every validation/error branch, dev vs prod entry resolution |
@@ -79,6 +78,30 @@ Specs (`e2e/*.spec.ts`):
 `proto-desktop:tour` → seen) so specs assert English strings without the tour
 overlay; the first-run spec deliberately skips the tour seed.
 
+## Deploy smoke (post-deploy gate)
+
+```bash
+SMOKE_URL=https://proto-six-iota.vercel.app pnpm test:smoke   # run by hand against any deployment
+```
+
+`.github/workflows/deploy-smoke.yml` fires on every successful Vercel
+deployment (GitHub `deployment_status` event — Preview and Production alike)
+and runs `e2e/deploy/deployed-smoke.spec.ts` via `playwright.deploy.config.ts`
+against the live deployment URL. No local servers: the deployed host resolves
+remotes from the production manifest exactly like a visitor would. The check
+attaches to the deployed commit, so Preview runs appear on the PR.
+
+It covers the failure classes local E2E cannot see (they only exist on the
+deployed topology):
+- `remotes.manifest.json` resolves and each remote `entryUrl` answers 200
+  **with CORS headers** (fetched cross-origin like the host runtime does)
+- the deployed host boots to the desktop with every remote registered
+
+Setup: Vercel's per-deployment URLs sit behind SSO protection, so the repo
+needs a `VERCEL_AUTOMATION_BYPASS_SECRET` secret (Vercel project → Settings →
+Deployment Protection → Protection Bypass for Automation, then
+`gh secret set VERCEL_AUTOMATION_BYPASS_SECRET`).
+
 ## Visual regression (design note — not currently wired into CI)
 
 An earlier iteration ran a mini Playwright `toHaveScreenshot` matrix here —
@@ -106,3 +129,5 @@ story-level, not page-level.
 **e2e** (Playwright, report uploaded on failure).
 The typecheck/build steps double as the i18n gate — `en.ts` is a type-mirror
 of `ko.ts`, so a missing locale key fails `tsc -b`.
+`.github/workflows/deploy-smoke.yml` adds the post-deploy smoke above on top
+of every Vercel deployment.
