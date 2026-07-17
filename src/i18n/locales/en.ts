@@ -32,7 +32,7 @@ export const en: Resources = {
     toLight: 'Switch to light mode',
     toEnglish: 'Switch to English',
     toKorean: 'Switch to Korean',
-    federationStrip: 'Module Federation · {{count}} remotes · React {{version}}',
+    federationStrip: 'Module Federation · {{count}} remotes',
     openInspector: 'Open Federation Inspector',
   },
   window: {
@@ -119,7 +119,6 @@ export const en: Resources = {
       'An interactive portfolio — production projects clean-room rebuilt from their architecture and specs with AI-assisted coding. Everything here actually runs.',
     claimsTitle: 'Claims → Evidence',
     claimsCaption: 'Each claim mapped to a demo that actually runs. Click a row to open it.',
-    tagLive: 'live',
     claim: {
       federation: {
         title: 'Runtime remote-URL injection + independent deploys',
@@ -163,7 +162,7 @@ export const en: Resources = {
       ci: 'View CI runs',
       agents: 'View AGENTS.md',
     },
-    decisionsTitle: 'Technical decisions · trade-offs',
+    decisionsTitle: 'Technical decisions',
     decision: {
       runtime: {
         title: 'Runtime, not build-time, registration',
@@ -177,16 +176,6 @@ export const en: Resources = {
         title: 'React Compiler migration — why watch() went stale',
         desc: "While removing manual memoization I found react-hook-form's watch() — a mutable render-time reference — clashing with compiler caching, freezing the screen; switching to subscription-based useWatch fixed it. The same family of decision recurs in this repo: the retry wrapper lives in useState, not useMemo (WindowFrame).",
       },
-    },
-    archTitle: 'Architecture',
-    archCaption:
-      'The topology as actually deployed — this desktop loads it at runtime. Click a node to open its deployment.',
-    arch: {
-      host: 'Host (web desktop)',
-      remotes: 'Independent remotes · {{count}}',
-      edge: 'mf-manifest.json · loaded at runtime',
-      singleton: 'React 19 singleton — shared by the host and every remote',
-      repo: 'Source repository',
     },
     stackTitle: 'Tech stack',
     stackGroup: {

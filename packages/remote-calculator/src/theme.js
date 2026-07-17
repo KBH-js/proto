@@ -73,4 +73,16 @@ export const boxShadow = {
   window: '0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)',
 };
 
+// Calculator-local Liquid Glass tints (NOT mirrored from shared/theme):
+// translucent overrides for the <LiquidGlass tint> prop, derived from the
+// palette above. The calculator keeps a fixed dark-glass identity in both
+// host themes (like the macOS calculator), so these do not react to `.dark`.
+export const glassTint = {
+  display: 'rgba(22, 33, 62, 0.55)',   // background.secondary @ 55%
+  key: 'rgba(255, 255, 255, 0.08)',    // neutral key on dark glass
+  operation: 'rgba(83, 52, 131, 0.6)', // accent.secondary @ 60%
+  accent: 'rgba(233, 69, 96, 0.65)',   // accent.primary @ 65%
+  clear: 'rgba(248, 113, 113, 0.5)',   // error @ 50%
+};
+
 export default { colors, spacing, borderRadius, fontFamily, fontSize, boxShadow };

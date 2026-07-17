@@ -28,6 +28,10 @@ export default defineConfig({
       shared: {
         react: { singleton: true, requiredVersion: '^19.0.0' },
         'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
+        // Liquid Glass surface — consumed as a singleton so the embedded app
+        // uses the host's instance (one <defs> filter, host theme tokens) and
+        // falls back to this bundled copy only when running standalone.
+        '@proto/shared/glass': { singleton: true, requiredVersion: false },
       },
       // Skip DTS generation/consumption — host types the remote via loadRemoteComponent<T>
       dts: false,
@@ -38,6 +42,9 @@ export default defineConfig({
   },
   source: {
     entry: { index: './src/main.tsx' },
+    // The `@proto/shared` workspace package ships raw .tsx (no build step);
+    // include it so Rspack transpiles the LiquidGlass source like app code.
+    include: [/[\\/]packages[\\/]shared[\\/]/],
   },
   server: {
     port: 5001,

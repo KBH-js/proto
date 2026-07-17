@@ -12,8 +12,6 @@ import {
   Sun,
   Moon,
   ArrowUpRight,
-  ArrowDown,
-  Server,
   PlayCircle,
   AppWindow,
   Cloud,
@@ -25,9 +23,8 @@ import { LiquidGlass } from '@proto/shared/glass';
 import { useWindowStore } from '../store/windowStore';
 import { usePrefsStore } from '../store/prefsStore';
 import { useTourStore } from '../store/tourStore';
-import { useAppRegistry } from '../registry/appRegistry';
 import { useCopyEmail } from '../hooks/useCopyEmail';
-import { useTranslation, translateAppTitle, type TFunction } from '../i18n';
+import { useTranslation, type TFunction } from '../i18n';
 import { portfolioConfig } from '../config/portfolio.config';
 import { Tooltip } from '../components/atoms/Tooltip';
 
@@ -36,8 +33,8 @@ import { Tooltip } from '../components/atoms/Tooltip';
  *
  * Its centrepiece is a "Claims → Evidence" table: every claim is a row that
  * opens the running feature proving it (Inspector, theme / language toggles)
- * or deep-links the source. Below it, an architecture diagram mirrors the
- * README topology with nodes that link the live deployments. Fully
+ * or deep-links the source. Architecture lives in the README (mermaid) and
+ * the Inspector (live URLs) — this app doesn't duplicate the diagram. Fully
  * theme-aware and i18n-driven (consumes Tier 1's prefs/i18n contract).
  */
 
@@ -106,21 +103,6 @@ const STACK_GROUPS: { key: 'core' | 'state' | 'quality'; primary?: boolean; item
   { key: 'state', items: ['Zustand', 'TanStack Query', 'Tailwind CSS', 'React Compiler'] },
   { key: 'quality', items: ['Vitest', 'MSW', 'Playwright', 'GitHub Actions'] },
 ];
-
-/** Every claim on the board runs live — the pulse badge asserts exactly that. */
-function LiveBadge({ t }: { t: TFunction }) {
-  return (
-    <LiquidGlass
-      variant="button"
-      inline
-      as="span"
-      className="lg-text items-center gap-1 px-1.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-green-700 dark:text-green-300"
-    >
-      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-      {t('about.tagLive')}
-    </LiquidGlass>
-  );
-}
 
 function ClaimActionButton({ action, t }: { action: ClaimAction; t: TFunction }) {
   const openWindow = useWindowStore((s) => s.openWindow);
@@ -207,37 +189,10 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** A step in the host's boot pipeline strip inside the architecture diagram. */
-function FlowChip({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 whitespace-nowrap">
-      {children}
-    </span>
-  );
-}
-
 export function AboutApp() {
   const { t } = useTranslation();
   const startTour = useTourStore((s) => s.start);
   const copyEmail = useCopyEmail();
-  const registryEntries = useAppRegistry((s) => s.entries);
-
-  // Remote nodes come from the registry (fed by remotes.manifest.json), so
-  // adding a remote never leaves the diagram stale. `prodEntry` is the
-  // manifest's production URL — `entry` resolves to localhost under dev.
-  const remoteNodes = Object.values(registryEntries)
-    .filter((entry) => entry.isRemote && entry.remote)
-    .map((entry) => {
-      const { prodEntry } = entry.remote!;
-      let href = prodEntry;
-      try {
-        href = new URL(prodEntry).origin;
-      } catch {
-        // keep the raw manifest value if it isn't a valid absolute URL
-      }
-      const name = translateAppTitle(t, entry.defaultConfig.componentType, entry.defaultConfig.title);
-      return { key: entry.defaultConfig.componentType, name, href };
-    });
 
   const contactLinks = [
     { label: 'GitHub', href: portfolioConfig.links.github, icon: Github },
@@ -331,12 +286,9 @@ export function AboutApp() {
                       <Icon className="w-4 h-4 text-gray-500 dark:text-gray-300" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-medium text-sm text-gray-800 dark:text-gray-100">
-                          {t(`about.claim.${row.key}.title`)}
-                        </h3>
-                        <LiveBadge t={t} />
-                      </div>
+                      <h3 className="font-medium text-sm text-gray-800 dark:text-gray-100">
+                        {t(`about.claim.${row.key}.title`)}
+                      </h3>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                         {t(`about.claim.${row.key}.desc`)}
                       </p>
@@ -353,10 +305,10 @@ export function AboutApp() {
           </ul>
         </section>
 
-        {/* Technical decisions */}
+        {/* Technical decisions — one card per row for uninterrupted reading */}
         <section>
           <SectionTitle>{t('about.decisionsTitle')}</SectionTitle>
-          <div className="grid @lg:grid-cols-2 gap-2">
+          <div className="space-y-2">
             {DECISIONS.map((key) => (
               <LiquidGlass variant="card" key={key} radius={12} className="p-3">
                 <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100">
@@ -368,97 +320,6 @@ export function AboutApp() {
               </LiquidGlass>
             ))}
           </div>
-        </section>
-
-        {/* Architecture — the deployed topology; every node links its live deployment */}
-        <section>
-          <SectionTitle>{t('about.archTitle')}</SectionTitle>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 -mt-1">{t('about.archCaption')}</p>
-
-          {/* Host node + its boot pipeline */}
-          <LiquidGlass variant="card" radius={12} className="p-3">
-            <a
-              href={portfolioConfig.deployments.host}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 group"
-            >
-              <Server className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">{t('about.arch.host')}</p>
-                <p className="text-3xs text-gray-500 dark:text-gray-400 font-mono truncate">
-                  {portfolioConfig.deployments.host.replace(/^https?:\/\//, '')}
-                </p>
-              </div>
-              <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
-            </a>
-            <div className="mt-2 flex items-center flex-wrap gap-1 text-3xs font-mono text-gray-600 dark:text-gray-300">
-              <FlowChip>remotes.manifest.json</FlowChip>
-              <span aria-hidden>→</span>
-              <FlowChip>registerRemotes()</FlowChip>
-              <span aria-hidden>→</span>
-              <FlowChip>App Registry</FlowChip>
-              <span aria-hidden>→</span>
-              <FlowChip>Desktop UI</FlowChip>
-            </div>
-          </LiquidGlass>
-
-          {remoteNodes.length > 0 && (
-            <>
-              {/* Runtime-load edge from the host down to the remotes */}
-              <div className="flex flex-col items-center py-1 text-gray-400 dark:text-gray-500">
-                <span className="w-px h-2 bg-gray-300 dark:bg-white/20" />
-                <span className="text-3xs font-mono py-0.5">{t('about.arch.edge')}</span>
-                <ArrowDown className="w-3 h-3" />
-              </div>
-
-              <p className="text-3xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">
-                {t('about.arch.remotes', { count: remoteNodes.length })}
-              </p>
-              <div className="grid grid-cols-2 @lg:grid-cols-4 gap-2">
-                {remoteNodes.map((node) => (
-                  <LiquidGlass
-                    variant="card"
-                    as="a"
-                    key={node.key}
-                    href={node.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    radius={12}
-                    className="p-2.5 hover:brightness-110 transition-[filter] group"
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <Boxes className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                      <p className="flex-1 min-w-0 text-xs font-medium text-gray-800 dark:text-gray-100 truncate">
-                        {node.name}
-                      </p>
-                      <ArrowUpRight className="w-3 h-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
-                    </div>
-                    <p className="mt-1 text-3xs text-gray-500 dark:text-gray-400 font-mono truncate">
-                      {node.href.replace(/^https?:\/\//, '')}
-                    </p>
-                  </LiquidGlass>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* Shared singleton rail spanning host + remotes */}
-          <div className="mt-2 flex items-center gap-2 rounded-lg border border-dashed border-gray-300 dark:border-white/20 px-3 py-1.5">
-            <Package className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-            <p className="text-2xs text-gray-600 dark:text-gray-400">{t('about.arch.singleton')}</p>
-          </div>
-
-          <a
-            href={portfolioConfig.repo}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
-          >
-            <Github className="w-3.5 h-3.5" />
-            {t('about.arch.repo')}
-            <ArrowUpRight className="w-3 h-3" />
-          </a>
         </section>
 
         {/* Tech stack */}

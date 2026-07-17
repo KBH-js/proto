@@ -36,8 +36,10 @@ export function DesktopIcon({ icon, label, onLaunch, componentType }: DesktopIco
       )}
       {/* lg-text swaps its text-shadow with the theme (white lift on light
           glass, dark drop on graphite) — the old text-white was authored for
-          the pre-glass dark wallpaper and vanished on the light rail. */}
-      <span className="lg-text text-xs text-gray-800 dark:text-gray-100 text-center leading-tight truncate w-full">
+          the pre-glass dark wallpaper and vanished on the light rail.
+          Labels wrap to multiple lines instead of truncating; break-keep
+          keeps Korean from breaking mid-word ('디자인 토큰' → two lines). */}
+      <span className="lg-text text-xs text-gray-800 dark:text-gray-100 text-center leading-tight break-keep w-full">
         {label}
       </span>
     </button>
