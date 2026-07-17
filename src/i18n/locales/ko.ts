@@ -157,7 +157,7 @@ export const ko = {
       },
       theming: {
         title: '디자인 토큰 + 다크 모드',
-        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다. Playwright 시각 회귀(VRT)가 라이트/다크 매트릭스로 CI에서 돌아갑니다.',
+        desc: '테마는 셸 루트의 class 토글이고 토큰은 shared 패키지에서 옵니다. 트레이의 테마 버튼으로 전환됩니다. raw 컬러·px 리터럴은 커스텀 lint 룰이 차단해 모든 색과 사이즈가 토큰 소스에서만 나옵니다.',
       },
       aidx: {
         title: 'AI 협업 DX — AGENTS.md 규약 + 기계적 가드레일',

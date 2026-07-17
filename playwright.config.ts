@@ -24,32 +24,6 @@ export default defineConfig({
     {
       name: 'chromium',
       testDir: 'e2e',
-      testIgnore: '**/vrt/**',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    /**
-     * Visual regression (pnpm test:vrt) — 3 surfaces × light/dark.
-     * Baselines are rendered on CI (ubuntu) and committed. The comparison is
-     * CI-vs-CI (identical environment), so the tolerance only needs to absorb
-     * anti-aliasing noise — 0.02 was measured to let a real UI change (three
-     * new header buttons) pass unnoticed. Local Windows/macOS runs exceed any
-     * sane tolerance on font rendering alone and are best-effort only (see
-     * TESTING.md).
-     */
-    {
-      name: 'vrt',
-      testDir: 'e2e/vrt',
-      // One platform-agnostic baseline set (the CI-rendered one) instead of
-      // Playwright's default per-OS suffixed snapshots.
-      snapshotPathTemplate: '{testDir}/__screenshots__/{testFileName}/{arg}{ext}',
-      expect: {
-        toHaveScreenshot: {
-          maxDiffPixelRatio: 0.002,
-          animations: 'disabled',
-          caret: 'hide',
-          scale: 'css',
-        },
-      },
       use: { ...devices['Desktop Chrome'] },
     },
   ],

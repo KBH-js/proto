@@ -6,7 +6,6 @@ Three layers, all enforced per-PR by CI (`.github/workflows/ci.yml`):
 |-------|------|---------|
 | Unit + integration | **Vitest** (+ **MSW** for network) | `pnpm test` |
 | End-to-end | **Playwright** (chromium) | `pnpm test:e2e` |
-| Visual regression | **Playwright** `toHaveScreenshot` | `pnpm test:vrt` (CI only) |
 | Type/i18n/token gates | `tsc -b` + ESLint local rules | `pnpm typecheck` · `pnpm lint` |
 
 ## Vitest (unit + integration)
@@ -73,51 +72,30 @@ Specs (`e2e/*.spec.ts`):
 `proto-desktop:tour` → seen) so specs assert English strings without the tour
 overlay; the first-run spec deliberately skips the tour seed.
 
-## Visual regression (VRT)
+## Visual regression (design note — not currently wired into CI)
 
-```bash
-pnpm test:vrt         # compare against committed baselines (CI is the source of truth)
-pnpm test:vrt:update  # re-render baselines — CI workflow only, never commit local renders
-```
+An earlier iteration ran a mini Playwright `toHaveScreenshot` matrix here —
+3 surfaces (desktop shell, About window, Design Tokens window) × light/dark
+= 6 baselines. Because font rasterization and anti-aliasing differ per OS,
+baselines were rendered on CI (ubuntu) by a dedicated `workflow_dispatch`
+workflow and committed via a platform-agnostic `snapshotPathTemplate`; the
+CI-vs-CI comparison allowed a tight tolerance (`maxDiffPixelRatio: 0.002` —
+a looser 0.02 was measured to let a real UI change, new About-header
+buttons, slip through unnoticed).
 
-A mini `toHaveScreenshot` matrix — 3 surfaces × light/dark = 6 baselines —
-proving the VRT pipeline end to end (the full-scale version of this runs in
-the private project these mirror):
-
-| Surface | How it's captured |
-|---------|-------------------|
-| Desktop shell | full-page shot right after boot (tray gate: catalog resolved) |
-| About window | element shot of the `windowFrame` after icon launch |
-| Design Tokens window | element shot after `[data-app-icon="tokens"]` launch |
-
-It lives in its own Playwright project (`vrt`, `e2e/vrt/`), so `pnpm test:e2e`
-and `pnpm test:vrt` run independently; both share the config's `webServer`
-topology. The theme axis is seeded through `proto-desktop:prefs` (same
-localStorage contract as the shared fixture), one describe block per theme.
-
-**Baselines are rendered on CI (ubuntu) and committed** under
-`e2e/vrt/__screenshots__/` via a platform-agnostic `snapshotPathTemplate` —
-font rasterization and anti-aliasing differ per OS, so screenshots rendered
-on local Windows/macOS must never be committed. Because the comparison is
-CI-vs-CI (identical environment), the tolerance is tight:
-`maxDiffPixelRatio: 0.002` + `animations: 'disabled'` absorbs anti-aliasing
-noise only — a looser 0.02 was measured to let a real UI change (new header
-buttons in the About window) slip through. Cross-OS font deltas exceed any
-sane tolerance, so treat a local `pnpm test:vrt` as best-effort and let CI
-arbitrate.
-
-To create or refresh baselines: run the **VRT baseline** workflow
-(`.github/workflows/vrt-baseline.yml`, manual `workflow_dispatch`) on your
-branch — it renders on ubuntu, uploads the shots as an artifact for review,
-and commits them back to the branch. The `vrt` CI job skips with a notice
-until baselines exist, so a branch that adds VRT surfaces can't fail on a
-chicken-and-egg missing-snapshot error.
+It was retired from CI on purpose: **window/page-level screenshots are the
+wrong granularity for VRT.** Any copy or layout tweak inside a captured
+surface invalidates baselines, so every content PR paid a baseline
+re-render round-trip while catching little that E2E assertions don't. VRT
+earns its keep at the isolated component/story level — the full-scale
+version in the private project this repo mirrors runs against Storybook
+stories in a light/dark matrix. If VRT returns here, it comes back
+story-level, not page-level.
 
 ## CI
 
 `.github/workflows/ci.yml` runs on every PR and push to `main`:
-**verify** (lint → typecheck → vitest → host build → all-remote builds),
-**e2e** (Playwright, report uploaded on failure), and **vrt** (screenshot
-matrix against committed ubuntu baselines; diff report uploaded on failure).
+**verify** (lint → typecheck → vitest → host build → all-remote builds) and
+**e2e** (Playwright, report uploaded on failure).
 The typecheck/build steps double as the i18n gate — `en.ts` is a type-mirror
 of `ko.ts`, so a missing locale key fails `tsc -b`.
