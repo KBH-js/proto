@@ -9,7 +9,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
  * state driving the overlay; the step *content* (anchors, copy) lives in the
  * `FirstRunTour` component, keeping this store pure and unit-testable.
  *
- * Replay (About button, Alt+/ shortcut) just calls `start()`, which
+ * Replay (About button) just calls `start()`, which
  * re-activates regardless of `seen`.
  */
 interface TourState {

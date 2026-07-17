@@ -6,7 +6,6 @@ import { BootScreen } from './components/shared/BootScreen';
 import { FirstRunTour } from './components/shared/FirstRunTour';
 import { initializeAppRegistry } from './registry/appRegistry';
 import { useWindowStore } from './store/windowStore';
-import { useShortcuts } from './hooks/useShortcuts';
 
 const RESIZE_DEBOUNCE_MS = 150;
 
@@ -14,9 +13,6 @@ function App() {
   // BootScreen owns the gate: it holds until the app catalog resolves (it reads
   // the registry status itself), then calls back to reveal the desktop.
   const [booting, setBooting] = useState(true);
-
-  // Global keyboard shortcuts (Alt+A/I/T/L, Alt+/)
-  useShortcuts();
 
   // Fetch the remote app catalog and register remotes with the MF runtime.
   // Idempotent on store state — StrictMode double-invocation joins the

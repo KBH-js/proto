@@ -120,14 +120,12 @@ export const en: Resources = {
     layerComponentDesc: 'Tokens consumed by components',
   },
   about: {
-    subtitle: 'Module Federation web desktop · a resume you can run',
+    subtitle: 'Module Federation web desktop · an interactive portfolio',
     honesty:
-      'A clean-room reproduction of the projects on my résumé, rebuilt from their architecture and specs with AI-assisted coding.',
+      'An interactive portfolio — production projects clean-room rebuilt from their architecture and specs with AI-assisted coding. Everything here actually runs.',
     claimsTitle: 'Claims → Evidence',
-    claimsCaption: 'Each résumé point mapped to a demo that actually runs. Click a row to open it.',
+    claimsCaption: 'Each claim mapped to a demo that actually runs. Click a row to open it.',
     tagLive: 'live',
-    tagPartial: 'partial',
-    tagPlanned: 'planned',
     claim: {
       federation: {
         title: 'Runtime remote-URL injection + independent deploys',
@@ -150,12 +148,8 @@ export const en: Resources = {
         desc: 'The Network (Neutron) and Compute (Nova) dashboards run as independently deployed remotes, on TanStack Query caching and an MSW-mocked REST layer — outage-injection demo included.',
       },
       testing: {
-        title: 'Test infrastructure — Vitest/MSW + Playwright E2E + CI gate',
-        desc: 'Vitest+MSW unit/integration tests and Playwright E2E (window ops, remote loading, failure recovery) are enforced on every PR by a GitHub Actions gate.',
-      },
-      i18n: {
-        title: 'i18n ko/en pipeline · missing-key guard',
-        desc: 'ko is the source; en is a type-mirror of ko, so a missing key is a compile error — enforced by the build step of the CI PR gate. Try the language button in the tray.',
+        title: 'Test infrastructure · i18n pipeline — enforced by the CI gate',
+        desc: "Vitest+MSW unit/integration tests and Playwright E2E (window ops, remote loading, failure recovery) are enforced on every PR by a GitHub Actions gate. For i18n, ko is the source and en is its type mirror, so a missing key is a compile error the same gate's build step catches. Try the language button in the tray.",
       },
       theming: {
         title: 'Design tokens + dark mode',
@@ -164,10 +158,6 @@ export const en: Resources = {
       aidx: {
         title: 'AI-collaboration DX — AGENTS.md conventions + hard guardrails',
         desc: 'Team conventions live in a single AGENTS.md; raw-color/px lint rules and the i18n type mirror force AI-written code to follow them too. Remote scaffolding is automated by a validated Skill.',
-      },
-      perf: {
-        title: 'Rendering performance — virtual scroll (10,000 rows) · debounced search',
-        desc: "A claim from my previous role (Tmax). It sits outside this desktop's thesis (MF architecture · engineering workflow), so it is not reproduced here yet.",
       },
     },
     act: {
@@ -194,22 +184,22 @@ export const en: Resources = {
         desc: "While removing manual memoization I found react-hook-form's watch() — a mutable render-time reference — clashing with compiler caching, freezing the screen; switching to subscription-based useWatch fixed it. The same family of decision recurs in this repo: the retry wrapper lives in useState, not useMemo (WindowFrame).",
       },
     },
-    linksTitle: 'Deployments · source',
-    linksCaption: 'Actually deployed — this desktop loads them at runtime.',
-    link: {
+    archTitle: 'Architecture',
+    archCaption:
+      'The topology as actually deployed — this desktop loads it at runtime. Click a node to open its deployment.',
+    arch: {
       host: 'Host (web desktop)',
-      remote: 'Remote · {{name}}',
+      remotes: 'Independent remotes · {{count}}',
+      edge: 'mf-manifest.json · loaded at runtime',
+      singleton: 'React 19 singleton — shared by the host and every remote',
       repo: 'Source repository',
     },
-    shortcutsTitle: 'Keyboard shortcuts',
-    shortcut: {
-      about: 'Open About',
-      inspector: 'Open Inspector',
-      theme: 'Toggle theme',
-      locale: 'Toggle language',
-      tour: 'Guide tour',
-    },
     stackTitle: 'Tech stack',
+    stackGroup: {
+      core: 'Core',
+      state: 'UI & State',
+      quality: 'Quality & CI',
+    },
     replayTour: 'Replay guide tour',
   },
   tour: {
@@ -237,7 +227,7 @@ export const en: Resources = {
       },
       done: {
         title: "You're all set",
-        body: 'Press "Get started" to open the About app — see each résumé claim mapped to a live demo. Replay this tour anytime with Alt + /.',
+        body: 'Press "Get started" to open the About app — see each claim mapped to a live demo. Replay it anytime from the button in the About header.',
       },
     },
   },

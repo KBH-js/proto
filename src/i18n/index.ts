@@ -8,9 +8,8 @@ import { resolveJosa } from './josa';
  * mirrors its shape) with `{{var}}` interpolation. No dependency; locale
  * lives in `prefsStore`, so `useTranslation()` re-renders on switch.
  *
- * Scope: the host shell (chrome, boot, errors, Resume, Inspector). The
- * About app is intentionally excluded — Tier 3 rewrites it and will consume
- * this same pipeline.
+ * Scope: the host shell and its local apps (chrome, boot, errors, Resume,
+ * Inspector, About).
  */
 const resources = { ko, en } as const;
 

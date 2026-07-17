@@ -12,13 +12,13 @@ import {
   Sun,
   Moon,
   ArrowUpRight,
+  ArrowDown,
   Server,
   PlayCircle,
   AppWindow,
   Cloud,
   FlaskConical,
   Bot,
-  Gauge,
   type LucideIcon,
 } from 'lucide-react';
 import { LiquidGlass } from '@proto/shared/glass';
@@ -34,14 +34,12 @@ import { Tooltip } from '../components/atoms/Tooltip';
 /**
  * About — the portfolio's thesis, in engineer tone.
  *
- * Its centrepiece is a "Claims → Evidence" table: every résumé point is a row
- * that either opens the running feature that proves it (Inspector, theme /
- * language toggles) or deep-links the source, and unproven points are tagged
- * "planned" rather than dressed up as done. Fully theme-aware and i18n-driven
- * (consumes Tier 1's prefs/i18n contract).
+ * Its centrepiece is a "Claims → Evidence" table: every claim is a row that
+ * opens the running feature proving it (Inspector, theme / language toggles)
+ * or deep-links the source. Below it, an architecture diagram mirrors the
+ * README topology with nodes that link the live deployments. Fully
+ * theme-aware and i18n-driven (consumes Tier 1's prefs/i18n contract).
  */
-
-type Tag = 'live' | 'partial' | 'planned';
 
 type ClaimAction =
   | { kind: 'inspector' }
@@ -54,94 +52,72 @@ interface ClaimRow {
   /** i18n key under about.claim.<key> */
   key: string;
   icon: LucideIcon;
-  tag: Tag;
-  /** Omitted on rows with nothing runnable to show (e.g. planned work) */
-  action?: ClaimAction;
+  /** Evidence buttons — a claim may carry several (e.g. CI runs + a live toggle) */
+  actions: ClaimAction[];
 }
 
 const CLAIMS: ClaimRow[] = [
-  { key: 'federation', icon: Boxes, tag: 'live', action: { kind: 'inspector' } },
-  { key: 'recovery', icon: ShieldCheck, tag: 'live', action: { kind: 'inspector' } },
-  { key: 'singleton', icon: Package, tag: 'live', action: { kind: 'inspector' } },
+  { key: 'federation', icon: Boxes, actions: [{ kind: 'inspector' }] },
+  { key: 'recovery', icon: ShieldCheck, actions: [{ kind: 'inspector' }] },
+  { key: 'singleton', icon: Package, actions: [{ kind: 'inspector' }] },
   {
     key: 'windowing',
     icon: AppWindow,
-    tag: 'live',
-    action: {
-      kind: 'link',
-      href: `${portfolioConfig.repo}/blob/main/src/store/windowStore.ts`,
-      labelKey: 'about.act.source',
-    },
+    actions: [
+      {
+        kind: 'link',
+        href: `${portfolioConfig.repo}/blob/main/src/store/windowStore.ts`,
+        labelKey: 'about.act.source',
+      },
+    ],
   },
   {
     key: 'openstack',
     icon: Cloud,
-    tag: 'live',
-    action: { kind: 'open', app: 'network', title: 'Network' },
+    actions: [{ kind: 'open', app: 'network', title: 'Network' }],
   },
   {
     key: 'testing',
     icon: FlaskConical,
-    tag: 'live',
-    action: { kind: 'link', href: `${portfolioConfig.repo}/actions`, labelKey: 'about.act.ci' },
+    actions: [
+      { kind: 'link', href: `${portfolioConfig.repo}/actions`, labelKey: 'about.act.ci' },
+      { kind: 'locale' },
+    ],
   },
-  { key: 'i18n', icon: Languages, tag: 'live', action: { kind: 'locale' } },
-  { key: 'theming', icon: Palette, tag: 'live', action: { kind: 'theme' } },
+  { key: 'theming', icon: Palette, actions: [{ kind: 'theme' }] },
   {
     key: 'aidx',
     icon: Bot,
-    tag: 'live',
-    action: {
-      kind: 'link',
-      href: `${portfolioConfig.repo}/blob/main/AGENTS.md`,
-      labelKey: 'about.act.agents',
-    },
+    actions: [
+      {
+        kind: 'link',
+        href: `${portfolioConfig.repo}/blob/main/AGENTS.md`,
+        labelKey: 'about.act.agents',
+      },
+    ],
   },
-  { key: 'perf', icon: Gauge, tag: 'planned' },
 ];
 
 const DECISIONS = ['runtime', 'singleton', 'compiler'] as const;
 
-const SHORTCUTS: { keys: string; key: string }[] = [
-  { keys: 'Alt + A', key: 'about' },
-  { keys: 'Alt + I', key: 'inspector' },
-  { keys: 'Alt + T', key: 'theme' },
-  { keys: 'Alt + L', key: 'locale' },
-  { keys: 'Alt + /', key: 'tour' },
+/** Grouped for scanability — the `primary` row is the stack this desktop is about. */
+const STACK_GROUPS: { key: 'core' | 'state' | 'quality'; primary?: boolean; items: string[] }[] = [
+  { key: 'core', primary: true, items: ['React 19', 'TypeScript', 'Module Federation 2.x', 'Rsbuild (Rspack)'] },
+  { key: 'state', items: ['Zustand', 'TanStack Query', 'Tailwind CSS', 'React Compiler'] },
+  { key: 'quality', items: ['Vitest', 'MSW', 'Playwright', 'GitHub Actions'] },
 ];
 
-const STACK = [
-  'React 19',
-  'TypeScript',
-  'Module Federation',
-  'Rsbuild (Rspack)',
-  'TanStack Query',
-  'Zustand',
-  'Tailwind',
-  'Vitest',
-  'MSW',
-  'Playwright',
-  'GitHub Actions',
-];
-
-// Only text/dot colour survives — the pill body is now a Liquid Glass surface.
-const TAG_TEXT: Record<Tag, string> = {
-  live: 'text-green-700 dark:text-green-300',
-  partial: 'text-amber-700 dark:text-amber-300',
-  planned: 'text-gray-500 dark:text-gray-300',
-};
-
-function TagBadge({ tag, t }: { tag: Tag; t: TFunction }) {
-  const label = tag === 'live' ? t('about.tagLive') : tag === 'partial' ? t('about.tagPartial') : t('about.tagPlanned');
+/** Every claim on the board runs live — the pulse badge asserts exactly that. */
+function LiveBadge({ t }: { t: TFunction }) {
   return (
     <LiquidGlass
       variant="button"
       inline
       as="span"
-      className={`lg-text items-center gap-1 px-1.5 py-0.5 text-3xs font-bold uppercase tracking-wider ${TAG_TEXT[tag]}`}
+      className="lg-text items-center gap-1 px-1.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-green-700 dark:text-green-300"
     >
-      {tag === 'live' && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />}
-      {label}
+      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+      {t('about.tagLive')}
     </LiquidGlass>
   );
 }
@@ -231,16 +207,25 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** A step in the host's boot pipeline strip inside the architecture diagram. */
+function FlowChip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 whitespace-nowrap">
+      {children}
+    </span>
+  );
+}
+
 export function AboutApp() {
   const { t } = useTranslation();
   const startTour = useTourStore((s) => s.start);
   const copyEmail = useCopyEmail();
   const registryEntries = useAppRegistry((s) => s.entries);
 
-  // Remote deployments come from the registry (fed by remotes.manifest.json),
-  // so adding a remote never leaves this list stale. `prodEntry` is the
+  // Remote nodes come from the registry (fed by remotes.manifest.json), so
+  // adding a remote never leaves the diagram stale. `prodEntry` is the
   // manifest's production URL — `entry` resolves to localhost under dev.
-  const remoteLinks = Object.values(registryEntries)
+  const remoteNodes = Object.values(registryEntries)
     .filter((entry) => entry.isRemote && entry.remote)
     .map((entry) => {
       const { prodEntry } = entry.remote!;
@@ -251,14 +236,8 @@ export function AboutApp() {
         // keep the raw manifest value if it isn't a valid absolute URL
       }
       const name = translateAppTitle(t, entry.defaultConfig.componentType, entry.defaultConfig.title);
-      return { label: t('about.link.remote', { name }), href, icon: Boxes };
+      return { key: entry.defaultConfig.componentType, name, href };
     });
-
-  const deployLinks: { label: string; href: string; icon: LucideIcon }[] = [
-    { label: t('about.link.host'), href: portfolioConfig.deployments.host, icon: Server },
-    ...remoteLinks,
-    { label: t('about.link.repo'), href: portfolioConfig.repo, icon: Github },
-  ];
 
   const contactLinks = [
     { label: 'GitHub', href: portfolioConfig.links.github, icon: Github },
@@ -356,16 +335,16 @@ export function AboutApp() {
                         <h3 className="font-medium text-sm text-gray-800 dark:text-gray-100">
                           {t(`about.claim.${row.key}.title`)}
                         </h3>
-                        <TagBadge tag={row.tag} t={t} />
+                        <LiveBadge t={t} />
                       </div>
                       <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                         {t(`about.claim.${row.key}.desc`)}
                       </p>
-                      {row.action && (
-                        <div className="mt-2">
-                          <ClaimActionButton action={row.action} t={t} />
-                        </div>
-                      )}
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {row.actions.map((action, i) => (
+                          <ClaimActionButton key={`${action.kind}-${i}`} action={action} t={t} />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </LiquidGlass>
@@ -391,64 +370,121 @@ export function AboutApp() {
           </div>
         </section>
 
-        {/* Deployments · source */}
+        {/* Architecture — the deployed topology; every node links its live deployment */}
         <section>
-          <SectionTitle>{t('about.linksTitle')}</SectionTitle>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 -mt-1">{t('about.linksCaption')}</p>
-          <div className="grid @lg:grid-cols-2 gap-2">
-            {deployLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <LiquidGlass
-                  variant="card"
-                  as="a"
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  radius={12}
-                  className="flex items-center gap-2 px-3 py-2 hover:brightness-110 transition-[filter] group"
-                >
-                  <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-800 dark:text-gray-100">{link.label}</p>
-                    <p className="text-3xs text-gray-500 dark:text-gray-400 font-mono truncate">
-                      {link.href.replace(/^https?:\/\//, '')}
-                    </p>
-                  </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
-                </LiquidGlass>
-              );
-            })}
-          </div>
-        </section>
+          <SectionTitle>{t('about.archTitle')}</SectionTitle>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 -mt-1">{t('about.archCaption')}</p>
 
-        {/* Keyboard shortcuts */}
-        <section>
-          <SectionTitle>{t('about.shortcutsTitle')}</SectionTitle>
-          <div className="grid @lg:grid-cols-2 gap-x-4 gap-y-1.5">
-            {SHORTCUTS.map((s) => (
-              <div key={s.key} className="flex items-center justify-between gap-2">
-                <span className="text-xs text-gray-600 dark:text-gray-300">{t(`about.shortcut.${s.key}`)}</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-3xs font-mono text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                  {s.keys}
-                </kbd>
+          {/* Host node + its boot pipeline */}
+          <LiquidGlass variant="card" radius={12} className="p-3">
+            <a
+              href={portfolioConfig.deployments.host}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 group"
+            >
+              <Server className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">{t('about.arch.host')}</p>
+                <p className="text-3xs text-gray-500 dark:text-gray-400 font-mono truncate">
+                  {portfolioConfig.deployments.host.replace(/^https?:\/\//, '')}
+                </p>
               </div>
-            ))}
+              <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
+            </a>
+            <div className="mt-2 flex items-center flex-wrap gap-1 text-3xs font-mono text-gray-600 dark:text-gray-300">
+              <FlowChip>remotes.manifest.json</FlowChip>
+              <span aria-hidden>→</span>
+              <FlowChip>registerRemotes()</FlowChip>
+              <span aria-hidden>→</span>
+              <FlowChip>App Registry</FlowChip>
+              <span aria-hidden>→</span>
+              <FlowChip>Desktop UI</FlowChip>
+            </div>
+          </LiquidGlass>
+
+          {remoteNodes.length > 0 && (
+            <>
+              {/* Runtime-load edge from the host down to the remotes */}
+              <div className="flex flex-col items-center py-1 text-gray-400 dark:text-gray-500">
+                <span className="w-px h-2 bg-gray-300 dark:bg-white/20" />
+                <span className="text-3xs font-mono py-0.5">{t('about.arch.edge')}</span>
+                <ArrowDown className="w-3 h-3" />
+              </div>
+
+              <p className="text-3xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">
+                {t('about.arch.remotes', { count: remoteNodes.length })}
+              </p>
+              <div className="grid grid-cols-2 @lg:grid-cols-4 gap-2">
+                {remoteNodes.map((node) => (
+                  <LiquidGlass
+                    variant="card"
+                    as="a"
+                    key={node.key}
+                    href={node.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    radius={12}
+                    className="p-2.5 hover:brightness-110 transition-[filter] group"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Boxes className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                      <p className="flex-1 min-w-0 text-xs font-medium text-gray-800 dark:text-gray-100 truncate">
+                        {node.name}
+                      </p>
+                      <ArrowUpRight className="w-3 h-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 flex-shrink-0" />
+                    </div>
+                    <p className="mt-1 text-3xs text-gray-500 dark:text-gray-400 font-mono truncate">
+                      {node.href.replace(/^https?:\/\//, '')}
+                    </p>
+                  </LiquidGlass>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Shared singleton rail spanning host + remotes */}
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-dashed border-gray-300 dark:border-white/20 px-3 py-1.5">
+            <Package className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+            <p className="text-2xs text-gray-600 dark:text-gray-400">{t('about.arch.singleton')}</p>
           </div>
+
+          <a
+            href={portfolioConfig.repo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+          >
+            <Github className="w-3.5 h-3.5" />
+            {t('about.arch.repo')}
+            <ArrowUpRight className="w-3 h-3" />
+          </a>
         </section>
 
         {/* Tech stack */}
         <section>
           <SectionTitle>{t('about.stackTitle')}</SectionTitle>
-          <div className="flex flex-wrap gap-1.5">
-            {STACK.map((name) => (
-              <span
-                key={name}
-                className="px-2 py-0.5 rounded-full text-3xs font-medium bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300"
-              >
-                {name}
-              </span>
+          <div className="space-y-2">
+            {STACK_GROUPS.map((group) => (
+              <div key={group.key} className="flex items-baseline gap-2">
+                <span className="w-16 flex-shrink-0 text-3xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  {t(`about.stackGroup.${group.key}`)}
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.items.map((name) => (
+                    <span
+                      key={name}
+                      className={
+                        group.primary
+                          ? 'px-2 py-0.5 rounded-full text-3xs font-semibold bg-sky-100 text-sky-800 dark:bg-sky-500/20 dark:text-sky-200'
+                          : 'px-2 py-0.5 rounded-full text-3xs font-medium bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300'
+                      }
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </section>

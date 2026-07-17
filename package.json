@@ -17,7 +17,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test --project=chromium",
-    "test:e2e:ui": "playwright test --project=chromium --ui"
+    "test:e2e:ui": "playwright test --project=chromium --ui",
+    "test:smoke": "playwright test --config playwright.deploy.config.ts"
   },
   "dependencies": {
     "@module-federation/enhanced": "^2.7.0",

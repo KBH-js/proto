@@ -13,6 +13,7 @@ pnpm test:e2e                          # Playwright E2E (dev 서버 5개 자동 
 ```
 
 같은 검사가 GitHub Actions(`.github/workflows/ci.yml`)에서 PR마다 강제된다: lint · typecheck · Vitest · 호스트 빌드 · remote 4개 빌드 · E2E.
+추가로 Vercel 배포가 성공할 때마다 `.github/workflows/deploy-smoke.yml`이 배포된 URL에 스모크(`pnpm test:smoke` — manifest 해석·remote CORS·부팅)를 돌린다. Preview 배포의 결과는 PR 커밋에 체크로 붙는다.
 
 ## 하드 가드레일 (lint/타입이 기계적으로 차단)
 
