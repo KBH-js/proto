@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, version as reactVersion } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { LiquidGlass } from '@proto/shared/glass';
 import { useWindowStore } from '../../store/windowStore';
 import { useAppRegistry } from '../../registry/appRegistry';
@@ -114,7 +114,7 @@ export function Taskbar() {
           >
             <Zap className="w-3.5 h-3.5 text-accent" />
             <span className="text-2xs font-medium whitespace-nowrap">
-              {t('taskbar.federationStrip', { count: remoteCount, version: reactVersion })}
+              {t('taskbar.federationStrip', { count: remoteCount })}
             </span>
           </button>
         </Tooltip>

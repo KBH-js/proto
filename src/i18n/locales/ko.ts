@@ -31,7 +31,7 @@ export const ko = {
     toLight: '라이트 모드로 전환',
     toEnglish: 'English로 전환',
     toKorean: '한국어로 전환',
-    federationStrip: 'Module Federation · remote {{count}}개 · React {{version}}',
+    federationStrip: 'Module Federation · remote {{count}}개',
     openInspector: '페더레이션 인스펙터 열기',
   },
   window: {
@@ -124,7 +124,6 @@ export const ko = {
       '실무 프로젝트를 아키텍처와 스펙 기반 AI assisted coding으로 clean-room 재현한 인터랙티브 포트폴리오입니다 — 여기 보이는 모든 것이 실제로 실행됩니다.',
     claimsTitle: '주장 → 증거',
     claimsCaption: '각 주장을 실제로 도는 데모로 연결합니다. 행을 누르면 해당 기능이 열립니다.',
-    tagLive: '라이브',
     claim: {
       federation: {
         title: '런타임 동적 Remote URL 주입 + 독립 배포',
@@ -168,7 +167,7 @@ export const ko = {
       ci: 'CI 실행 보기',
       agents: 'AGENTS.md 보기',
     },
-    decisionsTitle: '기술 결정 · 트레이드오프',
+    decisionsTitle: '기술 결정',
     decision: {
       runtime: {
         title: '빌드타임이 아닌 런타임 등록',
@@ -182,16 +181,6 @@ export const ko = {
         title: 'React Compiler 마이그레이션 — watch()가 멈춘 이유',
         desc: '수동 메모이제이션을 걷어내는 과정에서 react-hook-form watch()의 가변 참조가 컴파일러 캐싱과 충돌해 화면이 갱신되지 않는 문제를 발견했고, 구독 기반 useWatch로 전환해 해결했습니다. 이 레포에서도 같은 계열의 결정이 반복됩니다 — 재시도 래퍼를 useMemo가 아닌 useState로 보관합니다(WindowFrame).',
       },
-    },
-    archTitle: '아키텍처',
-    archCaption:
-      '실제 배포 토폴로지입니다 — 이 데스크톱이 런타임에 로드합니다. 노드를 누르면 배포된 주소가 열립니다.',
-    arch: {
-      host: 'Host (웹 데스크톱)',
-      remotes: '독립 배포 remote · {{count}}개',
-      edge: 'mf-manifest.json · 런타임 로드',
-      singleton: 'React 19 싱글턴 — Host와 모든 remote가 공유',
-      repo: '소스 저장소',
     },
     stackTitle: '기술 스택',
     stackGroup: {
