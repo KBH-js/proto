@@ -123,8 +123,13 @@ export function StartMenu({ anchorRef, onClose }: StartMenuProps) {
         variant="menu"
         role="menu"
         aria-label={t('taskbar.startMenu')}
-        className="fixed w-72 flex flex-col overflow-hidden"
+        className="w-72 flex flex-col overflow-hidden"
         style={{
+          // Inline, not a `fixed` class: .lg-surface sets `position: relative`
+          // and loads after Tailwind, so the utility class loses the cascade.
+          // A relative menu stays in body flow, grows the page, and the first
+          // menuitem's focus() then scrolls the whole shell out of view.
+          position: 'fixed',
           left: position.left,
           bottom: position.bottom,
           maxHeight: position.maxHeight,

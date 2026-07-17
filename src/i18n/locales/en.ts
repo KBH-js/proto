@@ -141,19 +141,43 @@ export const en: Resources = {
         title: 'React 19 singleton sharing',
         desc: 'React/ReactDOM are negotiated once and shared by every remote. The Inspector shows the single negotiated version.',
       },
+      windowing: {
+        title: 'Windowing — move · resize · snap · restore',
+        desc: 'A react-rnd window layer owned by the shell: Aero snap, a genie minimize animation, and layout persistence to localStorage. Try dragging this window to a screen edge.',
+      },
+      openstack: {
+        title: 'OpenStack dashboards — Neutron · Nova remotes',
+        desc: 'The Network (Neutron) and Compute (Nova) dashboards run as independently deployed remotes, on TanStack Query caching and an MSW-mocked REST layer — outage-injection demo included.',
+      },
+      testing: {
+        title: 'Test infrastructure — Vitest/MSW + Playwright E2E + CI gate',
+        desc: 'Vitest+MSW unit/integration tests and Playwright E2E (window ops, remote loading, failure recovery) are enforced on every PR by a GitHub Actions gate.',
+      },
       i18n: {
         title: 'i18n ko/en pipeline · missing-key guard',
-        desc: 'ko is the source; en is a type-mirror of ko, so a missing key is a compile error — this repo’s analog of the CI missing-key check. Try the language button in the tray.',
+        desc: 'ko is the source; en is a type-mirror of ko, so a missing key is a compile error — enforced by the build step of the CI PR gate. Try the language button in the tray.',
       },
       theming: {
         title: 'Design tokens + dark mode',
-        desc: 'Theme is a class toggle on the shell root; tokens come from a shared package. Switch it with the theme button.',
+        desc: 'Theme is a class toggle on the shell root; tokens come from a shared package. Switch it with the theme button. A Playwright visual-regression (VRT) matrix is planned.',
+      },
+      aidx: {
+        title: 'AI-collaboration DX — AGENTS.md conventions + hard guardrails',
+        desc: 'Team conventions live in a single AGENTS.md; raw-color/px lint rules and the i18n type mirror force AI-written code to follow them too. Remote scaffolding is automated by a validated Skill.',
+      },
+      perf: {
+        title: 'Rendering performance — virtual scroll (10,000 rows) · debounced search',
+        desc: "A claim from my previous role (Tmax). It sits outside this desktop's thesis (MF architecture · engineering workflow), so it is not reproduced here yet.",
       },
     },
     act: {
       inspector: 'Show in Inspector',
       theme: 'Toggle theme',
       locale: 'Toggle language',
+      open: 'Open the app',
+      source: 'View source',
+      ci: 'View CI runs',
+      agents: 'View AGENTS.md',
     },
     decisionsTitle: 'Technical decisions · trade-offs',
     decision: {
@@ -164,6 +188,10 @@ export const en: Resources = {
       singleton: {
         title: 'Shared-module config: performance + a matched React singleton',
         desc: 'Host and remotes share requiredVersion ^19 to prevent two Reacts from loading. Dependencies common to several apps are served by the host as one shared bundle, which optimizes performance.',
+      },
+      compiler: {
+        title: 'React Compiler migration — why watch() went stale',
+        desc: "While removing manual memoization I found react-hook-form's watch() — a mutable render-time reference — clashing with compiler caching, freezing the screen; switching to subscription-based useWatch fixed it. The same family of decision recurs in this repo: the retry wrapper lives in useState, not useMemo (WindowFrame).",
       },
     },
     linksTitle: 'Deployments · source',
