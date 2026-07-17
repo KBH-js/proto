@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useTourStore } from '../../store/tourStore';
 import { usePrefsStore } from '../../store/prefsStore';
 import { useTranslation } from '../../i18n';
@@ -125,8 +125,10 @@ export function FirstRunTour() {
 
   const step = active ? STEPS[stepIndex] : undefined;
 
-  // Measure the current step's anchor; re-measure on resize.
-  useEffect(() => {
+  // Measure the current step's anchor; re-measure on resize. Layout effect:
+  // a passive effect lets the step's new text paint one frame before the
+  // spotlight/card move to the new anchor, which reads as a flicker.
+  useLayoutEffect(() => {
     if (!active) return;
     const measure = () => {
       const selector = STEPS[stepIndex]?.anchor;
