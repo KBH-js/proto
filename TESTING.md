@@ -7,11 +7,14 @@ Three layers, all enforced per-PR by CI (`.github/workflows/ci.yml`):
 | Unit + integration | **Vitest** (+ **MSW** for network) | `pnpm test` |
 | End-to-end | **Playwright** (chromium) | `pnpm test:e2e` |
 | Visual regression | **Playwright** `toHaveScreenshot` | `pnpm test:vrt` (CI only) |
-| Type/i18n/token gates | `tsc -b` + ESLint local rules | `pnpm build` · `pnpm lint` |
+| Type/i18n/token gates | `tsc -b` + ESLint local rules | `pnpm typecheck` · `pnpm lint` |
 
 ## Vitest (unit + integration)
 
-Tests run on Vitest's own esbuild pipeline — the Rsbuild / Module Federation /
+The host and the remote packages' data layers (`packages/remote-network`,
+`packages/remote-compute`) are covered by **Vitest** (unit + component) and
+**Vitest + MSW** (integration) — one root config runs all 14 suites.
+Tests run on their own esbuild pipeline — the Rsbuild / Module Federation /
 React Compiler build config does not apply — under the **happy-dom**
 environment by default; `catalog.test.ts` opts into Node per-file because
 happy-dom's `Response.json()` locks its stream under MSW.
@@ -20,11 +23,6 @@ happy-dom's `Response.json()` locks its stream under MSW.
 pnpm test        # run once (CI-style)
 pnpm test:watch  # watch mode
 ```
-
-Covers (host `src/**` + `packages/**/src/**`): window geometry/store, tour
-store, shortcuts, app registry, catalog validation (MSW), design-token
-builder, DesktopIcon/StartMenu/WindowFrame components, and the
-remote-network / remote-compute data layers (MSW node server).
 
 | Suite | Kind | What it locks down |
 |-------|------|--------------------|
@@ -115,8 +113,8 @@ chicken-and-egg missing-snapshot error.
 ## CI
 
 `.github/workflows/ci.yml` runs on every PR and push to `main`:
-**verify** (lint → typecheck → vitest → host build → all remote builds),
+**verify** (lint → typecheck → vitest → host build → all-remote builds),
 **e2e** (Playwright, report uploaded on failure), and **vrt** (screenshot
 matrix against committed ubuntu baselines; diff report uploaded on failure).
-The build step doubles as the i18n gate — `en.ts` is a type-mirror of
-`ko.ts`, so a missing locale key fails `tsc -b`.
+The typecheck/build steps double as the i18n gate — `en.ts` is a type-mirror
+of `ko.ts`, so a missing locale key fails `tsc -b`.

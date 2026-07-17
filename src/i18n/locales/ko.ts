@@ -196,10 +196,7 @@ export const ko = {
     linksCaption: '실제로 배포되어 이 데스크톱이 런타임에 로드합니다.',
     link: {
       host: 'Host (웹 데스크톱)',
-      calculator: 'Remote · Calculator',
-      notes: 'Remote · Notes',
-      network: 'Remote · Network',
-      compute: 'Remote · Compute',
+      remote: 'Remote · {{name}}',
       repo: '소스 저장소',
     },
     shortcutsTitle: '키보드 단축키',
@@ -226,19 +223,19 @@ export const ko = {
       },
       calculator: {
         title: '원격 앱을 실행해 보세요',
-        body: 'Calculator를 클릭하면 별도로 배포된 remote-calculator에서 로드됩니다. 로드 시간이 토스트로, 타이틀바엔 MFE 배지가 표시됩니다.',
+        body: 'Calculator는 별도로 배포된 remote-calculator에서 런타임에 로드됩니다. 투어가 끝나면 이 아이콘을 눌러보세요 — 로드 시간이 토스트로 뜨고 타이틀바에 MFE 배지가 표시됩니다.',
       },
       inspector: {
         title: '런타임을 들여다보기',
         body: "Federation Inspector는 각 remote의 주입된 URL·로드 시간을 보여주고, '장애 주입'으로 실패→복구 흐름을 직접 시연합니다.",
       },
       tray: {
-        title: '언어 · 테마 · 상태',
-        body: '여기서 한국어/영어와 다크/라이트를 전환하고, 현재 연결된 remote 개수를 확인합니다.',
+        title: '언어 · 테마',
+        body: '이 트레이에서 한국어/영어와 다크/라이트 테마를 전환합니다. 투어가 끝나면 직접 눌러 바꿔보세요.',
       },
       done: {
         title: '준비 완료',
-        body: '소개(About) 앱에서 이력서 주장이 어떤 데모로 증명되는지 확인하세요. 이 투어는 언제든 다시 볼 수 있습니다.',
+        body: "'시작하기'를 누르면 소개(About) 앱이 열립니다 — 이력서의 주장이 어떤 데모로 증명되는지 확인하세요. 투어는 Alt + / 로 언제든 다시 볼 수 있습니다.",
       },
     },
   },

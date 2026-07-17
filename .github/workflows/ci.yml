@@ -33,7 +33,6 @@ jobs:
       - run: pnpm -r build
 
   e2e:
-    name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -45,6 +44,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      # webServer in playwright.config.ts boots the host dev server (:5173)
+      # plus all four remote dev servers (:5001-:5004) before the specs run.
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()

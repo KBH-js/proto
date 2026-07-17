@@ -106,18 +106,21 @@
 
   /*
    * Invisible hit-area extension: the visible dot is only 13px, well under
-   * comfortable click/touch targets. Dots sit at a 21px pitch (13px + 8px
-   * gap), so ±4px horizontally makes adjacent zones meet exactly without
-   * overlapping; ±6px vertically stays inside the titlebar. ::before is the
-   * specular glare, so the hit pad lives on ::after.
+   * comfortable click/touch targets. Dots sit at a 29px pitch (13px + 16px
+   * cluster gap — WindowControls uses gap-4), so ±8px horizontally makes
+   * adjacent zones meet exactly without overlapping (an overlap would let the
+   * later DOM sibling steal the click); ±8px vertically stays inside the
+   * 36px titlebar (13 + 16 = 29 < 36). The resulting 29×29px zone is a
+   * touch-workable target while the aqua dot keeps its 13px look. ::before
+   * is the specular glare, so the hit pad lives on ::after.
    */
   .aqua-traffic::after {
     content: '';
     position: absolute;
-    top: -6px;
-    bottom: -6px;
-    left: -4px;
-    right: -4px;
+    top: -8px;
+    bottom: -8px;
+    left: -8px;
+    right: -8px;
   }
 
   .aqua-traffic:active {

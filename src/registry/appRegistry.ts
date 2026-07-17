@@ -16,6 +16,11 @@ import { translateNow } from '../i18n';
 export interface RemoteRef extends RemoteRegistration {
   /** Exposed module name without the './' prefix, e.g. 'CalculatorApp' */
   module: string;
+  /**
+   * The manifest's production entry URL, unresolved. `entry` becomes the dev
+   * URL under the dev server, so About's deployment list reads this instead.
+   */
+  prodEntry: string;
 }
 
 /**
@@ -123,6 +128,7 @@ function toRegistryEntry(app: CatalogApp): AppRegistryEntry {
       name: app.remote!.name,
       entry: resolveEntryUrl(app.remote!),
       module: app.remote!.module,
+      prodEntry: app.remote!.entryUrl,
     },
     defaultConfig: {
       componentType: app.id,

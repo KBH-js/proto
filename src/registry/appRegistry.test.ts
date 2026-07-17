@@ -43,6 +43,10 @@ describe('initializeAppRegistry', () => {
     expect(entries.about).toBeDefined();
     expect(entries.calculator?.isRemote).toBe(true);
     expect(entries.notes?.remote?.module).toBe('NotesApp');
+    // The unresolved prod entry survives for About's deployment list.
+    expect(entries.calculator?.remote?.prodEntry).toBe(
+      'https://remote-calculator-sage.vercel.app/mf-manifest.json',
+    );
     expect(registerRemotes).toHaveBeenCalledTimes(1);
     expect(registerRemotes.mock.calls[0][0]).toHaveLength(3);
   });
