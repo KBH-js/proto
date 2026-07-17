@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # pnpm must be installed before setup-node resolves its `cache: pnpm`;
+      # the pnpm version comes from the root package.json "packageManager".
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      # Host build (tsc -b && rsbuild build)
+      - run: pnpm build
+      # Remote builds; packages/shared has no build script and is skipped.
+      # No env needed — ASSET_PREFIX defaults to 'auto'.
+      - run: pnpm -r build

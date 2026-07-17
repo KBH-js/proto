@@ -21,5 +21,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  // Tests are executed (and transformed) by the ROOT vitest run, which brings
+  // vitest + the shared MSW server from the workspace. The isolated Vercel
+  // deploy uploads only this package, so `tsc -b` must not touch them.
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }
