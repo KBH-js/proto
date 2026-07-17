@@ -1,5 +1,7 @@
 # KBH-Desktop — Web-based Desktop Environment
 
+[![CI](https://github.com/KBH-js/proto/actions/workflows/ci.yml/badge.svg)](https://github.com/KBH-js/proto/actions/workflows/ci.yml)
+
 브라우저에서 동작하는 데스크탑 환경을 마이크로 프론트엔드 아키텍처로 구현한 데모입니다.
 
 **Live Demo:** [proto-six-iota.vercel.app](https://proto-six-iota.vercel.app/)
@@ -10,6 +12,7 @@
 - **Runtime Micro-Frontends** — Module Federation 2.x 런타임 API로 Calculator, Notes 앱을 동적 등록·로딩. remote 목록은 빌드 타임이 아닌 `remotes.manifest.json`에서 주입되어, manifest 수정만으로 호스트 재배포 없이 remote 추가/이동 가능
 - **장애 격리 & 복구** — remote 서버 장애 시 해당 창만 에러 상태로 격리. 서버 복구 후 창 안의 **Try Again** 버튼으로 페이지 새로고침 없이 그 창만 복구
 - **Rspack 빌드체인** — 호스트/remote 모두 Rsbuild(Rspack) 기반, 호스트는 React Compiler 적용
+- **테스트 & CI 게이트** — Vitest+MSW 단위·통합 테스트와 Playwright E2E(창 조작·remote 로드·장애 복구)가 GitHub Actions PR 게이트에서 매 PR마다 실행. 자세한 내용은 [TESTING.md](./TESTING.md)
 
 ## Architecture
 
@@ -85,4 +88,4 @@ pnpm dev
 
 ## Tech Stack
 
-React 19 · TypeScript · Rsbuild (Rspack) · Module Federation 2.x · Zustand · Tailwind CSS · React Compiler
+React 19 · TypeScript · Rsbuild (Rspack) · Module Federation 2.x · TanStack Query · Zustand · Tailwind CSS · React Compiler · Vitest · MSW · Playwright · GitHub Actions
