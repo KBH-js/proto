@@ -7,7 +7,7 @@
  * so this pass picks the correct form — but only when the preceding character
  * is a Hangul syllable. Latin/digit/other endings keep the hedged pair, since
  * their pronunciation (and thus 받침) can't be derived from the code point
- * (e.g. module ids like 'CalculatorApp').
+ * (e.g. module ids like 'NetworkApp').
  */
 
 /** hedged pattern → [form after 받침, form after open syllable] */

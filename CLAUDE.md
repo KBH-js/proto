@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-calculator`, `packages/remote-notes`, `packages/remote-network`, `packages/remote-compute`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 Vitest+MSW(`pnpm test`) + Playwright E2E(`pnpm test:e2e`).
+pnpm workspace 모노레포. Host(웹 데스크탑 셸, 루트 `src/`)가 Module Federation 2.x **런타임 API**로 Remote 앱들(`packages/remote-network`, `packages/remote-compute`)을 동적 등록·로딩한다. 빌드는 전부 Rsbuild(Rspack). 테스트는 Vitest+MSW(`pnpm test`) + Playwright E2E(`pnpm test:e2e`).
 
 크로스커팅 규약(게이트·가드레일·커밋 컨벤션)은 [AGENTS.md](./AGENTS.md)가 단일 소스다.
 
@@ -10,12 +10,12 @@ Host (루트):
 
 ```bash
 pnpm dev          # http://localhost:5173
-pnpm dev:remotes  # 모든 remote를 dev 모드로 병렬 실행 (:5001–:5004)
+pnpm dev:remotes  # 모든 remote를 dev 모드로 병렬 실행 (:5003–:5004)
 pnpm build        # tsc -b && rsbuild build
 pnpm lint         # eslint . (호스트에만 lint 스크립트 있음)
 pnpm typecheck    # tsc -b + 전 패키지 typecheck
 pnpm test         # Vitest — host + remote 패키지 + eslint-rules 전 스위트
-pnpm test:e2e     # Playwright (dev 서버 5개 자동 기동)
+pnpm test:e2e     # Playwright (dev 서버 3개 자동 기동)
 pnpm preview
 ```
 
@@ -50,7 +50,7 @@ Remote (각 `packages/remote-*`): `pnpm dev` — Rsbuild MF 플러그인은 dev 
 
 **Remote 앱 생성/추가 요청이 오면 반드시 `add-remote-app` skill(`.claude/skills/add-remote-app/SKILL.md`)을 먼저 구동하고 그 절차를 따른다** — 어떤 표현이든("remote app 만들어줘", "리모트 앱 추가", "new MF remote" 등) 해당하며, skill 없이 아래 요약만으로 진행하지 말 것.
 
-1. `packages/remote-notes`를 미러링해 패키지 생성 — rsbuild.config.ts(`name`, `exposes`, singleton `shared`, `dts: false`, 고유 포트, `dev.assetPrefix`), async boundary 엔트리, exposed 모듈에 `import './index.css'`.
+1. `packages/remote-compute`를 미러링해 패키지 생성 — rsbuild.config.ts(`name`, `exposes`, singleton `shared`, `dts: false`, 고유 포트, `dev.assetPrefix`), async boundary 엔트리, exposed 모듈에 `import './index.css'`.
 2. `public/remotes.manifest.json`에 앱 엔트리 추가 — **호스트 코드 수정 없음**. 아이콘이 새 이름이면 `src/components/shared/appIcons.ts`의 `appIconMap`(+ `getAppIconColor` 틴트)에 추가.
 3. 배포 시: 새 Vercel 프로젝트(root: 해당 패키지), CORS 헤더 유지(vercel.json), `ASSET_PREFIX` env 설정 후 manifest의 `entryUrl` 갱신.
 

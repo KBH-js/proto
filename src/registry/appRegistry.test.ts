@@ -41,14 +41,14 @@ describe('initializeAppRegistry', () => {
     expect(status).toBe('ready');
     // Locals survive the merge; remotes come from the catalog fixture.
     expect(entries.about).toBeDefined();
-    expect(entries.calculator?.isRemote).toBe(true);
-    expect(entries.notes?.remote?.module).toBe('NotesApp');
+    expect(entries.network?.isRemote).toBe(true);
+    expect(entries.compute?.remote?.module).toBe('ComputeApp');
     // The unresolved prod entry survives for About's deployment list.
-    expect(entries.calculator?.remote?.prodEntry).toBe(
-      'https://remote-calculator-sage.vercel.app/mf-manifest.json',
+    expect(entries.network?.remote?.prodEntry).toBe(
+      'https://remote-network.vercel.app/mf-manifest.json',
     );
     expect(registerRemotes).toHaveBeenCalledTimes(1);
-    expect(registerRemotes.mock.calls[0][0]).toHaveLength(3);
+    expect(registerRemotes.mock.calls[0][0]).toHaveLength(2);
   });
 
   it('is a no-op when called again after the registry is ready', async () => {
@@ -70,18 +70,18 @@ describe('initializeAppRegistry', () => {
 
   it('runs again after the store resets to its seed (dev HMR re-instantiation)', async () => {
     await initializeAppRegistry();
-    expect(useAppRegistry.getState().entries.calculator).toBeDefined();
+    expect(useAppRegistry.getState().entries.network).toBeDefined();
 
     // HMR re-instantiates the store module: entries drop back to the local
     // seed and status to 'loading', while this module's closures survive.
     useAppRegistry.setState(seededState, true);
-    expect(useAppRegistry.getState().entries.calculator).toBeUndefined();
+    expect(useAppRegistry.getState().entries.network).toBeUndefined();
 
     await initializeAppRegistry();
 
     const { entries, status } = useAppRegistry.getState();
     expect(status).toBe('ready');
-    expect(entries.calculator?.isRemote).toBe(true);
+    expect(entries.network?.isRemote).toBe(true);
     expect(fetchCatalog).toHaveBeenCalledTimes(2);
     expect(registerRemotes).toHaveBeenCalledTimes(2);
   });
@@ -95,7 +95,7 @@ describe('initializeAppRegistry', () => {
     expect(status).toBe('degraded');
     // Local apps stay usable; no remote entries appear.
     expect(entries.about).toBeDefined();
-    expect(entries.calculator).toBeUndefined();
+    expect(entries.network).toBeUndefined();
     expect(registerRemotes).not.toHaveBeenCalled();
 
     // 'degraded' is a settled state — repeated calls must not refetch-loop.

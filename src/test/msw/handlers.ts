@@ -9,32 +9,6 @@ export const validCatalog: AppCatalog = {
   version: 1,
   apps: [
     {
-      id: 'calculator',
-      title: 'Calculator',
-      icon: 'calculator',
-      type: 'remote',
-      defaultSize: { w: 320, h: 480 },
-      remote: {
-        name: 'remoteCalculator',
-        module: 'CalculatorApp',
-        entryUrl: 'https://remote-calculator-sage.vercel.app/mf-manifest.json',
-        devEntryUrl: 'http://localhost:5001/mf-manifest.json',
-      },
-    },
-    {
-      id: 'notes',
-      title: 'Notes',
-      icon: 'sticky-note',
-      type: 'remote',
-      defaultSize: { w: 380, h: 420 },
-      remote: {
-        name: 'remoteNotes',
-        module: 'NotesApp',
-        entryUrl: 'https://remote-notes.vercel.app/mf-manifest.json',
-        devEntryUrl: 'http://localhost:5002/mf-manifest.json',
-      },
-    },
-    {
       id: 'network',
       title: 'Network',
       icon: 'network',
@@ -45,6 +19,19 @@ export const validCatalog: AppCatalog = {
         module: 'NetworkApp',
         entryUrl: 'https://remote-network.vercel.app/mf-manifest.json',
         devEntryUrl: 'http://localhost:5003/mf-manifest.json',
+      },
+    },
+    {
+      id: 'compute',
+      title: 'Compute',
+      icon: 'server',
+      type: 'remote',
+      defaultSize: { w: 860, h: 620 },
+      remote: {
+        name: 'remoteCompute',
+        module: 'ComputeApp',
+        entryUrl: 'https://remote-compute.vercel.app/mf-manifest.json',
+        devEntryUrl: 'http://localhost:5004/mf-manifest.json',
       },
     },
   ],

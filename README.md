@@ -10,8 +10,8 @@
 ## Features
 
 - **Window Management** — Zustand 기반 전역 상태로 창 포커스(z-index), 최소화/최대화, 드래그·리사이즈 구현
-- **Runtime Micro-Frontends** — Module Federation 2.x 런타임 API로 remote 앱 4개를 동적 등록·로딩. remote 목록은 빌드 타임이 아닌 `remotes.manifest.json`에서 주입되어, manifest 수정만으로 호스트 재배포 없이 remote 추가/이동 가능
-- **2계층 Remote 구성** — **reference remotes**(Calculator :5001 · Notes :5002)는 최소 MF 계약을 그대로 보여주는 레퍼런스이자 장애 격리 데모의 실험체, **domain remotes**(Network=Neutron :5003 · Compute=Nova :5004)는 TanStack Query 캐싱·장애 주입, MSW-mockable REST(+인메모리 폴백), 스코프 CSS-변수 토큰(호스트 다크 테마 반응), 호스트 locale/theme 브리지를 갖춘 OpenStack 대시보드
+- **Runtime Micro-Frontends** — Module Federation 2.x 런타임 API로 remote 앱 2개를 동적 등록·로딩. remote 목록은 빌드 타임이 아닌 `remotes.manifest.json`에서 주입되어, manifest 수정만으로 호스트 재배포 없이 remote 추가/이동 가능
+- **OpenStack 도메인 Remote** — Network(=Neutron :5003) · Compute(=Nova :5004) 대시보드는 TanStack Query 캐싱·장애 주입, MSW-mockable REST(+인메모리 폴백), 스코프 CSS-변수 토큰(호스트 다크 테마 반응), 호스트 locale/theme 브리지를 갖춘 독립 배포 remote
 - **장애 격리 & 복구** — remote 서버 장애 시 해당 창만 에러 상태로 격리. 서버 복구 후 창 안의 **Try Again** 버튼으로 페이지 새로고침 없이 그 창만 복구
 - **Rspack 빌드체인** — 호스트/remote 모두 Rsbuild(Rspack) 기반, 호스트는 React Compiler 적용
 - **테스트 & CI 게이트** — Vitest+MSW 단위·통합 테스트와 Playwright E2E(창 조작·remote 로드·장애 복구)가 GitHub Actions PR 게이트에서 매 PR마다 실행. 자세한 내용은 [TESTING.md](./TESTING.md)
@@ -40,8 +40,6 @@ graph TD
     end
 
     subgraph Remotes ["Independent Remotes (Rsbuild)"]
-        Calc["Calculator :5001"]
-        Notes["Notes :5002"]
         Net["Network (Neutron) :5003"]
         Comp["Compute (Nova) :5004"]
     end
@@ -51,20 +49,16 @@ graph TD
         GlassLib["@proto/shared/glass"]
     end
 
-    Runtime -.->|mf-manifest.json| Calc
-    Runtime -.->|mf-manifest.json| Notes
     Runtime -.->|mf-manifest.json| Net
     Runtime -.->|mf-manifest.json| Comp
     Host -.-> ReactLib
     Host -.-> GlassLib
-    Calc -.-> ReactLib
-    Notes -.-> ReactLib
     Net -.-> ReactLib
     Comp -.-> ReactLib
 
     class Manifest manifest
     class Runtime,Registry,Desktop host
-    class Calc,Notes,Net,Comp remote
+    class Net,Comp remote
     class ReactLib,GlassLib shared
 ```
 
@@ -81,7 +75,7 @@ Rsbuild MF 플러그인은 dev 모드에서 remote 컨테이너를 바로 서빙
 ```bash
 pnpm install
 
-# Terminal 1: 모든 Remote를 dev 모드로 — :5001 Calculator, :5002 Notes, :5003 Network, :5004 Compute
+# Terminal 1: 모든 Remote를 dev 모드로 — :5003 Network, :5004 Compute
 pnpm dev:remotes
 
 # Terminal 2: Host — http://localhost:5173
@@ -90,9 +84,9 @@ pnpm dev
 
 ### 장애 복구 데모
 
-1. Calculator와 Notes 창을 연다 — 둘 다 정상 동작
-2. Notes dev 서버를 종료하고 페이지를 새로고침한 뒤 Notes를 연다 → Notes 창만 에러, Calculator는 정상
-3. Notes 서버 재기동 후 에러 창의 **Try Again** 클릭 → 페이지 새로고침 없이 해당 창만 복구
+1. Network와 Compute 창을 연다 — 둘 다 정상 동작
+2. Compute dev 서버를 종료하고 페이지를 새로고침한 뒤 Compute를 연다 → Compute 창만 에러, Network는 정상
+3. Compute 서버 재기동 후 에러 창의 **Try Again** 클릭 → 페이지 새로고침 없이 해당 창만 복구
 
 자세한 아키텍처와 remote 추가 절차는 [REMOTES.md](./REMOTES.md)를 참고하세요.
 

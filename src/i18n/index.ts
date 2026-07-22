@@ -66,8 +66,8 @@ export function translateNow(key: string, params?: TransParams): string {
 }
 
 /**
- * Translate an app title by its registry `componentType` (e.g. 'calculator'
- * → '계산기'). Falls back to the provided registry/manifest title when the
+ * Translate an app title by its registry `componentType` (e.g. 'network'
+ * → '네트워크'). Falls back to the provided registry/manifest title when the
  * app has no translation entry (e.g. a future remote not yet localized).
  */
 export function translateAppTitle(t: TFunction, componentType: string, fallback: string): string {

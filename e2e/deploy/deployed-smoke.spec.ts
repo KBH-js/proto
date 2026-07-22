@@ -39,7 +39,7 @@ test('production manifest resolves and every remote entry answers with CORS', as
 test('deployed host boots to the desktop with every remote registered', async ({ page }) => {
   await bootDesktop(page);
 
-  // 4 local apps + 4 remotes — mirrors boot.spec, against the live deployment
-  await expect(page.locator('[data-app-icon]')).toHaveCount(8);
-  await expect(page.locator('[data-tour="tray"]')).toContainText('Module Federation · 4 remotes');
+  // 4 local apps + 2 remotes — mirrors boot.spec, against the live deployment
+  await expect(page.locator('[data-app-icon]')).toHaveCount(6);
+  await expect(page.locator('[data-tour="tray"]')).toContainText('Module Federation · 2 remotes');
 });

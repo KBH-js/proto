@@ -11,9 +11,9 @@ describe('fetchAppCatalog', () => {
   it('returns the parsed catalog on the happy path', async () => {
     const catalog = await fetchAppCatalog();
     expect(catalog.version).toBe(1);
-    expect(catalog.apps).toHaveLength(3);
-    expect(catalog.apps[0].remote?.name).toBe('remoteCalculator');
-    expect(catalog.apps.map((a) => a.id)).toContain('network');
+    expect(catalog.apps).toHaveLength(2);
+    expect(catalog.apps[0].remote?.name).toBe('remoteNetwork');
+    expect(catalog.apps.map((a) => a.id)).toContain('compute');
   });
 
   it('throws on a non-2xx response', async () => {

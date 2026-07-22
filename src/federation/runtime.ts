@@ -14,7 +14,7 @@ import { useFederationStore } from '../store/federationStore';
  */
 
 export interface RemoteRegistration {
-  /** MF container name, e.g. 'remoteCalculator' */
+  /** MF container name, e.g. 'remoteNetwork' */
   name: string;
   /** Entry URL — the remote's mf-manifest.json (or remoteEntry.js) */
   entry: string;
@@ -47,7 +47,7 @@ export function forceRefreshRemote(remote: RemoteRegistration): void {
 /**
  * Load a remote module and normalize it into a lazy()-compatible shape.
  *
- * @param id - Federated module id, e.g. 'remoteCalculator/CalculatorApp'
+ * @param id - Federated module id, e.g. 'remoteNetwork/NetworkApp'
  * @throws when the module cannot be loaded or has no component default export —
  *         the rejection propagates through React.lazy into the ErrorBoundary.
  */

@@ -11,9 +11,9 @@ import { Size } from '../types/window.types';
  */
 
 export interface CatalogRemote {
-  /** MF container name, e.g. 'remoteCalculator' */
+  /** MF container name, e.g. 'remoteNetwork' */
   name: string;
-  /** Exposed module name without './', e.g. 'CalculatorApp' */
+  /** Exposed module name without './', e.g. 'NetworkApp' */
   module: string;
   /** Production entry — the remote's deployed mf-manifest.json */
   entryUrl: string;

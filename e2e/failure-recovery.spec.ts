@@ -11,15 +11,15 @@ import { test, expect, bootDesktop } from './fixtures';
 test('a poisoned remote fails into its own frame and Try Again recovers it', async ({ page }) => {
   await bootDesktop(page);
 
-  // Break the Calculator container via the Inspector's chaos demo
+  // Break the Network container via the Inspector's chaos demo
   await page.locator('[data-app-icon="inspector"]').click();
-  const calculatorRow = page
+  const networkRow = page
     .getByRole('listitem')
-    .filter({ hasText: 'remoteCalculator/CalculatorApp' });
-  await calculatorRow.getByRole('button', { name: 'Break' }).click();
+    .filter({ hasText: 'remoteNetwork/NetworkApp' });
+  await networkRow.getByRole('button', { name: 'Break' }).click();
 
-  // The reopened Calculator window fails into its per-frame ErrorBoundary
-  await expect(page.getByText('Calculator is currently unavailable')).toBeVisible({
+  // The reopened Network window fails into its per-frame ErrorBoundary
+  await expect(page.getByText('Network is currently unavailable')).toBeVisible({
     timeout: 30_000,
   });
   // The rest of the shell is untouched — the Inspector window is still live
@@ -27,8 +27,8 @@ test('a poisoned remote fails into its own frame and Try Again recovers it', asy
 
   // Try Again re-registers the healthy entry and swaps a fresh lazy wrapper
   await page.getByRole('button', { name: 'Try Again' }).click();
-  await expect(page.getByRole('button', { name: '7', exact: true })).toBeVisible({
+  await expect(page.getByText('Network Dashboard')).toBeVisible({
     timeout: 30_000,
   });
-  await expect(page.getByText('Calculator is currently unavailable')).toHaveCount(0);
+  await expect(page.getByText('Network is currently unavailable')).toHaveCount(0);
 });

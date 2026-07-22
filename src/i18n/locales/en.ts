@@ -11,8 +11,6 @@ export const en: Resources = {
     about: 'About',
     resume: 'Resume',
     inspector: 'Inspector',
-    calculator: 'Calculator',
-    notes: 'Notes',
     network: 'Network',
     compute: 'Compute',
     tokens: 'Design Tokens',
@@ -122,7 +120,7 @@ export const en: Resources = {
     claim: {
       federation: {
         title: 'Runtime remote-URL injection + independent deploys',
-        desc: 'The host declares no remotes at build time. It fetches a manifest at boot and registers each remote at runtime via registerRemotes(). Remotes span two tiers — minimal-contract references (Calculator · Notes) and domain dashboards (Neutron · Nova).',
+        desc: 'The host declares no remotes at build time. It fetches a manifest at boot and registers each remote at runtime via registerRemotes(). The Network (Neutron) and Compute (Nova) dashboards each register as an independently deployed remote.',
       },
       recovery: {
         title: 'Post-redeploy stale-chunk recovery — only the failed frame',
@@ -196,9 +194,9 @@ export const en: Resources = {
         title: 'Welcome to KBH-Desktop',
         body: 'A web desktop built with Module Federation — a clean-room reproduction of a real in-house project. Everything here actually runs. Take a 30-second tour.',
       },
-      calculator: {
+      network: {
         title: 'Launch a remote app',
-        body: "Calculator loads at runtime from the separately-deployed remote-calculator. After the tour, try this icon — you'll see the load time as a toast and an MFE badge in the title bar.",
+        body: "The Network dashboard loads at runtime from the separately-deployed remote-network. After the tour, try this icon — you'll see the load time as a toast and an MFE badge in the title bar.",
       },
       inspector: {
         title: 'Look inside the runtime',

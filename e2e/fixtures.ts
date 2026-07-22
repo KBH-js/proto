@@ -36,7 +36,7 @@ export { expect };
 export async function bootDesktop(page: Page): Promise<void> {
   await page.goto('/');
   await expect(page.getByText('KBH-Desktop', { exact: true })).toBeHidden({ timeout: 30_000 });
-  await expect(page.locator('[data-app-icon="calculator"]')).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('[data-app-icon="network"]')).toBeVisible({ timeout: 30_000 });
 }
 
 /**

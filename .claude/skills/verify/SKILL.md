@@ -23,7 +23,7 @@ fails the PR.
 ## 2. Live E2E (browser)
 
 Start dev servers via `.claude/launch.json` (preview tooling): the remotes
-touched by the change (`remote-calculator` :5001 … `remote-compute` :5004),
+touched by the change (`remote-network` :5003, `remote-compute` :5004),
 then `host` (:5173).
 
 - Open each affected app from the desktop shell; the window renders with no

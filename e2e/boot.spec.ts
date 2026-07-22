@@ -24,10 +24,10 @@ test('boots to a desktop with all apps and a healthy federation tray', async ({ 
 
   await bootDesktop(page);
 
-  // 4 local apps + 4 remotes from the runtime catalog
-  await expect(page.locator('[data-app-icon]')).toHaveCount(8);
+  // 4 local apps + 2 remotes from the runtime catalog
+  await expect(page.locator('[data-app-icon]')).toHaveCount(6);
   // Tray status strip proves the manifest resolved and remotes registered
-  await expect(page.locator('[data-tour="tray"]')).toContainText('Module Federation · 4 remotes');
+  await expect(page.locator('[data-tour="tray"]')).toContainText('Module Federation · 2 remotes');
 
   expect(consoleErrors).toEqual([]);
 });

@@ -55,21 +55,21 @@ Notes:
 ## Playwright E2E
 
 ```bash
-pnpm test:e2e     # headless; starts all 5 dev servers itself
+pnpm test:e2e     # headless; starts all 3 dev servers itself
 pnpm test:e2e:ui  # interactive UI mode
 ```
 
 Topology: the config's `webServer` array boots the **host in dev mode**
-(:5173) plus all four remote dev servers (:5001–:5004). Dev mode matters —
+(:5173) plus both remote dev servers (:5003–:5004). Dev mode matters —
 `resolveEntryUrl()` only picks the localhost `devEntryUrl`s when
 `import.meta.env.DEV` is true, so this exercises the real runtime-federation
 path with no manifest swapping. Locally, already-running dev servers are
 reused.
 
 Specs (`e2e/*.spec.ts`):
-- `boot` — first-run tour, 8 desktop icons, federation tray strip, zero console errors
+- `boot` — first-run tour, 6 desktop icons, federation tray strip, zero console errors
 - `local-window` — open/close a local app window + taskbar item lifecycle
-- `remote-load` — Calculator loads through the MF runtime (MFE:DEV badge, load toast)
+- `remote-load` — Network loads through the MF runtime (MFE:DEV badge, load toast)
 - `window-ops` — maximize / minimize (genie) / restore from taskbar
 - `failure-recovery` — Inspector "Break" → per-frame ErrorBoundary → "Try Again" recovers
 - `prefs` — theme class toggle on the shell root, ko/en locale switch

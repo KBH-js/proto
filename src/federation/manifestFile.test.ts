@@ -26,7 +26,7 @@ describe('public/remotes.manifest.json (shipped file)', () => {
 
   it('lists the expected apps (update when adding a remote — see add-remote-app skill)', () => {
     const ids = manifest.apps.map((app) => app.id).sort();
-    expect(ids).toEqual(['calculator', 'compute', 'network', 'notes']);
+    expect(ids).toEqual(['compute', 'network']);
   });
 
   it('has unique app ids', () => {
