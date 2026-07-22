@@ -21,16 +21,16 @@ code changes** except icon/i18n polish.
 
 **Reference implementation: `packages/remote-compute`** (built by mirroring
 `packages/remote-network`). When in doubt about any file's exact shape, open
-the corresponding file there and mirror it. `packages/remote-notes` is the
-minimal variant (no data layer). Deployment details live in `REMOTES.md`.
+the corresponding file there and mirror it. Deployment details live in
+`REMOTES.md`.
 
 ## Step 0 — Gather decisions (from the request; do not invent silently)
 
 - **App id / MF name / exposed module**: e.g. id `storage`, name
   `remoteStorage`, module `StorageApp` (exposes `./StorageApp`).
-- **Port**: next free one. Taken so far: 5001 calculator, 5002 notes,
-  5003 network, 5004 compute. Verify against `.claude/launch.json`,
-  `public/remotes.manifest.json`, and the REMOTES.md port table.
+- **Port**: next free one. Taken so far: 5003 network, 5004 compute.
+  Verify against `.claude/launch.json`, `public/remotes.manifest.json`,
+  and the REMOTES.md port table.
 - **Domain model**: if it's an OpenStack-style dashboard, base types on the
   real API vocabulary (e.g. Nova: servers/flavors/os-hypervisors) — faithful
   naming is part of the portfolio narrative.

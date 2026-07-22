@@ -14,7 +14,7 @@ import { translateNow } from '../i18n';
  * Reference to a federated remote module
  */
 export interface RemoteRef extends RemoteRegistration {
-  /** Exposed module name without the './' prefix, e.g. 'CalculatorApp' */
+  /** Exposed module name without the './' prefix, e.g. 'NetworkApp' */
   module: string;
   /**
    * The manifest's production entry URL, unresolved. `entry` becomes the dev

@@ -10,8 +10,6 @@ export const ko = {
     about: '소개',
     resume: '이력서',
     inspector: '인스펙터',
-    calculator: '계산기',
-    notes: '메모',
     network: '네트워크',
     compute: '컴퓨트',
     tokens: '디자인 토큰',
@@ -121,7 +119,7 @@ export const ko = {
     claim: {
       federation: {
         title: '런타임 동적 Remote URL 주입 + 독립 배포',
-        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다. remote는 2계층 — 최소 계약을 보여주는 레퍼런스(계산기·메모)와 도메인 대시보드(Neutron·Nova) — 로 구성됩니다.',
+        desc: 'Host는 빌드 타임에 remote를 선언하지 않습니다. 부팅 시 매니페스트를 fetch해 registerRemotes()로 런타임 등록합니다. 네트워크(Neutron)·컴퓨트(Nova) 대시보드가 각각 독립 배포 remote로 등록됩니다.',
       },
       recovery: {
         title: '재배포 후 stale-chunk 복구 — 실패한 프레임만',
@@ -195,9 +193,9 @@ export const ko = {
         title: 'KBH-Desktop에 오신 것을 환영합니다',
         body: 'Module Federation으로 만든 웹 데스크톱입니다. 사내 실프로젝트의 clean-room 재현 — 여기 보이는 것은 실제로 실행됩니다. 30초만 둘러보세요.',
       },
-      calculator: {
+      network: {
         title: '원격 앱을 실행해 보세요',
-        body: 'Calculator는 별도로 배포된 remote-calculator에서 런타임에 로드됩니다. 투어가 끝나면 이 아이콘을 눌러보세요 — 로드 시간이 토스트로 뜨고 타이틀바에 MFE 배지가 표시됩니다.',
+        body: '네트워크 대시보드는 별도로 배포된 remote-network에서 런타임에 로드됩니다. 투어가 끝나면 이 아이콘을 눌러보세요 — 로드 시간이 토스트로 뜨고 타이틀바에 MFE 배지가 표시됩니다.',
       },
       inspector: {
         title: '런타임을 들여다보기',

@@ -10,7 +10,7 @@ afterEach(() => {
 describe('DesktopIcon launch interactions', () => {
   it('launches on a single click', () => {
     const onLaunch = vi.fn();
-    render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
+    render(<DesktopIcon icon="network" label="Network" onLaunch={onLaunch} />);
 
     fireEvent.click(screen.getByRole('button'));
     expect(onLaunch).toHaveBeenCalledTimes(1);
@@ -18,7 +18,7 @@ describe('DesktopIcon launch interactions', () => {
 
   it('is a native button, so keyboard activation goes through click', () => {
     const onLaunch = vi.fn();
-    render(<DesktopIcon icon="calculator" label="Calculator" onLaunch={onLaunch} />);
+    render(<DesktopIcon icon="network" label="Network" onLaunch={onLaunch} />);
 
     const button = screen.getByRole('button');
     button.focus();

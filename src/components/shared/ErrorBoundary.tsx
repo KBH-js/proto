@@ -13,9 +13,9 @@ import { useTranslation } from '../../i18n';
  * 
  * @example
  * ```tsx
- * <ErrorBoundary appName="Calculator">
+ * <ErrorBoundary appName="Network">
  *   <Suspense fallback={<LoadingFallback />}>
- *     <LazyCalculatorApp />
+ *     <LazyNetworkApp />
  *   </Suspense>
  * </ErrorBoundary>
  * ```

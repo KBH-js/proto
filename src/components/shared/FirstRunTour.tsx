@@ -28,9 +28,9 @@ interface TourStep {
 const STEPS: TourStep[] = [
   { titleKey: 'tour.step.welcome.title', bodyKey: 'tour.step.welcome.body' },
   {
-    titleKey: 'tour.step.calculator.title',
-    bodyKey: 'tour.step.calculator.body',
-    anchor: '[data-app-icon="calculator"]',
+    titleKey: 'tour.step.network.title',
+    bodyKey: 'tour.step.network.body',
+    anchor: '[data-app-icon="network"]',
   },
   {
     titleKey: 'tour.step.inspector.title',

@@ -2,18 +2,6 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "remote-calculator",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["-C", "packages/remote-calculator", "dev"],
-      "port": 5001
-    },
-    {
-      "name": "remote-notes",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["-C", "packages/remote-notes", "dev"],
-      "port": 5002
-    },
-    {
       "name": "remote-network",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["-C", "packages/remote-network", "dev"],

@@ -23,43 +23,43 @@ vi.mock('react-rnd', () => ({
   Rnd: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
-const CALCULATOR_ENTRY: AppRegistryEntry = {
+const NETWORK_ENTRY: AppRegistryEntry = {
   isRemote: true,
   remote: {
-    name: 'remoteCalculator',
-    entry: 'http://localhost:5001/mf-manifest.json',
-    module: 'CalculatorApp',
-    prodEntry: 'https://remote-calculator-sage.vercel.app/mf-manifest.json',
+    name: 'remoteNetwork',
+    entry: 'http://localhost:5003/mf-manifest.json',
+    module: 'NetworkApp',
+    prodEntry: 'https://remote-network.vercel.app/mf-manifest.json',
   },
   defaultConfig: {
-    componentType: 'calculator',
-    title: 'Calculator',
-    icon: 'calculator',
-    defaultSize: { w: 400, h: 500 },
+    componentType: 'network',
+    title: 'Network',
+    icon: 'network',
+    defaultSize: { w: 860, h: 620 },
   },
 };
 
-const calculatorWindow: WindowState = {
-  id: 'win-calc',
-  title: 'Calculator',
+const networkWindow: WindowState = {
+  id: 'win-network',
+  title: 'Network',
   position: { x: 0, y: 0 },
-  size: { w: 400, h: 500 },
+  size: { w: 860, h: 620 },
   zIndex: 100,
   isMinimized: false,
   isMaximized: false,
-  componentType: 'calculator',
+  componentType: 'network',
 };
 
 // Registry is a module-level singleton — snapshot its pristine state so each
 // test starts from the real boot state (locals only, status 'loading').
 const pristineRegistry = useAppRegistry.getState();
 
-const notFoundText = translate('ko', 'window.notFound', { type: 'calculator' });
+const notFoundText = translate('ko', 'window.notFound', { type: 'network' });
 
 function resolveCatalog() {
   act(() => {
     useAppRegistry.setState((state) => ({
-      entries: { ...state.entries, calculator: CALCULATOR_ENTRY },
+      entries: { ...state.entries, network: NETWORK_ENTRY },
       status: 'ready',
     }));
   });
@@ -73,7 +73,7 @@ describe('WindowFrame remote rehydration', () => {
     useAppRegistry.setState(pristineRegistry, true);
     loadRemoteComponent.mockReset();
     loadRemoteComponent.mockImplementation(() =>
-      Promise.resolve({ default: () => <div>REMOTE_CALCULATOR</div> }),
+      Promise.resolve({ default: () => <div>REMOTE_NETWORK</div> }),
     );
   });
 
@@ -82,11 +82,11 @@ describe('WindowFrame remote rehydration', () => {
   });
 
   it('loads a persisted remote window once the catalog resolves after boot', async () => {
-    // Boot state: the catalog has not resolved, so the rehydrated calculator
+    // Boot state: the catalog has not resolved, so the rehydrated network
     // window has no registry entry yet.
-    expect(useAppRegistry.getState().entries.calculator).toBeUndefined();
+    expect(useAppRegistry.getState().entries.network).toBeUndefined();
 
-    render(<WindowFrame window={calculatorWindow} />);
+    render(<WindowFrame window={networkWindow} />);
 
     // Regression: before the fix the wrapper seeded to null here and never
     // recovered, leaving the "app not found" fallback permanently.
@@ -96,9 +96,9 @@ describe('WindowFrame remote rehydration', () => {
     resolveCatalog();
 
     // The window re-seeds its lazy wrapper and the remote renders.
-    expect(await screen.findByText('REMOTE_CALCULATOR')).toBeTruthy();
+    expect(await screen.findByText('REMOTE_NETWORK')).toBeTruthy();
     expect(screen.queryByText(notFoundText)).toBeNull();
-    expect(loadRemoteComponent).toHaveBeenCalledWith('remoteCalculator/CalculatorApp');
+    expect(loadRemoteComponent).toHaveBeenCalledWith('remoteNetwork/NetworkApp');
   });
 
   it('loads immediately when the entry is already present at mount', async () => {
@@ -106,9 +106,9 @@ describe('WindowFrame remote rehydration', () => {
     // guards against the fix regressing the normal path.
     resolveCatalog();
 
-    render(<WindowFrame window={calculatorWindow} />);
+    render(<WindowFrame window={networkWindow} />);
 
-    expect(await screen.findByText('REMOTE_CALCULATOR')).toBeTruthy();
+    expect(await screen.findByText('REMOTE_NETWORK')).toBeTruthy();
     expect(screen.queryByText(notFoundText)).toBeNull();
   });
 });

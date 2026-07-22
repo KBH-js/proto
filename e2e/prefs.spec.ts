@@ -17,12 +17,12 @@ test('theme toggle flips the dark class on the shell root', async ({ page }) => 
 test('locale toggle switches shell strings between English and Korean', async ({ page }) => {
   await bootDesktop(page);
 
-  await expect(page.locator('[data-app-icon="calculator"]')).toContainText('Calculator');
+  await expect(page.locator('[data-app-icon="network"]')).toContainText('Network');
 
   await page.getByRole('button', { name: 'Switch to Korean' }).click();
 
-  await expect(page.locator('[data-app-icon="calculator"]')).toContainText('계산기');
+  await expect(page.locator('[data-app-icon="network"]')).toContainText('네트워크');
   // Toggle back from the Korean-labelled button
   await page.getByRole('button', { name: 'English로 전환' }).click();
-  await expect(page.locator('[data-app-icon="calculator"]')).toContainText('Calculator');
+  await expect(page.locator('[data-app-icon="network"]')).toContainText('Network');
 });

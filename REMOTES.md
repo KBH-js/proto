@@ -2,7 +2,7 @@
 
 This document describes the **Module Federation 2.x runtime architecture** used to integrate remote micro-frontend applications into the KBH-Desktop host.
 
-The four remotes deliberately span two tiers: **reference remotes** (Calculator :5001, Notes :5002) keep the minimal MF contract visible and serve as the lab for the failure-isolation demo, while **domain remotes** (Network :5003, Compute :5004) are OpenStack-style dashboards (TanStack Query + mocked REST) built on the same contract.
+The two remotes (Network :5003, Compute :5004) are OpenStack-style dashboards (TanStack Query + mocked REST) built on the same minimal MF contract, and double as the lab for the failure-isolation demo.
 
 ## Overview
 
@@ -41,14 +41,14 @@ This enables:
 │     │ (About, ...) │   │ (lazy MF)    │                       │
 │     └──────────────┘   └──────┬───────┘                       │
 └───────────────────────────────┼───────────────────────────────┘
-        ┌─────────────────┬─────┴───────────┬─────────────────┐
-        ▼                 ▼                 ▼                 ▼
-┌───────────────┐ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
-│ Calculator    │ │ Notes         │ │ Network       │ │ Compute       │
-│ :5001         │ │ :5002         │ │ :5003         │ │ :5004         │
-│ mf-manifest   │ │ mf-manifest   │ │ mf-manifest   │ │ mf-manifest   │
-└───────────────┘ └───────────────┘ └───────────────┘ └───────────────┘
-    reference         reference          domain            domain
+                    ┌───────────┴───────────┐
+                    ▼                       ▼
+            ┌───────────────┐       ┌───────────────┐
+            │ Network       │       │ Compute       │
+            │ :5003         │       │ :5004         │
+            │ mf-manifest   │       │ mf-manifest   │
+            └───────────────┘       └───────────────┘
+                 domain                  domain
 ```
 
 ## Quick Start
@@ -68,8 +68,6 @@ pnpm dev
 | Application | Port | Entry served |
 |-------------|------|--------------|
 | Host OS | 5173 | - |
-| Remote Calculator | 5001 | `/mf-manifest.json`, `/remoteEntry.js` |
-| Remote Notes | 5002 | `/mf-manifest.json`, `/remoteEntry.js` |
 | Remote Network | 5003 | `/mf-manifest.json`, `/remoteEntry.js` |
 | Remote Compute | 5004 | `/mf-manifest.json`, `/remoteEntry.js` |
 
@@ -82,16 +80,16 @@ pnpm dev
   "version": 1,
   "apps": [
     {
-      "id": "notes",
-      "title": "Notes",
-      "icon": "sticky-note",
+      "id": "network",
+      "title": "Network",
+      "icon": "network",
       "type": "remote",
-      "defaultSize": { "w": 380, "h": 420 },
+      "defaultSize": { "w": 860, "h": 620 },
       "remote": {
-        "name": "remoteNotes",
-        "module": "NotesApp",
-        "entryUrl": "https://<notes-deployment>.vercel.app/mf-manifest.json",
-        "devEntryUrl": "http://localhost:5002/mf-manifest.json"
+        "name": "remoteNetwork",
+        "module": "NetworkApp",
+        "entryUrl": "https://<network-deployment>.vercel.app/mf-manifest.json",
+        "devEntryUrl": "http://localhost:5003/mf-manifest.json"
       }
     }
   ]
@@ -99,7 +97,7 @@ pnpm dev
 ```
 
 - `remote.name` — the MF container name (must match the remote's `rsbuild.config.ts`)
-- `remote.module` — the exposed module without `./` (`exposes: { './NotesApp': ... }` → `"NotesApp"`)
+- `remote.module` — the exposed module without `./` (`exposes: { './NetworkApp': ... }` → `"NetworkApp"`)
 - `entryUrl` — deployed `mf-manifest.json`; `devEntryUrl` — used when the host runs in dev mode
 - `type: 'local' | 'external'` are reserved for future catalog-driven app types
 - Local apps (About, Resume) stay statically registered in `src/registry/appRegistry.ts`
@@ -114,8 +112,8 @@ The manifest is fetched with `cache: 'no-store'`, validated in `src/federation/c
 
 ### Step 1: Scaffold the package
 
-Mirror `packages/remote-notes` (the minimal, no-data-layer reference below);
-for a data-backed dashboard remote, mirror `packages/remote-compute` instead:
+Mirror `packages/remote-compute` (itself built by mirroring
+`packages/remote-network` — the two are the reference implementations):
 
 ```
 packages/remote-myapp/
@@ -144,7 +142,7 @@ import { defineConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginModuleFederation } from '@module-federation/rsbuild-plugin';
 
-const DEV_ORIGIN = 'http://localhost:5003'; // unique port
+const DEV_ORIGIN = 'http://localhost:5005'; // unique port
 
 export default defineConfig({
   plugins: [
@@ -162,7 +160,7 @@ export default defineConfig({
   ],
   html: { template: './index.html' },
   source: { entry: { index: './src/main.tsx' } },
-  server: { port: 5003, strictPort: true, cors: { origin: '*' } },
+  server: { port: 5005, strictPort: true, cors: { origin: '*' } },
   dev: { assetPrefix: DEV_ORIGIN },
   output: { assetPrefix: process.env.ASSET_PREFIX || 'auto' },
 });
@@ -228,8 +226,6 @@ Independent Vercel projects (one per app):
 | Project | Root directory | Notes |
 |---|---|---|
 | `proto` (host) | repo root | serves `remotes.manifest.json` |
-| `remote-calculator` | `packages/remote-calculator` | CORS headers required |
-| `remote-notes` | `packages/remote-notes` | CORS headers required |
 | `remote-network` | `packages/remote-network` | CORS headers required; deployed at `https://remote-network.vercel.app` (ASSET_PREFIX set) |
 | `remote-compute` | `packages/remote-compute` | CORS headers required; deployed at `https://remote-compute.vercel.app` (ASSET_PREFIX set) |
 
@@ -257,5 +253,5 @@ The retry must create a *new* lazy wrapper. If you refactor `WindowFrame`, keep 
 
 ```powershell
 # find + kill (Windows PowerShell)
-Get-NetTCPConnection -LocalPort 5001 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+Get-NetTCPConnection -LocalPort 5003 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
 ```

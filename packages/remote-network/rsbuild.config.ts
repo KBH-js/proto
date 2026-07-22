@@ -6,7 +6,7 @@ import { pluginModuleFederation } from '@module-federation/rsbuild-plugin';
  * Rsbuild + Module Federation 2.x configuration for the Network remote.
  *
  * Discovered by the host at runtime via public/remotes.manifest.json —
- * no build-time coupling. Mirrors packages/remote-notes/rsbuild.config.ts.
+ * no build-time coupling. Mirrored by packages/remote-compute/rsbuild.config.ts.
  *
  * @tanstack/react-query is intentionally NOT shared — it is remote-internal
  * state, so each remote keeps its own QueryClient. Only react/react-dom are
